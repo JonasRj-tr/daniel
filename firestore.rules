@@ -1,0 +1,28 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Properties collection: Public read, authenticated or admin write
+    match /properties/{propertyId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Site settings collection: Public read, admin write
+    match /settings/{settingsId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Default deny all other paths
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

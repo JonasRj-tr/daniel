@@ -24,8 +24,8 @@ const PROPERTIES_COLLECTION = 'properties';
 const SETTINGS_COLLECTION = 'settings';
 const GENERAL_SETTINGS_DOC = 'general';
 
-const LOCAL_STORAGE_PROPERTIES_KEY = 'dp_properties_cache';
-const LOCAL_STORAGE_SETTINGS_KEY = 'dp_settings_cache';
+const LOCAL_STORAGE_PROPERTIES_KEY = 'dp_properties_cache_v2';
+const LOCAL_STORAGE_SETTINGS_KEY = 'dp_settings_cache_v2';
 const LOCAL_STORAGE_ADMIN_KEY = 'dp_admin_session';
 
 // Helper to get cached properties

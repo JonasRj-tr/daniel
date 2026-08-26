@@ -146,7 +146,7 @@ export const FloorPlanViewer3D: React.FC<FloorPlanViewer3DProps> = ({ property }
           {/* Footer of 3D Card */}
           <div className="flex items-center justify-between text-[10px] text-[#777] border-t border-[#333] pt-1.5">
             <span>Interativo 3D: Mova o cursor</span>
-            <span className="text-[#C9A86C]">Daniel Pacheco Curadoria</span>
+            <span className="text-[#C9A86C]">Daniel Pacheco Consultoria</span>
           </div>
         </div>
 

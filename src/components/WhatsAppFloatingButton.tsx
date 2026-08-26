@@ -48,14 +48,14 @@ export const WhatsAppFloatingButton: React.FC<WhatsAppFloatingButtonProps> = ({
 
       {/* Floating Buttons Group */}
       <div className="flex items-center gap-3">
-        {/* Curadoria VIP Quick button */}
+        {/* Consultoria VIP Quick button */}
         <button
           id="floating-vip-curation-btn"
           onClick={onOpenCuratedModal}
           className="hidden md:flex items-center gap-2 px-3.5 py-2.5 rounded-full bg-[#181818] border border-[#C9A86C]/40 text-[#C9A86C] hover:bg-[#C9A86C]/10 text-xs font-semibold shadow-lg hover:shadow-xl transition-all"
         >
           <Sparkles className="w-3.5 h-3.5 text-[#C9A86C]" />
-          <span>Curadoria Personalizada</span>
+          <span>Consultoria Personalizada</span>
         </button>
 
         {/* WhatsApp Icon Button */}

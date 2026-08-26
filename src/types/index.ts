@@ -22,7 +22,7 @@ export interface Property {
   bathrooms?: number;
   garageSpaces?: number;
   developer?: string; // Construtora
-  featured?: boolean; // Curadoria Signature
+  featured?: boolean; // Seleção Exclusiva
   images: string[];
   features: string[]; // Diferenciais (ex: Sacada com churrasqueira, Piscina, Vista mar)
   floorPlanUrl?: string;

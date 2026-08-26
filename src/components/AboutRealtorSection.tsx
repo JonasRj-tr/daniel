@@ -166,7 +166,7 @@ export const AboutRealtorSection: React.FC<AboutRealtorSectionProps> = ({
                   className="px-6 py-3.5 rounded-xl bg-[#1C1C1C] hover:bg-[#262626] border border-[#3A3A3A] text-xs font-semibold text-[#F8F5F0] hover:text-[#C9A86C] transition-all flex items-center gap-2 cursor-pointer"
                 >
                   <Sparkles className="w-4 h-4 text-[#C9A86C]" />
-                  <span>Solicitar Curadoria VIP</span>
+                  <span>Solicitar Consultoria VIP</span>
                 </button>
               )}
             </div>

@@ -40,7 +40,7 @@ export const PrivacyPolicyPage: React.FC<PrivacyPolicyPageProps> = ({ settings, 
         <section className="space-y-2">
           <h2 className="text-base sm:text-lg font-bold text-[#F8F5F0]">2. Coleta de Informações</h2>
           <p>
-            Coletamos apenas os dados necessários para o atendimento imobiliário consultivo, tais como: nome, telefone/WhatsApp, e-mail e preferências de imóvel (cidade, número de quartos, faixa orçamentária). Esses dados são informados voluntariamente pelo titular através dos formulários de contato ou curadoria VIP.
+            Coletamos apenas os dados necessários para o atendimento imobiliário consultivo, tais como: nome, telefone/WhatsApp, e-mail e preferências de imóvel (cidade, número de quartos, faixa orçamentária). Esses dados são informados voluntariamente pelo titular através dos formulários de contato ou Consultoria VIP.
           </p>
         </section>
 

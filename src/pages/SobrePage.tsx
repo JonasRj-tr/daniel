@@ -45,7 +45,7 @@ export const SobrePage: React.FC<SobrePageProps> = ({
           Quem é o Corretor Daniel Pacheco
         </h1>
         <p className="text-xs sm:text-sm text-[#A0A0A0] max-w-2xl mx-auto">
-          Transparência, solidez de mercado e curadoria de alto padrão em Criciúma, Balneário Rincão, Içara e Sul Catarinense.
+          Transparência, solidez de mercado e consultoria de alto padrão em Criciúma, Balneário Rincão, Içara e Sul Catarinense.
         </p>
       </div>
 

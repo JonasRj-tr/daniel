@@ -115,7 +115,7 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({
             onChange={(e) => setSortBy(e.target.value as any)}
             className="bg-[#181818] border border-[#2D2D2D] text-[#E0E0E0] rounded-lg px-2.5 py-1 text-xs outline-none cursor-pointer"
           >
-            <option value="recent">Relevância / Signature</option>
+            <option value="recent">Relevância / Seleção Exclusiva</option>
             <option value="bedrooms">Mais Quartos</option>
             <option value="code">Código do Imóvel</option>
           </select>
@@ -152,7 +152,7 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({
               onClick={onOpenCuratedModal}
               className="px-4 py-2 bg-[#C9A86C] text-[#0A0A0A] font-bold rounded-xl text-xs"
             >
-              Solicitar Curadoria VIP
+              Solicitar Consultoria VIP
             </button>
           </div>
         </div>

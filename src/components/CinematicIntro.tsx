@@ -243,7 +243,7 @@ export const CinematicIntro: React.FC<CinematicIntroProps> = ({
       <header className="w-full max-w-6xl mx-auto flex items-center justify-between relative z-20">
         <div className="flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#C9A86C] font-semibold">
           <Sparkles className="w-4 h-4 animate-spin" style={{ animationDuration: '6s' }} />
-          <span>Curadoria Imobiliária Oficial</span>
+          <span>Consultoria Imobiliária</span>
         </div>
 
         <div className="flex items-center gap-3">

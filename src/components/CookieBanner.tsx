@@ -25,7 +25,7 @@ export const CookieBanner: React.FC = () => {
       className="fixed bottom-6 left-6 z-50 bg-[#0A0A0A]/90 backdrop-blur-md border border-white/10 p-4 rounded-lg shadow-2xl max-w-[280px] text-[#F8F5F0] animate-in slide-in-from-bottom-3 duration-300"
     >
       <p className="text-[10px] mb-2.5 leading-relaxed text-gray-300">
-        Utilizamos cookies para melhorar sua experiência em nossa curadoria digital e consultoria imobiliária.
+        Utilizamos cookies para melhorar sua experiência em nossa consultoria digital e consultoria imobiliária.
       </p>
       <div className="flex items-center gap-2">
         <button

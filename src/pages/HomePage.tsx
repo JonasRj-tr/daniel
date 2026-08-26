@@ -78,6 +78,24 @@ export const HomePage: React.FC<HomePageProps> = ({
 
   const signatureProperties = properties.filter((p) => p.featured).slice(0, 6);
 
+  const heroImages = React.useMemo(() => {
+    const allImgs = properties.flatMap(p => p.images || []);
+    return allImgs.length > 0 
+      ? Array.from(new Set(allImgs)).slice(0, 5) 
+      : ["https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&q=80&w=1000"];
+  }, [properties]);
+
+  const [currentHeroImage, setCurrentHeroImage] = useState(0);
+
+  React.useEffect(() => {
+    if (heroImages.length > 1) {
+      const interval = setInterval(() => {
+        setCurrentHeroImage((prev) => (prev + 1) % heroImages.length);
+      }, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [heroImages.length]);
+
   const whatsappHeroUrl = createWhatsAppUrl(
     settings.whatsapp || '5548998001744',
     'Olá Daniel Pacheco! Gostaria de uma consultoria para encontrar o imóvel ideal no Sul de SC.'
@@ -106,7 +124,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               />
               <span className="h-3 w-[1px] bg-[#C9A86C]/40" />
               <span className="text-[10px] uppercase tracking-[0.3em] text-[#C9A86C] font-semibold">
-                Signature Curatorship • Sul Catarinense
+                Exclusive Selection • Sul Catarinense
               </span>
             </div>
 
@@ -181,11 +199,18 @@ export const HomePage: React.FC<HomePageProps> = ({
           <div className="lg:col-span-5 relative z-10">
             <div className="relative rounded-2xl overflow-hidden border border-[#2B2B2B] shadow-2xl aspect-[4/3] lg:aspect-auto lg:h-[460px] group">
               <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A0A] via-transparent to-transparent z-10 pointer-events-none" />
-              <img
-                src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&q=80&w=1000"
-                alt="Luxury Interior Sul Catarinense"
-                className="w-full h-full object-cover scale-105 opacity-85 group-hover:scale-110 transition-transform duration-700"
-              />
+              {heroImages.map((src, idx) => (
+                <img
+                  key={src}
+                  src={src}
+                  alt="Empreendimentos Sul Catarinense"
+                  className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ${
+                    idx === currentHeroImage 
+                      ? "opacity-85 scale-105 group-hover:scale-110 z-0" 
+                      : "opacity-0 scale-100 -z-10"
+                  }`}
+                />
+              ))}
 
               {/* Floating Badge Top */}
               <div className="absolute top-5 left-5 z-20 bg-[#0D0D0D]/90 backdrop-blur-md border border-[#C9A86C]/40 px-3.5 py-1.5 rounded-full shadow-xl flex items-center gap-2 text-xs">
@@ -195,9 +220,16 @@ export const HomePage: React.FC<HomePageProps> = ({
 
               {/* Bottom Dot Indicators */}
               <div className="absolute bottom-6 right-6 z-20 flex gap-2 items-center bg-[#0A0A0A]/70 px-3 py-1.5 rounded-full backdrop-blur-sm border border-white/10">
-                <div className="bg-[#C9A86C] w-2 h-2 rounded-full" />
-                <div className="bg-white/30 w-2 h-2 rounded-full" />
-                <div className="bg-white/30 w-2 h-2 rounded-full" />
+                {heroImages.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentHeroImage(idx)}
+                    className={`w-2 h-2 rounded-full transition-colors ${
+                      idx === currentHeroImage ? 'bg-[#C9A86C]' : 'bg-white/30 hover:bg-white/50'
+                    }`}
+                    aria-label={`Ir para a imagem ${idx + 1}`}
+                  />
+                ))}
               </div>
             </div>
           </div>
@@ -285,7 +317,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                     {prop.city} • {prop.bedrooms || 2} Quartos • {prop.neighborhood}
                   </p>
                   <p className="text-xs font-serif text-[#C9A86C] font-bold">
-                    {prop.price ? `A partir de R$ ${prop.price.toLocaleString('pt-BR')}` : 'Consulte Valor'}
+                    {'A Consultar'}
                   </p>
                 </div>
               </div>
@@ -294,7 +326,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         </div>
       </section>
 
-      {/* 3. CURADORIA SIGNATURE SECTION */}
+      {/* 3. Seleção Exclusiva SECTION */}
       {signatureProperties.length > 0 && (
         <section id="signature-section" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
@@ -304,7 +336,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 <span>Seleção Exclusiva</span>
               </div>
               <h2 className="text-3xl sm:text-4xl font-bold font-serif-luxury text-[#F8F5F0]">
-                Curadoria Signature
+                Seleção Exclusiva
               </h2>
               <p className="text-xs sm:text-sm text-[#999999] max-w-xl mt-1">
                 {settings.signatureSubtitle || 'Imóveis para morar e investir com os mais altos padrões de acabamento, localização e retorno.'}
@@ -320,7 +352,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               }}
               className="text-xs font-semibold text-[#C9A86C] hover:text-white flex items-center gap-1.5 transition-colors self-start md:self-auto"
             >
-              <span>Ver todas as oportunidades Signature</span>
+              <span>Ver todas as oportunidades exclusivas</span>
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
@@ -380,7 +412,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             <Building2 className="w-12 h-12 text-[#555] mx-auto" />
             <h3 className="text-xl font-serif-luxury text-[#E0E0E0]">Nenhum imóvel corresponde aos filtros selecionados</h3>
             <p className="text-xs text-[#888] max-w-md mx-auto">
-              Experimente ajustar os filtros de cidade ou tipo, ou solicite nossa curadoria VIP para encontrarmos imóveis fora do portfólio público.
+              Experimente ajustar os filtros de cidade ou tipo, ou solicite nossa Consultoria VIP para encontrarmos imóveis fora do portfólio público.
             </p>
             <button
               onClick={() => setHomeFilters({ search: '', city: 'Todas', status: 'Todos', type: 'Todos', bedrooms: 'Todos', onlySignature: false })}
@@ -623,7 +655,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               className="w-full sm:w-auto px-8 py-4 rounded-xl bg-[#1C1C1C] hover:bg-[#262626] border border-[#3A3A3A] text-xs font-semibold text-[#F8F5F0] hover:text-[#C9A86C] transition-all flex items-center justify-center gap-2"
             >
               <Sparkles className="w-4 h-4 text-[#C9A86C]" />
-              <span>Preencher Curadoria Personalizada</span>
+              <span>Preencher Consultoria Personalizada</span>
             </button>
           </div>
         </div>

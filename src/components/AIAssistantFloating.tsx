@@ -293,7 +293,7 @@ export const AIAssistantFloating: React.FC<AIAssistantFloatingProps> = ({
     );
 
     return {
-      text: `Excelente pergunta! O corretor **Daniel Pacheco** (${creci} • ${cnai}) atua de forma personalizada para cada cliente, cuidando de toda a parte burocrática, negociação direta e curadoria exclusiva no Sul de Santa Catarina.\n\n` +
+      text: `Excelente pergunta! O corretor **Daniel Pacheco** (${creci} • ${cnai}) atua de forma personalizada para cada cliente, cuidando de toda a parte burocrática, negociação direta e consultoria exclusiva no Sul de Santa Catarina.\n\n` +
         `Para um atendimento sob medida e detalhes precisos sobre "${query}", recomendo falar diretamente com ele pelo WhatsApp ou conferir os conteúdos recentes no Instagram oficial!`,
       actionButtons: [
         { label: 'Falar com Daniel no WhatsApp', type: 'whatsapp', url: dynamicWaUrl },

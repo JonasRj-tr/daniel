@@ -186,7 +186,7 @@ export const ComoEscolherPage: React.FC<ComoEscolherPageProps> = ({
             onClick={onOpenCuratedModal}
             className="px-6 py-3.5 bg-[#C9A86C] text-[#0A0A0A] font-bold text-xs rounded-xl hover:bg-[#B89748] transition-all"
           >
-            Preencher Curadoria VIP
+            Preencher Consultoria VIP
           </button>
         </div>
       </div>

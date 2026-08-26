@@ -66,7 +66,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
             {property.featured && (
               <span className="px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider bg-[#0A0A0A]/90 text-[#C9A86C] border border-[#C9A86C]/40 backdrop-blur-md flex items-center gap-1 shadow-md">
                 <Sparkles className="w-2.5 h-2.5 fill-current" />
-                <span>Signature</span>
+                <span>Exclusivo</span>
               </span>
             )}
             <span className="px-2 py-0.5 text-[9px] font-mono bg-black/80 text-[#C0C0C0] backdrop-blur-md border border-white/10">

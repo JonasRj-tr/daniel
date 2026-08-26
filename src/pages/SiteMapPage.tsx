@@ -47,7 +47,7 @@ export const SiteMapPage: React.FC<SiteMapPageProps> = ({
             <li>
               <button onClick={() => navigate('home')} className="hover:text-white flex items-center gap-1.5">
                 <ArrowRight className="w-3 h-3 text-[#C9A86C]" />
-                <span>Início (Apresentação & Curadoria)</span>
+                <span>Início (Apresentação & Consultoria)</span>
               </button>
             </li>
             <li>

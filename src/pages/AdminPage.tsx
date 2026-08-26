@@ -331,7 +331,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
           </span>
         </div>
         <div className="p-4 rounded-2xl bg-[#131313] border border-[#222]">
-          <span className="text-[10px] uppercase text-[#777] block">Curadoria Signature</span>
+          <span className="text-[10px] uppercase text-[#777] block">Seleção Exclusiva</span>
           <span className="text-2xl font-bold text-[#C9A86C] mt-1 block">
             {properties.filter((p) => p.featured).length}
           </span>
@@ -820,7 +820,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
                     onChange={(e) => setEditingProperty({ ...editingProperty, featured: e.target.checked })}
                     className="accent-[#C9A86C]"
                   />
-                  <span>Destacar em Curadoria Signature</span>
+                  <span>Destacar em Seleção Exclusiva</span>
                 </label>
 
                 <label className="flex items-center gap-2 text-xs text-[#E0E0E0] cursor-pointer">

@@ -110,7 +110,7 @@ export const FAQ_LIST: FAQItem[] = [
   },
   {
     question: 'Qual a diferença entre a assessoria de um corretor curador e uma imobiliária tradicional?',
-    answer: 'Daniel Pacheco atua com curadoria seletiva e atendimento consultivo direto. Em vez de apresentar centenas de opções genéricas, filtramos apenas os empreendimentos oficiais com real potencial de valorização, histórico sólido da construtora e alinhamento com seu perfil financeiro.',
+    answer: 'Daniel Pacheco atua com seleção criteriosa e atendimento consultivo direto. Em vez de apresentar centenas de opções genéricas, filtramos apenas os empreendimentos oficiais com real potencial de valorização, histórico sólido da construtora e alinhamento com seu perfil financeiro.',
   },
   {
     question: 'Quais cidades da região possuem maior potencial de valorização?',
@@ -118,6 +118,6 @@ export const FAQ_LIST: FAQItem[] = [
   },
   {
     question: 'Como agendar uma visita guiada aos decorados ou imóveis prontos?',
-    answer: 'Você pode solicitar o agendamento através do nosso botão de WhatsApp ou preenchendo o formulário de curadoria. Atendemos com horário exclusivo, inclusive aos finais de semana e feriados para clientes que vêm de outras cidades.',
+    answer: 'Você pode solicitar o agendamento através do nosso botão de WhatsApp ou preenchendo o formulário de consultoria. Atendemos com horário exclusivo, inclusive aos finais de semana e feriados para clientes que vêm de outras cidades.',
   },
 ];

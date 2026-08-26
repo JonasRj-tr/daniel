@@ -110,7 +110,7 @@ export const Header: React.FC<HeaderProps> = ({
               className="px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-[#C9A86C] border border-[#C9A86C]/50 hover:bg-[#C9A86C]/10 hover:border-[#C9A86C] rounded-full flex items-center gap-1.5 transition-all cursor-pointer"
             >
               <Sparkles className="w-3.5 h-3.5 text-[#C9A86C]" />
-              <span>Curadoria VIP</span>
+              <span>Consultoria VIP</span>
             </button>
 
             <a
@@ -206,7 +206,7 @@ export const Header: React.FC<HeaderProps> = ({
               className="w-full py-3 text-xs font-semibold text-[#C9A86C] bg-[#C9A86C]/10 border border-[#C9A86C]/40 rounded-xl flex items-center justify-center gap-2"
             >
               <Sparkles className="w-4 h-4 text-[#C9A86C]" />
-              <span>Solicitar Curadoria VIP Personalizada</span>
+              <span>Solicitar Consultoria VIP Personalizada</span>
             </button>
 
             <a

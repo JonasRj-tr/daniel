@@ -114,7 +114,7 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
           {property.featured && (
             <span className="px-3 py-1 rounded-full text-xs font-semibold bg-[#C9A86C]/20 border border-[#C9A86C]/40 text-[#C9A86C] flex items-center gap-1">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>Curadoria Signature</span>
+              <span>Seleção Exclusiva</span>
             </span>
           )}
 
@@ -277,7 +277,7 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
           <FloorPlanViewer3D property={property} />
 
           {/* Financing Simulator */}
-          <FinancingSimulator property={property} settings={settings} />
+          {/* <FinancingSimulator property={property} settings={settings} /> */}
         </div>
 
         {/* Right Column: Sticky Booking & Direct Contact Card */}
@@ -327,7 +327,7 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
                 className="w-full py-3 px-6 rounded-xl bg-[#1D1D1D] hover:bg-[#262626] border border-[#333] hover:border-[#C9A86C] text-xs font-semibold text-[#F8F5F0] hover:text-[#C9A86C] transition-all flex items-center justify-center gap-2"
               >
                 <Sparkles className="w-4 h-4 text-[#C9A86C]" />
-                <span>Solicitar Curadoria Semelhante</span>
+                <span>Solicitar Consultoria Semelhante</span>
               </button>
             </div>
 

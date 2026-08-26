@@ -185,7 +185,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             }`}
           >
             <Sparkles className="w-3 h-3 text-[#C9A86C]" />
-            <span>Curadoria Signature</span>
+            <span>Seleção Exclusiva</span>
           </button>
         </div>
 

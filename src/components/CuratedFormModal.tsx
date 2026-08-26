@@ -60,7 +60,7 @@ export const CuratedFormModal: React.FC<CuratedFormModalProps> = ({
     setSubmitted(true);
 
     // Format WhatsApp message
-    const message = `*SOLICITAÇÃO DE CURADORIA VIP - DANIEL PACHECO*\n\n` +
+    const message = `*SOLICITAÇÃO DE Consultoria VIP - DANIEL PACHECO*\n\n` +
       `👤 *Nome:* ${formData.name || 'Cliente'}\n` +
       `📱 *Contato:* ${formData.phone || 'Não informado'}\n` +
       `🎯 *Objetivo:* ${formData.objective}\n` +
@@ -69,7 +69,7 @@ export const CuratedFormModal: React.FC<CuratedFormModalProps> = ({
       `💰 *Faixa orçamentária:* ${formData.budgetRange}\n` +
       `⏳ *Prazo:* ${formData.timeframe}\n` +
       (formData.notes ? `📝 *Observações:* ${formData.notes}\n` : '') +
-      `\nOlá Daniel, acabei de preencher a curadoria no seu site e gostaria de receber as melhores oportunidades alinhadas ao meu perfil!`;
+      `\nOlá Daniel, acabei de preencher a consultoria no seu site e gostaria de receber as melhores oportunidades alinhadas ao meu perfil!`;
 
     const whatsappUrl = createWhatsAppUrl(settings.whatsapp || '5548998001744', message);
 
@@ -113,7 +113,7 @@ export const CuratedFormModal: React.FC<CuratedFormModalProps> = ({
                   Assessoria Exclusiva
                 </span>
                 <h2 className="text-lg sm:text-xl font-bold font-serif-luxury text-[#F8F5F0]">
-                  Curadoria Personalizada de Imóveis
+                  Consultoria Personalizada de Imóveis
                 </h2>
               </div>
             </div>
@@ -272,7 +272,7 @@ export const CuratedFormModal: React.FC<CuratedFormModalProps> = ({
                 className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-[#C9A86C] to-[#E3C788] hover:from-[#B89748] hover:to-[#D4AF37] text-[#0A0A0A] font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-[#C9A86C]/20 transition-all cursor-pointer"
               >
                 <MessageCircle className="w-4 h-4 fill-current text-[#0A0A0A]" />
-                <span>Receber Curadoria no WhatsApp de Daniel Pacheco</span>
+                <span>Receber Consultoria no WhatsApp de Daniel Pacheco</span>
               </button>
             </form>
           </div>

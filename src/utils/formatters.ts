@@ -1,12 +1,5 @@
 export function formatCurrency(value?: number): string {
-  if (value === undefined || value === null || value <= 0) {
-    return 'Sob consulta';
-  }
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    maximumFractionDigits: 0,
-  }).format(value);
+  return 'A Consultar';
 }
 
 export function formatNumber(val: number): string {

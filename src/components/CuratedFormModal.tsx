@@ -51,7 +51,7 @@ export const CuratedFormModal: React.FC<CuratedFormModalProps> = ({
         particleCount: 80,
         spread: 60,
         origin: { y: 0.6 },
-        colors: ['#C9A86C', '#F8F5F0', '#25D366']
+        colors: ['#C9A227', '#F7F3EB', '#1F8A4C']
       });
     } catch {
       // Confetti fallback
@@ -85,16 +85,16 @@ export const CuratedFormModal: React.FC<CuratedFormModalProps> = ({
   };
 
   return (
-    <div id="curated-modal-backdrop" className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+    <div id="curated-modal-backdrop" className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
       <div 
         id="curated-modal-card" 
-        className="relative bg-[#111111] border border-[#2B2B2B] w-full max-w-xl rounded-3xl p-6 sm:p-8 shadow-2xl text-[#F8F5F0] my-8 animate-in zoom-in-95 duration-200"
+        className="relative bg-[#FFFFFF] border border-[#E5E0D8] w-full max-w-xl rounded-3xl p-6 sm:p-8 shadow-2xl text-[#111111] my-8 animate-in zoom-in-95 duration-200"
       >
         {/* Close button */}
         <button
           id="curated-modal-close-btn"
           onClick={handleClose}
-          className="absolute top-5 right-5 p-2 rounded-full bg-[#1C1C1C] text-[#888] hover:text-[#F8F5F0] hover:bg-[#282828] transition-all"
+          className="absolute top-5 right-5 p-2 rounded-full bg-[#F7F3EB] text-[#5A5A5A] hover:text-[#111111] hover:bg-[#EAE4D8] transition-all cursor-pointer"
         >
           <X className="w-5 h-5" />
         </button>
@@ -102,23 +102,23 @@ export const CuratedFormModal: React.FC<CuratedFormModalProps> = ({
         {!submitted ? (
           <div>
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4 pb-2 border-b border-white/5">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4 pb-2 border-b border-[#E5E0D8]">
               <img
                 src={settings.logoUrl || "https://i.postimg.cc/wv36Qv93/Chat-GPT-Image-26-de-ago-de-2026-09-58-21-(1).png"}
                 alt="Daniel Pacheco Consultoria Imobiliária Logo Oficial"
-                className="h-10 sm:h-12 w-auto max-w-[170px] object-contain shrink-0 filter drop-shadow-[0_2px_8px_rgba(201,168,108,0.25)]"
+                className="h-10 sm:h-12 w-auto max-w-[170px] object-contain shrink-0"
               />
-              <div className="border-l-0 sm:border-l border-white/10 sm:pl-3">
-                <span className="text-[10px] font-semibold uppercase tracking-widest text-[#C9A86C]">
+              <div className="border-l-0 sm:border-l border-[#E5E0D8] sm:pl-3">
+                <span className="text-[10px] font-semibold uppercase tracking-widest text-[#C9A227]">
                   Assessoria Exclusiva
                 </span>
-                <h2 className="text-lg sm:text-xl font-bold font-serif-luxury text-[#F8F5F0]">
+                <h2 className="text-lg sm:text-xl font-bold font-serif-luxury text-[#111111]">
                   Consultoria Personalizada de Imóveis
                 </h2>
               </div>
             </div>
 
-            <p className="text-xs text-[#999999] mb-6 leading-relaxed">
+            <p className="text-xs text-[#5A5A5A] mb-6 leading-relaxed">
               Conte-nos exatamente o que você procura. Daniel Pacheco fará uma seleção técnica e exclusiva dos melhores empreendimentos disponíveis no Sul de SC.
             </p>
 
@@ -126,9 +126,9 @@ export const CuratedFormModal: React.FC<CuratedFormModalProps> = ({
               {/* Step 1: Contact Info */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-medium text-[#C0C0C0] mb-1.5 block">Seu Nome Completo *</label>
+                  <label className="text-xs font-medium text-[#111111] mb-1.5 block">Seu Nome Completo *</label>
                   <div className="relative">
-                    <User className="w-4 h-4 text-[#666] absolute left-3 top-1/2 -translate-y-1/2" />
+                    <User className="w-4 h-4 text-[#5A5A5A] absolute left-3 top-1/2 -translate-y-1/2" />
                     <input
                       id="curated-input-name"
                       type="text"
@@ -136,15 +136,15 @@ export const CuratedFormModal: React.FC<CuratedFormModalProps> = ({
                       placeholder="Ex: João da Silva"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full bg-[#181818] border border-[#2D2D2D] focus:border-[#C9A86C] text-sm text-[#F8F5F0] rounded-xl pl-9 pr-3 py-2.5 outline-none"
+                      className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-sm text-[#111111] rounded-xl pl-9 pr-3 py-2.5 outline-none"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-xs font-medium text-[#C0C0C0] mb-1.5 block">WhatsApp com DDD *</label>
+                  <label className="text-xs font-medium text-[#111111] mb-1.5 block">WhatsApp com DDD *</label>
                   <div className="relative">
-                    <Phone className="w-4 h-4 text-[#666] absolute left-3 top-1/2 -translate-y-1/2" />
+                    <Phone className="w-4 h-4 text-[#5A5A5A] absolute left-3 top-1/2 -translate-y-1/2" />
                     <input
                       id="curated-input-phone"
                       type="tel"
@@ -152,7 +152,7 @@ export const CuratedFormModal: React.FC<CuratedFormModalProps> = ({
                       placeholder="(48) 99999-9999"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full bg-[#181818] border border-[#2D2D2D] focus:border-[#C9A86C] text-sm text-[#F8F5F0] rounded-xl pl-9 pr-3 py-2.5 outline-none"
+                      className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-sm text-[#111111] rounded-xl pl-9 pr-3 py-2.5 outline-none"
                     />
                   </div>
                 </div>
@@ -160,17 +160,17 @@ export const CuratedFormModal: React.FC<CuratedFormModalProps> = ({
 
               {/* Goal / Objective */}
               <div>
-                <label className="text-xs font-medium text-[#C0C0C0] mb-1.5 block">Qual é o seu objetivo principal?</label>
+                <label className="text-xs font-medium text-[#111111] mb-1.5 block">Qual é o seu objetivo principal?</label>
                 <div className="grid grid-cols-3 gap-2">
                   {['Morar', 'Investir', 'Segunda Residência'].map((obj) => (
                     <button
                       key={obj}
                       type="button"
                       onClick={() => setFormData({ ...formData, objective: obj })}
-                      className={`py-2 px-3 text-xs font-medium rounded-xl border transition-all ${
+                      className={`py-2 px-3 text-xs font-medium rounded-xl border transition-all cursor-pointer ${
                         formData.objective === obj
-                          ? 'bg-[#C9A86C] text-[#0A0A0A] border-[#C9A86C] font-semibold'
-                          : 'bg-[#181818] text-[#999] border-[#2A2A2A] hover:bg-[#202020]'
+                          ? 'bg-[#0A0A0A] text-[#FFFFFF] border-[#0A0A0A] font-semibold shadow-sm'
+                          : 'bg-[#F7F3EB] text-[#5A5A5A] border-[#E5E0D8] hover:bg-[#EAE4D8]'
                       }`}
                     >
                       {obj}
@@ -182,13 +182,13 @@ export const CuratedFormModal: React.FC<CuratedFormModalProps> = ({
               {/* City & Type */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-medium text-[#C0C0C0] mb-1.5 block">Cidade de Preferência</label>
+                  <label className="text-xs font-medium text-[#111111] mb-1.5 block">Cidade de Preferência</label>
                   <div className="relative">
-                    <MapPin className="w-4 h-4 text-[#666] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <MapPin className="w-4 h-4 text-[#5A5A5A] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                     <select
                       value={formData.cityPreference}
                       onChange={(e) => setFormData({ ...formData, cityPreference: e.target.value })}
-                      className="w-full bg-[#181818] border border-[#2D2D2D] focus:border-[#C9A86C] text-sm text-[#F8F5F0] rounded-xl pl-9 pr-3 py-2.5 outline-none appearance-none cursor-pointer"
+                      className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-sm text-[#111111] rounded-xl pl-9 pr-3 py-2.5 outline-none appearance-none cursor-pointer"
                     >
                       <option value="Criciúma">Criciúma</option>
                       <option value="Balneário Rincão">Balneário Rincão</option>
@@ -203,13 +203,13 @@ export const CuratedFormModal: React.FC<CuratedFormModalProps> = ({
                 </div>
 
                 <div>
-                  <label className="text-xs font-medium text-[#C0C0C0] mb-1.5 block">Tipo de Imóvel Desejado</label>
+                  <label className="text-xs font-medium text-[#111111] mb-1.5 block">Tipo de Imóvel Desejado</label>
                   <div className="relative">
-                    <Building2 className="w-4 h-4 text-[#666] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <Building2 className="w-4 h-4 text-[#5A5A5A] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                     <select
                       value={formData.propertyType}
                       onChange={(e) => setFormData({ ...formData, propertyType: e.target.value })}
-                      className="w-full bg-[#181818] border border-[#2D2D2D] focus:border-[#C9A86C] text-sm text-[#F8F5F0] rounded-xl pl-9 pr-3 py-2.5 outline-none appearance-none cursor-pointer"
+                      className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-sm text-[#111111] rounded-xl pl-9 pr-3 py-2.5 outline-none appearance-none cursor-pointer"
                     >
                       <option value="Apartamento na Planta">Apartamento na Planta</option>
                       <option value="Apartamento Pronto">Apartamento Pronto</option>
@@ -224,11 +224,11 @@ export const CuratedFormModal: React.FC<CuratedFormModalProps> = ({
               {/* Budget & Timeframe */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-medium text-[#C0C0C0] mb-1.5 block">Expectativa de Investimento</label>
+                  <label className="text-xs font-medium text-[#111111] mb-1.5 block">Expectativa de Investimento</label>
                   <select
                     value={formData.budgetRange}
                     onChange={(e) => setFormData({ ...formData, budgetRange: e.target.value })}
-                    className="w-full bg-[#181818] border border-[#2D2D2D] focus:border-[#C9A86C] text-sm text-[#F8F5F0] rounded-xl px-3 py-2.5 outline-none appearance-none cursor-pointer"
+                    className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-sm text-[#111111] rounded-xl px-3 py-2.5 outline-none appearance-none cursor-pointer"
                   >
                     <option value="Até R$ 350.000">Até R$ 350.000</option>
                     <option value="R$ 350.000 a R$ 600.000">R$ 350.000 a R$ 600.000</option>
@@ -238,11 +238,11 @@ export const CuratedFormModal: React.FC<CuratedFormModalProps> = ({
                 </div>
 
                 <div>
-                  <label className="text-xs font-medium text-[#C0C0C0] mb-1.5 block">Prazo de Mudança / Entrega</label>
+                  <label className="text-xs font-medium text-[#111111] mb-1.5 block">Prazo de Mudança / Entrega</label>
                   <select
                     value={formData.timeframe}
                     onChange={(e) => setFormData({ ...formData, timeframe: e.target.value })}
-                    className="w-full bg-[#181818] border border-[#2D2D2D] focus:border-[#C9A86C] text-sm text-[#F8F5F0] rounded-xl px-3 py-2.5 outline-none appearance-none cursor-pointer"
+                    className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-sm text-[#111111] rounded-xl px-3 py-2.5 outline-none appearance-none cursor-pointer"
                   >
                     <option value="Imediato (Pronto)">Imediato (Imóvel Pronto)</option>
                     <option value="Curto Prazo (Em obras / 1 ano)">Curto Prazo (Em obras / 1 ano)</option>
@@ -253,7 +253,7 @@ export const CuratedFormModal: React.FC<CuratedFormModalProps> = ({
 
               {/* Notes */}
               <div>
-                <label className="text-xs font-medium text-[#C0C0C0] mb-1.5 block">
+                <label className="text-xs font-medium text-[#111111] mb-1.5 block">
                   Deseja adicionar algum detalhe ou exigência específica? (Opcional)
                 </label>
                 <textarea
@@ -261,7 +261,7 @@ export const CuratedFormModal: React.FC<CuratedFormModalProps> = ({
                   placeholder="Ex: Preciso de 2 vagas de garagem, sacada com churrasqueira e vista livre..."
                   value={formData.notes}
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                  className="w-full bg-[#181818] border border-[#2D2D2D] focus:border-[#C9A86C] text-xs text-[#F8F5F0] rounded-xl p-3 outline-none resize-none"
+                  className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-xs text-[#111111] rounded-xl p-3 outline-none resize-none"
                 />
               </div>
 
@@ -269,9 +269,9 @@ export const CuratedFormModal: React.FC<CuratedFormModalProps> = ({
               <button
                 id="curated-submit-btn"
                 type="submit"
-                className="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-[#C9A86C] to-[#E3C788] hover:from-[#B89748] hover:to-[#D4AF37] text-[#0A0A0A] font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-[#C9A86C]/20 transition-all cursor-pointer"
+                className="w-full py-3.5 px-6 rounded-xl bg-[#1F8A4C] hover:bg-[#197A42] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer"
               >
-                <MessageCircle className="w-4 h-4 fill-current text-[#0A0A0A]" />
+                <MessageCircle className="w-4 h-4 fill-current text-white" />
                 <span>Receber Consultoria no WhatsApp de Daniel Pacheco</span>
               </button>
             </form>
@@ -279,19 +279,19 @@ export const CuratedFormModal: React.FC<CuratedFormModalProps> = ({
         ) : (
           /* Submission success view */
           <div className="text-center py-8 space-y-4 animate-in fade-in duration-300">
-            <div className="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-[#25D366] flex items-center justify-center mx-auto shadow-lg">
+            <div className="w-16 h-16 rounded-full bg-[#1F8A4C]/15 border border-[#1F8A4C]/30 text-[#1F8A4C] flex items-center justify-center mx-auto shadow-sm">
               <CheckCircle2 className="w-8 h-8" />
             </div>
-            <h3 className="text-2xl font-bold font-serif-luxury text-[#F8F5F0]">
+            <h3 className="text-2xl font-bold font-serif-luxury text-[#111111]">
               Solicitação Enviada com Sucesso!
             </h3>
-            <p className="text-sm text-[#A0A0A0] max-w-md mx-auto leading-relaxed">
-              Obrigado, <strong className="text-white">{formData.name}</strong>! Estamos abrindo sua conversa no WhatsApp com o Corretor Daniel Pacheco para apresentar as opções selecionadas.
+            <p className="text-sm text-[#5A5A5A] max-w-md mx-auto leading-relaxed">
+              Obrigado, <strong className="text-[#111111]">{formData.name}</strong>! Estamos abrindo sua conversa no WhatsApp com o Corretor Daniel Pacheco para apresentar as opções selecionadas.
             </p>
             <div className="pt-4 flex justify-center">
               <button
                 onClick={handleClose}
-                className="px-6 py-2.5 rounded-xl bg-[#222] hover:bg-[#333] text-xs font-semibold text-[#E0E0E0] transition-colors"
+                className="px-6 py-2.5 rounded-xl bg-[#0A0A0A] hover:bg-[#222222] text-xs font-semibold text-[#FFFFFF] transition-colors cursor-pointer"
               >
                 Fechar Janela
               </button>

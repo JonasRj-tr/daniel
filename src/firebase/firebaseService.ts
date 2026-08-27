@@ -24,7 +24,7 @@ const PROPERTIES_COLLECTION = 'properties';
 const SETTINGS_COLLECTION = 'settings';
 const GENERAL_SETTINGS_DOC = 'general';
 
-const LOCAL_STORAGE_PROPERTIES_KEY = 'dp_properties_cache_v2';
+const LOCAL_STORAGE_PROPERTIES_KEY = 'dp_properties_cache_v4';
 const LOCAL_STORAGE_SETTINGS_KEY = 'dp_settings_cache_v2';
 const LOCAL_STORAGE_ADMIN_KEY = 'dp_admin_session';
 
@@ -75,9 +75,28 @@ export function subscribeToProperties(
         seedDatabase();
         callback(getLocalCachedProperties());
       } else {
+        const initialPricesMap = new Map(INITIAL_PROPERTIES.map((p) => [p.id, p]));
         const list: Property[] = [];
         snapshot.forEach((docSnapshot) => {
-          list.push({ id: docSnapshot.id, ...docSnapshot.data() } as Property);
+          const docData = docSnapshot.data() as Property;
+          const initial = initialPricesMap.get(docSnapshot.id);
+          let mergedPriceFormatted = docData.priceFormatted;
+          let mergedPrice = docData.price;
+          if (
+            initial && 
+            initial.priceFormatted && 
+            initial.priceFormatted !== 'A Consultar' && 
+            (!docData.priceFormatted || docData.priceFormatted === 'A Consultar')
+          ) {
+            mergedPriceFormatted = initial.priceFormatted;
+            mergedPrice = initial.price;
+          }
+          list.push({ 
+            id: docSnapshot.id, 
+            ...docData,
+            priceFormatted: mergedPriceFormatted || docData.priceFormatted,
+            price: mergedPrice ?? docData.price
+          } as Property);
         });
         
         // Sort featured first, then created desc

@@ -1,4 +1,14 @@
-export function formatCurrency(value?: number): string {
+export function formatCurrency(value?: number, formatted?: string): string {
+  if (formatted && formatted.trim() !== '') {
+    return formatted;
+  }
+  if (value && value > 0) {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      maximumFractionDigits: 0,
+    }).format(value);
+  }
   return 'A Consultar';
 }
 
@@ -10,6 +20,31 @@ export function createWhatsAppUrl(phone: string, text: string): string {
   const cleanPhone = phone.replace(/\D/g, '');
   const encoded = encodeURIComponent(text);
   return `https://wa.me/${cleanPhone}?text=${encoded}`;
+}
+
+export function getHighResImageUrl(url?: string): string {
+  if (!url) return '';
+  // Upgrade Odoo/eucorretorimoveis images to maximum 1920/Full HD & Ultra HD resolution
+  let res = url.replace(/field=image_1024/g, 'field=image_1920');
+  res = res.replace(/field=image_512/g, 'field=image_1920');
+  res = res.replace(/field=image_256/g, 'field=image_1920');
+  res = res.replace(/field=image_128/g, 'field=image_1920');
+
+  // Upgrade Unsplash images to Ultra HD 4K (w=2560 or w=3840 & q=95)
+  if (res.includes('images.unsplash.com')) {
+    res = res.replace(/w=\d+/g, 'w=2560').replace(/q=\d+/g, 'q=95');
+    if (!res.includes('auto=format')) {
+      res += (res.includes('?') ? '&' : '?') + 'auto=format&fit=crop&q=95';
+    }
+  }
+  return res;
+}
+
+export function getHighResImages(images?: string[]): string[] {
+  if (!images || images.length === 0) {
+    return ['https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2560&q=95'];
+  }
+  return images.map((img) => getHighResImageUrl(img));
 }
 
 export function getStatusBadgeColor(status: string): { bg: string; text: string; border: string; dot: string } {

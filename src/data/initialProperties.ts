@@ -13,7 +13,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Casa",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 1.600.000",
     "areaM2": 275,
     "bedrooms": 3,
     "suites": 1,
@@ -22,10 +22,10 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": true,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6683481",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6683116",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6683139",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6683141"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6683481",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6683116",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6683139",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6683141"
     ],
     "features": [
       "Churrasqueira",
@@ -38,7 +38,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Closet",
       "Depósito"
     ],
-    "createdAt": 1787752212229
+    "createdAt": 1787752212229,
+    "price": 1600000
   },
   {
     "id": "prop-238736",
@@ -52,7 +53,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Casa",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 599.990",
     "areaM2": 360,
     "bedrooms": 3,
     "bathrooms": 2,
@@ -60,10 +61,10 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": true,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6049451",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6049439",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6049430",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6049440"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6049451",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6049439",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6049430",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6049440"
     ],
     "features": [
       "Churrasqueira",
@@ -74,7 +75,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Portão Eletrônico",
       "Jardim"
     ],
-    "createdAt": 1787665812348
+    "createdAt": 1787665812348,
+    "price": 599990
   },
   {
     "id": "prop-336865",
@@ -88,17 +90,17 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Apartamento",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 220.000",
     "bedrooms": 2,
     "bathrooms": 1,
     "garageSpaces": 1,
     "featured": true,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6689818",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6689806",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6689815",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6689804"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6689818",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6689806",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6689815",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6689804"
     ],
     "features": [
       "Churrasqueira",
@@ -109,7 +111,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Área de Serviço",
       "Jardim"
     ],
-    "createdAt": 1787579412395
+    "createdAt": 1787579412395,
+    "price": 220000
   },
   {
     "id": "prop-334215",
@@ -123,7 +126,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Casa",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 519.900",
     "areaM2": 80,
     "bedrooms": 3,
     "bathrooms": 1,
@@ -131,10 +134,10 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": true,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6618980",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6618981",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6618982",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6618985"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6618980",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6618981",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6618982",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6618985"
     ],
     "features": [
       "Churrasqueira",
@@ -143,7 +146,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Academia",
       "Jardim"
     ],
-    "createdAt": 1787493012440
+    "createdAt": 1787493012440,
+    "price": 519900
   },
   {
     "id": "prop-334214",
@@ -157,7 +161,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Casa",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 580.000",
     "bedrooms": 4,
     "suites": 1,
     "bathrooms": 2,
@@ -165,16 +169,17 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": true,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6618613",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6618615",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6618619",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6618614"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6618613",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6618615",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6618619",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6618614"
     ],
     "features": [
       "Churrasqueira",
       "Área de Serviço"
     ],
-    "createdAt": 1787406612496
+    "createdAt": 1787406612496,
+    "price": 580000
   },
   {
     "id": "prop-244175",
@@ -188,17 +193,17 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Apartamento",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 232.000",
     "bedrooms": 2,
     "bathrooms": 1,
     "garageSpaces": 1,
     "featured": true,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6243931",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6243927",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6243932",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6243926"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6243931",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6243927",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6243932",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6243926"
     ],
     "features": [
       "Piscina",
@@ -206,7 +211,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Salão de Festas",
       "Academia"
     ],
-    "createdAt": 1787320212531
+    "createdAt": 1787320212531,
+    "price": 232000
   },
   {
     "id": "prop-243284",
@@ -220,7 +226,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Casa",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 735.000",
     "areaM2": 426,
     "bedrooms": 4,
     "suites": 2,
@@ -229,10 +235,10 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": true,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6220044",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6220043",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6220036",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6220025"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6220044",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6220043",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6220036",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6220025"
     ],
     "features": [
       "Piscina",
@@ -240,7 +246,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Semi-mobiliado",
       "Jardim"
     ],
-    "createdAt": 1787233812588
+    "createdAt": 1787233812588,
+    "price": 735000
   },
   {
     "id": "prop-243283",
@@ -254,7 +261,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Casa",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 583.000",
     "areaM2": 77,
     "bedrooms": 5,
     "bathrooms": 3,
@@ -262,16 +269,17 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": true,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6220014",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6220013",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6220010",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6220011"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6220014",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6220013",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6220010",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6220011"
     ],
     "features": [
       "Edícula",
       "Academia"
     ],
-    "createdAt": 1787147412632
+    "createdAt": 1787147412632,
+    "price": 583000
   },
   {
     "id": "prop-242933",
@@ -285,22 +293,23 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Lote/Terreno",
     "status": "Loteamento",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 166.000",
     "areaM2": 362,
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6206088",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6206089",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6206087",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6206086"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6206088",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6206089",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6206087",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6206086"
     ],
     "features": [
       "Escriturado",
       "Pronto para Construir",
       "Rede de Energia e Água"
     ],
-    "createdAt": 1787061012673
+    "createdAt": 1787061012673,
+    "price": 166000
   },
   {
     "id": "prop-242932",
@@ -314,20 +323,21 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Lote/Terreno",
     "status": "Loteamento",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 113.000",
     "areaM2": 360,
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6206079",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6206080",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6206081",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6206073"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6206079",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6206080",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6206081",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6206073"
     ],
     "features": [
       "Jardim"
     ],
-    "createdAt": 1786974612714
+    "createdAt": 1786974612714,
+    "price": 113000
   },
   {
     "id": "prop-242927",
@@ -341,22 +351,23 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Lote/Terreno",
     "status": "Loteamento",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 126.016",
     "areaM2": 360,
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6205057",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6205056",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6205055",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6205049"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6205057",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6205056",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6205055",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6205049"
     ],
     "features": [
       "Escriturado",
       "Pronto para Construir",
       "Rede de Energia e Água"
     ],
-    "createdAt": 1786888212740
+    "createdAt": 1786888212740,
+    "price": 126016
   },
   {
     "id": "prop-242926",
@@ -370,22 +381,23 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Lote/Terreno",
     "status": "Loteamento",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 99.000",
     "areaM2": 360,
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6205042",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6205041",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6205044",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6205046"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6205042",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6205041",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6205044",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6205046"
     ],
     "features": [
       "Escriturado",
       "Pronto para Construir",
       "Rede de Energia e Água"
     ],
-    "createdAt": 1786801812791
+    "createdAt": 1786801812791,
+    "price": 99000
   },
   {
     "id": "prop-242820",
@@ -399,21 +411,22 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Lote/Terreno",
     "status": "Loteamento",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 169.000",
     "areaM2": 363,
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6198780",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6198774",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6198775",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6198777"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6198780",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6198774",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6198775",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6198777"
     ],
     "features": [
       "Playground",
       "Academia"
     ],
-    "createdAt": 1786715412840
+    "createdAt": 1786715412840,
+    "price": 169000
   },
   {
     "id": "prop-241310",
@@ -427,7 +440,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Apartamento",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 710.086",
     "areaM2": 72.97,
     "bedrooms": 2,
     "suites": 1,
@@ -436,10 +449,10 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6130026",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6130032",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6130023",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6130024"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6130026",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6130032",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6130023",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6130024"
     ],
     "features": [
       "Churrasqueira",
@@ -451,7 +464,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Rebaixo em Gesso",
       "Área de Serviço"
     ],
-    "createdAt": 1786629012865
+    "createdAt": 1786629012865,
+    "price": 710086
   },
   {
     "id": "prop-241305",
@@ -465,7 +479,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Apartamento",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 752.210",
     "bedrooms": 2,
     "suites": 1,
     "bathrooms": 1,
@@ -473,10 +487,10 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6129070",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6129072",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6129068",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6129067"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6129070",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6129072",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6129068",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6129067"
     ],
     "features": [
       "Churrasqueira",
@@ -486,7 +500,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Salão de Festas",
       "Academia"
     ],
-    "createdAt": 1786542612888
+    "createdAt": 1786542612888,
+    "price": 752210
   },
   {
     "id": "prop-241304",
@@ -500,7 +515,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Apartamento",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 604.776",
     "bedrooms": 2,
     "suites": 1,
     "bathrooms": 1,
@@ -508,10 +523,10 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6128798",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6128799",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6128794",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6128795"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6128798",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6128799",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6128794",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6128795"
     ],
     "features": [
       "Churrasqueira",
@@ -521,7 +536,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Área de Serviço",
       "Depósito"
     ],
-    "createdAt": 1786456212902
+    "createdAt": 1786456212902,
+    "price": 604776
   },
   {
     "id": "prop-241303",
@@ -535,7 +551,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Apartamento",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 553.626",
     "bedrooms": 3,
     "suites": 1,
     "bathrooms": 1,
@@ -543,10 +559,10 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6128792",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6128791",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6128780",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6128785"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6128792",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6128791",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6128780",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6128785"
     ],
     "features": [
       "Churrasqueira",
@@ -557,7 +573,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Área de Serviço",
       "Garagem Coberta"
     ],
-    "createdAt": 1786369812928
+    "createdAt": 1786369812928,
+    "price": 553626
   },
   {
     "id": "prop-241302",
@@ -571,7 +588,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Apartamento",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 1.513.446",
     "areaM2": 33,
     "bedrooms": 4,
     "suites": 1,
@@ -579,10 +596,10 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6128775",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6128760",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6128761",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6128766"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6128775",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6128760",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6128761",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6128766"
     ],
     "features": [
       "Churrasqueira",
@@ -595,7 +612,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Lavabo",
       "Closet"
     ],
-    "createdAt": 1786283412970
+    "createdAt": 1786283412970,
+    "price": 1513446
   },
   {
     "id": "prop-241135",
@@ -609,7 +627,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Apartamento",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 1.459.287",
     "areaM2": 101.88,
     "bedrooms": 3,
     "suites": 1,
@@ -617,10 +635,10 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6123470",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6123471",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6123474",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6123469"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6123470",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6123471",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6123474",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6123469"
     ],
     "features": [
       "Churrasqueira",
@@ -635,7 +653,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Lavabo",
       "Jardim"
     ],
-    "createdAt": 1786197012998
+    "createdAt": 1786197012998,
+    "price": 1459287
   },
   {
     "id": "prop-241134",
@@ -658,10 +677,10 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6123465",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6123464",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6123455",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6123456"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6123465",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6123464",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6123455",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6123456"
     ],
     "features": [
       "Churrasqueira",
@@ -686,7 +705,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Apartamento",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 1.026.014",
     "areaM2": 94,
     "bedrooms": 3,
     "suites": 2,
@@ -694,10 +713,10 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6114347",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6114344",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6114350",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6114349"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6114347",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6114344",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6114350",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6114349"
     ],
     "features": [
       "Churrasqueira",
@@ -710,7 +729,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Academia",
       "Rebaixo em Gesso"
     ],
-    "createdAt": 1786024213055
+    "createdAt": 1786024213055,
+    "price": 1026014
   },
   {
     "id": "prop-240671",
@@ -724,7 +744,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Apartamento",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 3.586.537",
     "areaM2": 253,
     "bedrooms": 4,
     "suites": 3,
@@ -733,10 +753,10 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6107136",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6107135",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6107132",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6107140"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6107136",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6107135",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6107132",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6107140"
     ],
     "features": [
       "Churrasqueira",
@@ -750,7 +770,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Área de Serviço",
       "Lavabo"
     ],
-    "createdAt": 1785937813113
+    "createdAt": 1785937813113,
+    "price": 3586537
   },
   {
     "id": "prop-240670",
@@ -764,17 +785,17 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Apartamento",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 1.823.357",
     "bedrooms": 3,
     "suites": 1,
     "garageSpaces": 2,
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6107112",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6107113",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6107116",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6107114"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6107112",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6107113",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6107116",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6107114"
     ],
     "features": [
       "Churrasqueira",
@@ -786,7 +807,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Área de Serviço",
       "Depósito"
     ],
-    "createdAt": 1785851413152
+    "createdAt": 1785851413152,
+    "price": 1823357
   },
   {
     "id": "prop-240669",
@@ -800,7 +822,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Apartamento",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 1.059.111",
     "areaM2": 101,
     "bedrooms": 3,
     "suites": 1,
@@ -808,10 +830,10 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6107101",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6107104",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6107107",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6107103"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6107101",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6107104",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6107107",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6107103"
     ],
     "features": [
       "Churrasqueira",
@@ -822,7 +844,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Área de Serviço",
       "Lavabo"
     ],
-    "createdAt": 1785765013183
+    "createdAt": 1785765013183,
+    "price": 1059111
   },
   {
     "id": "prop-240667",
@@ -836,7 +859,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Apartamento",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 1.639.817",
     "areaM2": 125.98,
     "bedrooms": 3,
     "suites": 3,
@@ -844,10 +867,10 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6106024",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6106017",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6106016",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6106018"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6106024",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6106017",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6106016",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6106018"
     ],
     "features": [
       "Churrasqueira",
@@ -859,7 +882,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Área de Serviço",
       "Lavabo"
     ],
-    "createdAt": 1785678613226
+    "createdAt": 1785678613226,
+    "price": 1639817
   },
   {
     "id": "prop-240666",
@@ -873,7 +897,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Apartamento",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 2.543.557",
     "areaM2": 149.5,
     "bedrooms": 3,
     "suites": 3,
@@ -882,10 +906,10 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6106010",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6106009",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6106012",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6106014"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6106010",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6106009",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6106012",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6106014"
     ],
     "features": [
       "Churrasqueira",
@@ -896,7 +920,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Salão de Festas",
       "Academia"
     ],
-    "createdAt": 1785592213262
+    "createdAt": 1785592213262,
+    "price": 2543557
   },
   {
     "id": "prop-240529",
@@ -910,7 +935,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Apartamento",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 585.588",
     "bedrooms": 3,
     "suites": 1,
     "bathrooms": 1,
@@ -918,10 +943,10 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6100453",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6100451",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6100452",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6100454"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6100453",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6100451",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6100452",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6100454"
     ],
     "features": [
       "Churrasqueira",
@@ -933,7 +958,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Academia",
       "Área de Serviço"
     ],
-    "createdAt": 1785505813309
+    "createdAt": 1785505813309,
+    "price": 585588
   },
   {
     "id": "prop-240528",
@@ -947,7 +973,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Apartamento",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 890.783",
     "areaM2": 108.13,
     "bedrooms": 3,
     "suites": 1,
@@ -956,10 +982,10 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6100442",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6100441",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6100443",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6100444"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6100442",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6100441",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6100443",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6100444"
     ],
     "features": [
       "Churrasqueira",
@@ -969,7 +995,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Academia",
       "Área de Serviço"
     ],
-    "createdAt": 1785419413344
+    "createdAt": 1785419413344,
+    "price": 890783
   },
   {
     "id": "prop-240527",
@@ -983,7 +1010,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Apartamento",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 1.083.111",
     "areaM2": 108.13,
     "bedrooms": 3,
     "suites": 1,
@@ -991,10 +1018,10 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6100431",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6100432",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6100433",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6100434"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6100431",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6100432",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6100433",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6100434"
     ],
     "features": [
       "Churrasqueira",
@@ -1004,7 +1031,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Academia",
       "Área de Serviço"
     ],
-    "createdAt": 1785333013377
+    "createdAt": 1785333013377,
+    "price": 1083111
   },
   {
     "id": "prop-240524",
@@ -1018,7 +1046,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Apartamento",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 3.334.523",
     "areaM2": 226.86,
     "bedrooms": 3,
     "suites": 4,
@@ -1027,10 +1055,10 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6099233",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6099238",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6099235",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6099234"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6099233",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6099238",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6099235",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6099234"
     ],
     "features": [
       "Churrasqueira",
@@ -1042,7 +1070,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Jardim",
       "Quintal"
     ],
-    "createdAt": 1785246613407
+    "createdAt": 1785246613407,
+    "price": 3334523
   },
   {
     "id": "prop-240523",
@@ -1056,7 +1085,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Apartamento",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 1.004.888",
     "areaM2": 90.27,
     "bedrooms": 3,
     "suites": 1,
@@ -1065,10 +1094,10 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6099226",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6099228",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6099232",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6099229"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6099226",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6099228",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6099232",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6099229"
     ],
     "features": [
       "Churrasqueira",
@@ -1081,7 +1110,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Interfone",
       "Área de Serviço"
     ],
-    "createdAt": 1785160213433
+    "createdAt": 1785160213433,
+    "price": 1004888
   },
   {
     "id": "prop-240522",
@@ -1095,7 +1125,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Apartamento",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 267.268",
     "areaM2": 55.7,
     "bedrooms": 2,
     "suites": 1,
@@ -1104,10 +1134,10 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6099225",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6099220",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6099221",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6099222"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6099225",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6099220",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6099221",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6099222"
     ],
     "features": [
       "Elevador",
@@ -1117,7 +1147,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Salão de Festas",
       "Área de Serviço"
     ],
-    "createdAt": 1785073813456
+    "createdAt": 1785073813456,
+    "price": 267268
   },
   {
     "id": "prop-240521",
@@ -1131,7 +1162,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Apartamento",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 390.392",
     "areaM2": 55.7,
     "bedrooms": 3,
     "suites": 1,
@@ -1140,10 +1171,10 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6099213",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6099215",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6099216",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6099217"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6099213",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6099215",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6099216",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6099217"
     ],
     "features": [
       "Elevador",
@@ -1153,7 +1184,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Salão de Festas",
       "Área de Serviço"
     ],
-    "createdAt": 1784987413479
+    "createdAt": 1784987413479,
+    "price": 390392
   },
   {
     "id": "prop-240427",
@@ -1167,7 +1199,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Apartamento",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 862.534",
     "bedrooms": 3,
     "suites": 3,
     "bathrooms": 1,
@@ -1175,10 +1207,10 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6093805",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6093804",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6093803",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6093806"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6093805",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6093804",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6093803",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6093806"
     ],
     "features": [
       "Piscina",
@@ -1190,7 +1222,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Área de Serviço",
       "Lavabo"
     ],
-    "createdAt": 1784901013502
+    "createdAt": 1784901013502,
+    "price": 862534
   },
   {
     "id": "prop-239572",
@@ -1204,7 +1237,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Apartamento",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 358.554",
     "areaM2": 66,
     "bedrooms": 2,
     "suites": 1,
@@ -1213,10 +1246,10 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6080269",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6080273",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6080275",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6080277"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6080269",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6080273",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6080275",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6080277"
     ],
     "features": [
       "Churrasqueira",
@@ -1229,7 +1262,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Academia",
       "Depósito"
     ],
-    "createdAt": 1784814613551
+    "createdAt": 1784814613551,
+    "price": 358554
   },
   {
     "id": "prop-239568",
@@ -1243,7 +1277,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Apartamento",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 746.346",
     "areaM2": 153.73,
     "bedrooms": 3,
     "suites": 1,
@@ -1252,10 +1286,10 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6079095",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6079332",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6079329",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6079330"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6079095",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6079332",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6079329",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6079330"
     ],
     "features": [
       "Churrasqueira",
@@ -1267,7 +1301,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Interfone",
       "Área de Serviço"
     ],
-    "createdAt": 1784728213570
+    "createdAt": 1784728213570,
+    "price": 746346
   },
   {
     "id": "prop-239566",
@@ -1281,7 +1316,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Apartamento",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 1.351.359",
     "areaM2": 130,
     "bedrooms": 3,
     "suites": 3,
@@ -1290,10 +1325,10 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6079059",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6079058",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6079060",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6079061"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6079059",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6079058",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6079060",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6079061"
     ],
     "features": [
       "Churrasqueira",
@@ -1304,7 +1339,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Área de Serviço",
       "Closet"
     ],
-    "createdAt": 1784641813592
+    "createdAt": 1784641813592,
+    "price": 1351359
   },
   {
     "id": "prop-239559",
@@ -1318,7 +1354,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Apartamento",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 538.582",
     "areaM2": 74.03,
     "bedrooms": 3,
     "suites": 1,
@@ -1327,10 +1363,10 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6079039",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6077919",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6077915",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6077916"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6079039",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6077919",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6077915",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6077916"
     ],
     "features": [
       "Churrasqueira",
@@ -1339,7 +1375,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Salão de Festas",
       "Academia"
     ],
-    "createdAt": 1784555413607
+    "createdAt": 1784555413607,
+    "price": 538582
   },
   {
     "id": "prop-239554",
@@ -1353,7 +1390,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Apartamento",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 1.228.235",
     "areaM2": 111.54,
     "bedrooms": 3,
     "suites": 1,
@@ -1362,10 +1399,10 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6077807",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6077798",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6077801",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6077800"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6077807",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6077798",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6077801",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6077800"
     ],
     "features": [
       "Churrasqueira",
@@ -1380,7 +1417,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Área de Serviço",
       "Segurança 24h"
     ],
-    "createdAt": 1784469013639
+    "createdAt": 1784469013639,
+    "price": 1228235
   },
   {
     "id": "prop-239461",
@@ -1394,24 +1432,25 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Apartamento",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 199.900",
     "areaM2": 37.15,
     "bathrooms": 1,
     "garageSpaces": 1,
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6072204",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6072205",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6072196",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6072206"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6072204",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6072205",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6072196",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6072206"
     ],
     "features": [
       "Elevador",
       "Salão de Festas",
       "Academia"
     ],
-    "createdAt": 1784382613688
+    "createdAt": 1784382613688,
+    "price": 199900
   },
   {
     "id": "prop-238960",
@@ -1425,22 +1464,23 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Lote/Terreno",
     "status": "Loteamento",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 199.900",
     "areaM2": 469,
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6059429",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6059428",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6059431",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6059430"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6059429",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6059428",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6059431",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6059430"
     ],
     "features": [
       "Escriturado",
       "Pronto para Construir",
       "Rede de Energia e Água"
     ],
-    "createdAt": 1784296213731
+    "createdAt": 1784296213731,
+    "price": 199900
   },
   {
     "id": "prop-238931",
@@ -1454,23 +1494,24 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Apartamento",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 165.000",
     "bathrooms": 1,
     "garageSpaces": 1,
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6057979",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6057993",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6057980",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6057984"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6057979",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6057993",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6057980",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6057984"
     ],
     "features": [
       "Elevador",
       "Mobiliado",
       "Semi-mobiliado"
     ],
-    "createdAt": 1784209813790
+    "createdAt": 1784209813790,
+    "price": 165000
   },
   {
     "id": "prop-238797",
@@ -1484,7 +1525,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Casa",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 371.000",
     "areaM2": 1.8,
     "bedrooms": 2,
     "bathrooms": 1,
@@ -1492,17 +1533,18 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6052061",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6052070",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6052069",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6052072"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6052061",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6052070",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6052069",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6052072"
     ],
     "features": [
       "Churrasqueira",
       "Piso Porcelanato",
       "Área de Serviço"
     ],
-    "createdAt": 1784123413861
+    "createdAt": 1784123413861,
+    "price": 371000
   },
   {
     "id": "prop-238796",
@@ -1516,7 +1558,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Casa",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 350.000",
     "areaM2": 140,
     "bedrooms": 3,
     "suites": 1,
@@ -1525,17 +1567,18 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6052043",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6052056",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6052049",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6052046"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6052043",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6052056",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6052049",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6052046"
     ],
     "features": [
       "Churrasqueira",
       "Portão Eletrônico",
       "Área de Serviço"
     ],
-    "createdAt": 1784037013913
+    "createdAt": 1784037013913,
+    "price": 350000
   },
   {
     "id": "prop-238792",
@@ -1549,7 +1592,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Casa",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 380.000",
     "areaM2": 130,
     "bedrooms": 4,
     "bathrooms": 2,
@@ -1557,10 +1600,10 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6051149",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6051152",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6051155",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6051156"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6051149",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6051152",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6051155",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6051156"
     ],
     "features": [
       "Churrasqueira",
@@ -1568,7 +1611,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Semi-mobiliado",
       "Área de Serviço"
     ],
-    "createdAt": 1783950613967
+    "createdAt": 1783950613967,
+    "price": 380000
   },
   {
     "id": "prop-238791",
@@ -1582,7 +1626,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Casa",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 990.000",
     "areaM2": 600,
     "bedrooms": 3,
     "suites": 1,
@@ -1591,10 +1635,10 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6051147",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6051131",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6051132",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6051133"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6051147",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6051131",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6051132",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6051133"
     ],
     "features": [
       "Churrasqueira",
@@ -1608,7 +1652,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Garagem Coberta",
       "Jardim"
     ],
-    "createdAt": 1783864214043
+    "createdAt": 1783864214043,
+    "price": 990000
   },
   {
     "id": "prop-238734",
@@ -1622,7 +1667,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Casa",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 380.000",
     "areaM2": 62,
     "bedrooms": 3,
     "suites": 1,
@@ -1631,10 +1676,10 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6049018",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6049036",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6049027",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6049028"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6049018",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6049036",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6049027",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6049028"
     ],
     "features": [
       "Churrasqueira",
@@ -1644,7 +1689,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Garagem Coberta",
       "Jardim"
     ],
-    "createdAt": 1783777814111
+    "createdAt": 1783777814111,
+    "price": 380000
   },
   {
     "id": "prop-238691",
@@ -1658,7 +1704,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Casa",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 630.000",
     "bedrooms": 3,
     "suites": 1,
     "bathrooms": 1,
@@ -1666,17 +1712,18 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6048304",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6048296",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6048297",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6048298"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6048304",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6048296",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6048297",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6048298"
     ],
     "features": [
       "Mobiliado",
       "Semi-mobiliado",
       "Academia"
     ],
-    "createdAt": 1783691414158
+    "createdAt": 1783691414158,
+    "price": 630000
   },
   {
     "id": "prop-238686",
@@ -1690,7 +1737,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Casa",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 280.000",
     "areaM2": 82,
     "bedrooms": 3,
     "bathrooms": 2,
@@ -1698,15 +1745,16 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6048218",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6048226",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6048222",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6048223"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6048218",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6048226",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6048222",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6048223"
     ],
     "features": [
       "Churrasqueira"
     ],
-    "createdAt": 1783605014206
+    "createdAt": 1783605014206,
+    "price": 280000
   },
   {
     "id": "prop-238683",
@@ -1720,7 +1768,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Casa",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 330.000",
     "areaM2": 325,
     "bedrooms": 3,
     "bathrooms": 2,
@@ -1728,10 +1776,10 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": false,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6048170",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6048168",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6048169",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6048171"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6048170",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6048168",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6048169",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6048171"
     ],
     "features": [
       "Churrasqueira",
@@ -1741,7 +1789,8 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Edícula",
       "Depósito"
     ],
-    "createdAt": 1783518614240
+    "createdAt": 1783518614240,
+    "price": 330000
   },
   {
     "id": "prop-238733",
@@ -1755,7 +1804,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     "state": "SC",
     "type": "Casa",
     "status": "Pronto",
-        "priceFormatted": "A Consultar",
+    "priceFormatted": "R$ 750.000",
     "areaM2": 254,
     "bedrooms": 4,
     "suites": 1,
@@ -1764,10 +1813,10 @@ export const INITIAL_PROPERTIES: Property[] = [
     "featured": true,
     "directFinancing": true,
     "images": [
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6048998",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6049011",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6049015",
-      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1024&id=6049012"
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6048998",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6049011",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6049015",
+      "https://eucorretorimoveis.com.br/web/image?model=eu.real.estate.image&field=image_1920&id=6049012"
     ],
     "features": [
       "Churrasqueira",
@@ -1778,6 +1827,7 @@ export const INITIAL_PROPERTIES: Property[] = [
       "Edícula",
       "Quintal"
     ],
-    "createdAt": 1783432214305
+    "createdAt": 1783432214305,
+    "price": 750000
   }
 ];

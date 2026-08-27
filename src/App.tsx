@@ -125,7 +125,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] text-[#F8F5F0] flex flex-col font-sans selection:bg-[#C9A86C]/30 selection:text-[#C9A86C]">
+    <div className="min-h-screen bg-[#F7F3EB] text-[#111111] flex flex-col font-sans selection:bg-[#C9A227]/30 selection:text-[#111111]">
       {/* Header */}
       <Header
         settings={settings}

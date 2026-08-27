@@ -81,14 +81,14 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({
     <div id="portfolio-page" className="pt-28 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
       {/* Header section */}
       <div className="space-y-3">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#181818] border border-[#C9A86C]/30 text-xs text-[#C9A86C]">
-          <Sparkles className="w-3.5 h-3.5 text-[#C9A86C]" />
-          <span>Catálogo de Imóveis & Empreendimentos</span>
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#F7F3EB] border border-[#E5E0D8] text-xs text-[#C9A227]">
+          <Sparkles className="w-3.5 h-3.5 text-[#C9A227]" />
+          <span className="font-semibold">Catálogo de Imóveis & Empreendimentos</span>
         </div>
-        <h1 className="text-3xl sm:text-5xl font-bold font-serif-luxury text-[#F8F5F0]">
+        <h1 className="text-3xl sm:text-5xl font-bold font-serif-luxury text-[#111111]">
           Portfólio no Sul de Santa Catarina
         </h1>
-        <p className="text-xs sm:text-sm text-[#A0A0A0] max-w-3xl leading-relaxed">
+        <p className="text-xs sm:text-sm text-[#5A5A5A] max-w-3xl leading-relaxed">
           Navegue pelas opções disponíveis em Criciúma, Balneário Rincão, Içara, Nova Veneza e municípios vizinhos. Empreendimentos oficiais com suporte técnico do corretor.
         </p>
       </div>
@@ -102,18 +102,18 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({
       />
 
       {/* Sorting bar */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-[#888] pt-2">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-[#5A5A5A] pt-2">
         <p>
-          Exibindo <span className="font-semibold text-white">{filteredProperties.length}</span> de <span className="text-white">{properties.length}</span> imóveis cadastrados
+          Exibindo <span className="font-semibold text-[#111111]">{filteredProperties.length}</span> de <span className="text-[#111111] font-semibold">{properties.length}</span> imóveis cadastrados
         </p>
 
         <div className="flex items-center gap-2">
-          <ArrowUpDown className="w-3.5 h-3.5 text-[#C9A86C]" />
-          <span>Ordenar por:</span>
+          <ArrowUpDown className="w-3.5 h-3.5 text-[#C9A227]" />
+          <span className="font-medium">Ordenar por:</span>
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as any)}
-            className="bg-[#181818] border border-[#2D2D2D] text-[#E0E0E0] rounded-lg px-2.5 py-1 text-xs outline-none cursor-pointer"
+            className="bg-[#FFFFFF] border border-[#E5E0D8] text-[#111111] rounded-lg px-2.5 py-1.5 text-xs outline-none cursor-pointer focus:border-[#C9A227] shadow-sm"
           >
             <option value="recent">Relevância / Seleção Exclusiva</option>
             <option value="bedrooms">Mais Quartos</option>
@@ -135,22 +135,22 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({
           ))}
         </div>
       ) : (
-        <div className="text-center py-20 bg-[#121212] border border-[#242424] rounded-3xl p-8 space-y-4">
-          <Building2 className="w-12 h-12 text-[#555] mx-auto" />
-          <h3 className="text-xl font-serif-luxury text-[#E0E0E0]">Nenhum imóvel encontrado</h3>
-          <p className="text-xs text-[#888] max-w-md mx-auto">
+        <div className="text-center py-20 bg-[#FFFFFF] border border-[#E5E0D8] rounded-3xl p-8 space-y-4 shadow-sm">
+          <Building2 className="w-12 h-12 text-[#5A5A5A] mx-auto" />
+          <h3 className="text-xl font-serif-luxury text-[#111111]">Nenhum imóvel encontrado</h3>
+          <p className="text-xs text-[#5A5A5A] max-w-md mx-auto">
             Não encontramos resultados para esta combinação. Que tal solicitar uma busca personalizada diretamente no WhatsApp de Daniel Pacheco?
           </p>
           <div className="pt-2 flex justify-center gap-3">
             <button
               onClick={() => setFilters({ search: '', city: 'Todas', status: 'Todos', type: 'Todos', bedrooms: 'Todos', onlySignature: false })}
-              className="px-4 py-2 bg-[#262626] hover:bg-[#333] text-white rounded-xl text-xs"
+              className="px-4 py-2 bg-[#F7F3EB] hover:bg-[#E5E0D8] text-[#111111] border border-[#E5E0D8] rounded-xl text-xs font-semibold cursor-pointer transition-colors"
             >
               Resetar Filtros
             </button>
             <button
               onClick={onOpenCuratedModal}
-              className="px-4 py-2 bg-[#C9A86C] text-[#0A0A0A] font-bold rounded-xl text-xs"
+              className="px-4 py-2 bg-[#C9A227] hover:bg-[#B8931F] text-[#0A0A0A] font-bold rounded-xl text-xs cursor-pointer transition-colors shadow-sm"
             >
               Solicitar Consultoria VIP
             </button>

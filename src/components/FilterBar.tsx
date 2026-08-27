@@ -59,24 +59,24 @@ export const FilterBar: React.FC<FilterBarProps> = ({
     filters.onlySignature;
 
   return (
-    <div id="property-filters-container" className="bg-[#121212] border border-[#242424] rounded-2xl p-4 sm:p-6 shadow-xl space-y-4">
+    <div id="property-filters-container" className="bg-[#FFFFFF] border border-[#E5E0D8] rounded-2xl p-4 sm:p-6 shadow-sm space-y-4">
       {/* Top Search & Primary Filters Row */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
         {/* Search input */}
         <div className="md:col-span-4 relative">
-          <Search className="w-4 h-4 text-[#777] absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-[#5A5A5A] absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
             id="filter-search-input"
             type="text"
             placeholder="Buscar por bairro, condomínio ou código..."
             value={filters.search || ''}
             onChange={(e) => setFilters((prev) => ({ ...prev, search: e.target.value }))}
-            className="w-full bg-[#181818] border border-[#2D2D2D] focus:border-[#C9A86C] text-sm text-[#F8F5F0] rounded-xl pl-10 pr-4 py-2.5 outline-none placeholder-[#666] transition-colors"
+            className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-sm text-[#111111] rounded-xl pl-10 pr-4 py-2.5 outline-none placeholder-[#5A5A5A] transition-colors"
           />
           {filters.search && (
             <button
               onClick={() => setFilters((prev) => ({ ...prev, search: '' }))}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#888] hover:text-white"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#5A5A5A] hover:text-[#111111]"
             >
               ✕
             </button>
@@ -86,13 +86,13 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         {/* City Select */}
         <div className="md:col-span-3 relative">
           <div className="relative">
-            <MapPin className="w-4 h-4 text-[#C9A86C] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <MapPin className="w-4 h-4 text-[#C9A227] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             <select
               id="filter-city-select"
               value={filters.city || 'Todas'}
               onChange={(e) => setFilters((prev) => ({ ...prev, city: e.target.value }))}
               aria-label="Filtrar por cidade"
-              className="w-full bg-[#181818] border border-[#2D2D2D] focus:border-[#C9A86C] text-sm text-[#F8F5F0] rounded-xl pl-10 pr-8 py-2.5 outline-none appearance-none cursor-pointer"
+              className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-sm text-[#111111] rounded-xl pl-10 pr-8 py-2.5 outline-none appearance-none cursor-pointer"
             >
               <option value="Todas">Todas as Cidades</option>
               {cities.map((city) => (
@@ -101,7 +101,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                 </option>
               ))}
             </select>
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-xs text-[#777]">
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-xs text-[#5A5A5A]">
               ▼
             </div>
           </div>
@@ -110,13 +110,13 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         {/* Property Type Select */}
         <div className="md:col-span-3 relative">
           <div className="relative">
-            <Home className="w-4 h-4 text-[#C9A86C] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <Home className="w-4 h-4 text-[#C9A227] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             <select
               id="filter-type-select"
               value={filters.type || 'Todos'}
               onChange={(e) => setFilters((prev) => ({ ...prev, type: e.target.value as PropertyType | 'Todos' }))}
               aria-label="Filtrar por tipo de imóvel"
-              className="w-full bg-[#181818] border border-[#2D2D2D] focus:border-[#C9A86C] text-sm text-[#F8F5F0] rounded-xl pl-10 pr-8 py-2.5 outline-none appearance-none cursor-pointer"
+              className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-sm text-[#111111] rounded-xl pl-10 pr-8 py-2.5 outline-none appearance-none cursor-pointer"
             >
               {typeOptions.map((opt) => (
                 <option key={opt} value={opt}>
@@ -124,7 +124,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                 </option>
               ))}
             </select>
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-xs text-[#777]">
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-xs text-[#5A5A5A]">
               ▼
             </div>
           </div>
@@ -137,7 +137,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             value={filters.bedrooms || 'Todos'}
             onChange={(e) => setFilters((prev) => ({ ...prev, bedrooms: e.target.value }))}
             aria-label="Filtrar por número de quartos"
-            className="w-full bg-[#181818] border border-[#2D2D2D] focus:border-[#C9A86C] text-sm text-[#F8F5F0] rounded-xl px-3 py-2.5 outline-none appearance-none cursor-pointer"
+            className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-sm text-[#111111] rounded-xl px-3 py-2.5 outline-none appearance-none cursor-pointer"
           >
             <option value="Todos">Quartos: Todos</option>
             <option value="1">1 Quarto ou mais</option>
@@ -145,17 +145,17 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             <option value="3">3 Quartos ou mais</option>
             <option value="4">4+ Quartos</option>
           </select>
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-xs text-[#777]">
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-xs text-[#5A5A5A]">
             ▼
           </div>
         </div>
       </div>
 
       {/* Secondary Row: Status Pills & Action Counts */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-3 border-t border-[#1F1F1F]">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-3 border-t border-[#E5E0D8]">
         {/* Status quick tabs */}
         <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
-          <span className="text-xs text-[#777] mr-1 hidden sm:inline">Status:</span>
+          <span className="text-xs text-[#5A5A5A] mr-1 hidden sm:inline">Status:</span>
           {statusOptions.map((status) => {
             const isActive = (filters.status || 'Todos') === status;
             return (
@@ -163,10 +163,10 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                 key={status}
                 id={`filter-status-btn-${status.toLowerCase().replace(/\s+/g, '-')}`}
                 onClick={() => setFilters((prev) => ({ ...prev, status }))}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-[#C9A86C] text-[#0A0A0A] font-semibold shadow-sm'
-                    : 'bg-[#181818] text-[#A0A0A0] hover:text-[#F8F5F0] hover:bg-[#222]'
+                    ? 'bg-[#C9A227] text-[#0A0A0A] font-semibold shadow-sm'
+                    : 'bg-[#F7F3EB] text-[#5A5A5A] hover:text-[#111111] hover:bg-[#E5E0D8]'
                 }`}
               >
                 {status}
@@ -178,28 +178,28 @@ export const FilterBar: React.FC<FilterBarProps> = ({
           <button
             id="filter-signature-toggle"
             onClick={() => setFilters((prev) => ({ ...prev, onlySignature: !prev.onlySignature }))}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1 transition-all whitespace-nowrap ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1 transition-all whitespace-nowrap cursor-pointer ${
               filters.onlySignature
-                ? 'bg-amber-400/20 text-amber-300 border border-amber-400/50'
-                : 'bg-[#181818] text-[#888] hover:text-amber-300 border border-transparent'
+                ? 'bg-[#C9A227]/20 text-[#C9A227] border border-[#C9A227]'
+                : 'bg-[#F7F3EB] text-[#5A5A5A] hover:text-[#C9A227] border border-[#E5E0D8]'
             }`}
           >
-            <Sparkles className="w-3 h-3 text-[#C9A86C]" />
+            <Sparkles className="w-3 h-3 text-[#C9A227]" />
             <span>Seleção Exclusiva</span>
           </button>
         </div>
 
         {/* Count and Clear */}
         <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto text-xs">
-          <div className="text-[#A0A0A0]">
-            <span className="font-semibold text-[#F8F5F0]">{totalCount}</span> {totalCount === 1 ? 'imóvel encontrado' : 'imóveis encontrados'}
+          <div className="text-[#5A5A5A]">
+            <span className="font-semibold text-[#111111]">{totalCount}</span> {totalCount === 1 ? 'imóvel encontrado' : 'imóveis encontrados'}
           </div>
 
           {hasActiveFilters && (
             <button
               id="filter-clear-all-btn"
               onClick={handleReset}
-              className="text-[#C9A86C] hover:text-white flex items-center gap-1 font-medium transition-colors"
+              className="text-[#C9A227] hover:text-[#111111] flex items-center gap-1 font-medium transition-colors cursor-pointer"
             >
               <RotateCcw className="w-3 h-3" />
               <span>Limpar filtros</span>

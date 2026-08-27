@@ -29,18 +29,18 @@ export const NaPlantaPage: React.FC<NaPlantaPageProps> = ({
   return (
     <div id="na-planta-page" className="pt-28 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
       {/* Header Banner */}
-      <div className="relative bg-gradient-to-br from-[#181818] via-[#121212] to-[#0A0A0A] border border-[#2B2B2B] rounded-3xl p-8 sm:p-14 overflow-hidden">
+      <div className="relative bg-[#0A0A0A] border border-[#2A2A2A] rounded-3xl p-8 sm:p-14 overflow-hidden">
         <div className="max-w-3xl space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-xs text-emerald-300 font-semibold">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1F8A4C]/15 border border-[#1F8A4C]/40 text-xs text-[#1F8A4C] font-semibold">
             <Sparkles className="w-3.5 h-3.5" />
             <span>Lançamentos Oficiais & Obras em Andamento</span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl font-bold font-serif-luxury text-[#F8F5F0]">
+          <h1 className="text-3xl sm:text-5xl font-bold font-serif-luxury text-[#FFFFFF]">
             Apartamentos na Planta no Sul de Santa Catarina
           </h1>
 
-          <p className="text-sm sm:text-base text-[#A0A0A0] leading-relaxed font-light">
+          <p className="text-sm sm:text-base text-[#8A8A8A] leading-relaxed font-light">
             Adquira seu imóvel com preço de lançamento e parcelamento direto com a construtora sem as taxas e burocracia dos bancos tradicionais.
           </p>
 
@@ -49,7 +49,7 @@ export const NaPlantaPage: React.FC<NaPlantaPageProps> = ({
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-6 py-3.5 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-[#0A0A0A] font-bold text-xs flex items-center gap-2 shadow-lg transition-all"
+              className="px-6 py-3.5 rounded-xl bg-[#1F8A4C] hover:bg-[#197A42] text-white font-bold text-xs flex items-center gap-2 shadow-lg transition-all cursor-pointer"
             >
               <span>Receber Tabela de Lançamento no WhatsApp</span>
               <ArrowRight className="w-4 h-4" />
@@ -57,7 +57,7 @@ export const NaPlantaPage: React.FC<NaPlantaPageProps> = ({
 
             <button
               onClick={onOpenCuratedModal}
-              className="px-6 py-3.5 rounded-xl bg-[#222] hover:bg-[#2C2C2C] border border-[#3A3A3A] text-xs font-semibold text-[#F8F5F0] hover:text-[#C9A86C] transition-all"
+              className="px-6 py-3.5 rounded-xl bg-[#141414] hover:bg-[#1E1E1E] border border-[#2A2A2A] text-xs font-semibold text-[#FFFFFF] hover:text-[#C9A227] transition-all cursor-pointer"
             >
               Simular Entrada e Parcelamento
             </button>
@@ -67,32 +67,32 @@ export const NaPlantaPage: React.FC<NaPlantaPageProps> = ({
 
       {/* 3 Value Pillars */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="p-6 rounded-3xl bg-[#121212] border border-[#222] space-y-3">
-          <div className="p-3 rounded-2xl bg-emerald-500/10 text-emerald-400 w-fit">
+        <div className="p-6 rounded-3xl bg-[#FFFFFF] border border-[#E5E0D8] shadow-sm space-y-3">
+          <div className="p-3 rounded-2xl bg-[#1F8A4C]/10 text-[#1F8A4C] w-fit">
             <TrendingUp className="w-6 h-6" />
           </div>
-          <h3 className="text-lg font-bold text-[#F8F5F0]">Valorização Média de 20% a 40%</h3>
-          <p className="text-xs text-[#888] leading-relaxed">
+          <h3 className="text-lg font-bold text-[#111111]">Valorização Média de 20% a 40%</h3>
+          <p className="text-xs text-[#5A5A5A] leading-relaxed">
             Comprar no início da obra assegura o menor preço por metro quadrado e garante rentabilidade expressiva na entrega das chaves.
           </p>
         </div>
 
-        <div className="p-6 rounded-3xl bg-[#121212] border border-[#222] space-y-3">
-          <div className="p-3 rounded-2xl bg-[#C9A86C]/10 text-[#C9A86C] w-fit">
+        <div className="p-6 rounded-3xl bg-[#FFFFFF] border border-[#E5E0D8] shadow-sm space-y-3">
+          <div className="p-3 rounded-2xl bg-[#C9A227]/10 text-[#C9A227] w-fit">
             <Calculator className="w-6 h-6" />
           </div>
-          <h3 className="text-lg font-bold text-[#F8F5F0]">Financiamento Direto Facilitado</h3>
-          <p className="text-xs text-[#888] leading-relaxed">
+          <h3 className="text-lg font-bold text-[#111111]">Financiamento Direto Facilitado</h3>
+          <p className="text-xs text-[#5A5A5A] leading-relaxed">
             Pague em até 60x direto com a construtora, ajustando o valor de parcelas mensais, balões anuais e chaves conforme seu fluxo de caixa.
           </p>
         </div>
 
-        <div className="p-6 rounded-3xl bg-[#121212] border border-[#222] space-y-3">
-          <div className="p-3 rounded-2xl bg-blue-500/10 text-blue-400 w-fit">
+        <div className="p-6 rounded-3xl bg-[#FFFFFF] border border-[#E5E0D8] shadow-sm space-y-3">
+          <div className="p-3 rounded-2xl bg-[#C9A227]/10 text-[#C9A227] w-fit">
             <ShieldCheck className="w-6 h-6" />
           </div>
-          <h3 className="text-lg font-bold text-[#F8F5F0]">Segurança Jurídica & R.I.</h3>
-          <p className="text-xs text-[#888] leading-relaxed">
+          <h3 className="text-lg font-bold text-[#111111]">Segurança Jurídica & R.I.</h3>
+          <p className="text-xs text-[#5A5A5A] leading-relaxed">
             Trabalhamos exclusivamente com construtoras consolidadas que possuem Registro de Incorporação (R.I.) averbado em cartório e patrimônio de afetação.
           </p>
         </div>
@@ -102,14 +102,14 @@ export const NaPlantaPage: React.FC<NaPlantaPageProps> = ({
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <span className="text-xs font-semibold text-[#C9A86C] uppercase tracking-wider">
+            <span className="text-xs font-semibold text-[#C9A227] uppercase tracking-wider">
               Seleção Atual
             </span>
-            <h2 className="text-2xl sm:text-3xl font-bold font-serif-luxury text-[#F8F5F0]">
+            <h2 className="text-2xl sm:text-3xl font-bold font-serif-luxury text-[#111111]">
               Empreendimentos em Destaque
             </h2>
           </div>
-          <span className="text-xs text-[#888]">{naPlantaProperties.length} opções disponíveis</span>
+          <span className="text-xs text-[#5A5A5A]">{naPlantaProperties.length} opções disponíveis</span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

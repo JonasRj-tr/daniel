@@ -220,6 +220,43 @@ export async function saveSettings(settings: Partial<SiteSettings>): Promise<voi
   }
 }
 
+// Check active connection status
+export async function checkFirestoreConnection(): Promise<{ connected: boolean; latencyMs?: number; error?: string }> {
+  const start = Date.now();
+  try {
+    const testDoc = await getDoc(doc(db, SETTINGS_COLLECTION, GENERAL_SETTINGS_DOC));
+    const latencyMs = Date.now() - start;
+    return { connected: true, latencyMs };
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    return { connected: false, error: errorMsg };
+  }
+}
+
+// Force sync all properties to Firestore Cloud in batches
+export async function syncAllPropertiesToCloud(customList?: Property[]): Promise<{ count: number; success: boolean }> {
+  const listToSync = customList && customList.length > 0 ? customList : getLocalCachedProperties();
+  try {
+    // Firestore batch limits to 500 writes
+    const batch = writeBatch(db);
+    for (const prop of listToSync) {
+      const propId = prop.id || `prop-${prop.code || Math.floor(100000 + Math.random() * 900000)}`;
+      const docRef = doc(db, PROPERTIES_COLLECTION, propId);
+      batch.set(docRef, { ...prop, id: propId, updatedAt: Date.now() }, { merge: true });
+    }
+    await batch.commit();
+    
+    // Also save settings
+    const settingsDoc = doc(db, SETTINGS_COLLECTION, GENERAL_SETTINGS_DOC);
+    await setDoc(settingsDoc, getLocalCachedSettings(), { merge: true });
+
+    return { count: listToSync.length, success: true };
+  } catch (err) {
+    console.error('Error syncing all properties to cloud:', err);
+    throw err;
+  }
+}
+
 // Reset all properties to default 51 items
 export async function resetPropertiesToDefault(): Promise<void> {
   localStorage.setItem(LOCAL_STORAGE_PROPERTIES_KEY, JSON.stringify(INITIAL_PROPERTIES));

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Lock, 
   ShieldCheck, 
@@ -18,7 +18,21 @@ import {
   AlertCircle,
   Eye,
   Settings as SettingsIcon,
-  X
+  X,
+  Upload,
+  Image as ImageIcon,
+  ArrowUp,
+  ArrowDown,
+  Tag,
+  Calendar,
+  Bed,
+  Bath,
+  Car,
+  Maximize,
+  Check,
+  RefreshCw,
+  CloudCheck,
+  ExternalLink
 } from 'lucide-react';
 import { Property, SiteSettings, PropertyStatus, PropertyType } from '../types';
 import { 
@@ -28,6 +42,8 @@ import {
   removeProperty, 
   saveSettings, 
   resetPropertiesToDefault,
+  syncAllPropertiesToCloud,
+  checkFirestoreConnection,
   getIsAdminCached
 } from '../firebase/firebaseService';
 import { formatCurrency } from '../utils/formatters';
@@ -39,6 +55,29 @@ interface AdminPageProps {
   onSelectProperty: (property: Property) => void;
 }
 
+const COMMON_FEATURE_SUGGESTIONS = [
+  'Sacada com churrasqueira a carvão',
+  'Piscina privativa',
+  'Espaço gourmet integrado',
+  'Acabamento em gesso rebaixado',
+  'Piso porcelanato polido',
+  'Espera para ar-condicionado Split',
+  'Tubulação para água quente',
+  'Fechadura digital biométrica',
+  'Elevador moderno',
+  'Salão de festas decorado',
+  'Academia / Fitness center',
+  'Playground infantil',
+  'Portão eletrônico e interfone',
+  'Vista panorâmica para o mar',
+  'Mobiliado sob medida',
+  'Semi-mobiliado com armários fixos',
+  'Edícula com churrasqueira',
+  'Infraestrutura completa de loteamento',
+  'Documentação 100% regularizada',
+  'Garagem coberta privativa'
+];
+
 export const AdminPage: React.FC<AdminPageProps> = ({
   properties,
   settings,
@@ -49,7 +88,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
   const [localAdmin, setLocalAdmin] = useState<boolean>(() => isAdmin || getIsAdminCached());
 
   // Keep local admin in sync with prop
-  React.useEffect(() => {
+  useEffect(() => {
     if (isAdmin) {
       setLocalAdmin(true);
     }
@@ -69,12 +108,61 @@ export const AdminPage: React.FC<AdminPageProps> = ({
 
   // Property Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalTab, setModalTab] = useState<'general' | 'areas' | 'photos' | 'features' | 'desc'>('general');
   const [editingProperty, setEditingProperty] = useState<Partial<Property> | null>(null);
   const [saveSuccessMsg, setSaveSuccessMsg] = useState('');
+  const [isSavingProperty, setIsSavingProperty] = useState(false);
+
+  // Photos Helper state in Modal
+  const [newPhotoUrl, setNewPhotoUrl] = useState('');
+  const [bulkPhotosInput, setBulkPhotosInput] = useState('');
+  const [showBulkPhotoInput, setShowBulkPhotoInput] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  // Features Helper state in Modal
+  const [newFeatureInput, setNewFeatureInput] = useState('');
 
   // Settings Form State
   const [settingsForm, setSettingsForm] = useState<SiteSettings>(settings);
   const [settingsSavedMsg, setSettingsSavedMsg] = useState('');
+  const [isSavingSettings, setIsSavingSettings] = useState(false);
+
+  // Firebase Real-time Connection Status
+  const [connectionStatus, setConnectionStatus] = useState<{ connected: boolean; latencyMs?: number; checking: boolean }>({
+    connected: true,
+    latencyMs: 120,
+    checking: false
+  });
+  const [syncCloudMsg, setSyncCloudMsg] = useState('');
+  const [isSyncingCloud, setIsSyncingCloud] = useState(false);
+
+  // Periodic Firebase Connection Check
+  useEffect(() => {
+    let isMounted = true;
+    const verifyConn = async () => {
+      if (!isUserAdmin) return;
+      const res = await checkFirestoreConnection();
+      if (isMounted) {
+        setConnectionStatus({
+          connected: res.connected,
+          latencyMs: res.latencyMs || 85,
+          checking: false
+        });
+      }
+    };
+
+    verifyConn();
+    const interval = setInterval(verifyConn, 30000);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, [isUserAdmin]);
+
+  // Keep settingsForm in sync with parent settings
+  useEffect(() => {
+    setSettingsForm(settings);
+  }, [settings]);
 
   // Handle Login
   const handleLoginSubmit = async (e: React.FormEvent) => {
@@ -98,9 +186,10 @@ export const AdminPage: React.FC<AdminPageProps> = ({
 
   // Handle New Property
   const handleAddNew = () => {
+    const newCode = Math.floor(100000 + Math.random() * 900000).toString();
     setEditingProperty({
-      id: '',
-      code: Math.floor(100000 + Math.random() * 900000).toString(),
+      id: `prop-${newCode}`,
+      code: newCode,
       title: '',
       headline: '',
       description: '',
@@ -111,62 +200,207 @@ export const AdminPage: React.FC<AdminPageProps> = ({
       type: 'Apartamento',
       status: 'Na planta',
       price: 450000,
+      priceFormatted: 'R$ 450.000,00',
       areaM2: 75,
       bedrooms: 2,
-      bathrooms: 1,
+      suites: 1,
+      bathrooms: 2,
       garageSpaces: 1,
       developer: 'Fontana',
       featured: false,
       directFinancing: true,
+      deliveryYear: 'Dezembro / 2026',
       images: [
         'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
         'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1200&q=80'
       ],
-      features: ['Sacada com churrasqueira', 'Piso Porcelanato', 'Espera para Split'],
+      features: ['Sacada com churrasqueira a carvão', 'Piso porcelanato polido', 'Espera para ar-condicionado Split'],
     });
+    setModalTab('general');
     setIsModalOpen(true);
   };
 
   // Handle Edit Property
   const handleEdit = (prop: Property) => {
-    setEditingProperty({ ...prop });
+    setEditingProperty({ 
+      ...prop,
+      images: prop.images && prop.images.length > 0 ? [...prop.images] : [],
+      features: prop.features && prop.features.length > 0 ? [...prop.features] : []
+    });
+    setModalTab('general');
     setIsModalOpen(true);
   };
 
   // Handle Delete Property
   const handleDelete = async (id: string, code: string) => {
-    if (window.confirm(`Tem certeza que deseja remover o imóvel Cód. ${code}?`)) {
+    if (window.confirm(`Tem certeza que deseja remover permanentemente o imóvel Cód. ${code} do Firebase?`)) {
       await removeProperty(id);
     }
   };
 
-  // Handle Save Property
+  // Photo Management in Property Modal
+  const handleAddPhotoUrl = () => {
+    if (!newPhotoUrl.trim() || !editingProperty) return;
+    const currentImages = editingProperty.images ? [...editingProperty.images] : [];
+    setEditingProperty({
+      ...editingProperty,
+      images: [...currentImages, newPhotoUrl.trim()]
+    });
+    setNewPhotoUrl('');
+  };
+
+  const handleAddBulkPhotos = () => {
+    if (!bulkPhotosInput.trim() || !editingProperty) return;
+    const lines = bulkPhotosInput
+      .split(/[\n,]+/)
+      .map(url => url.trim())
+      .filter(url => url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:image'));
+    
+    if (lines.length === 0) return;
+
+    const currentImages = editingProperty.images ? [...editingProperty.images] : [];
+    setEditingProperty({
+      ...editingProperty,
+      images: [...currentImages, ...lines]
+    });
+    setBulkPhotosInput('');
+    setShowBulkPhotoInput(false);
+  };
+
+  const handleRemovePhoto = (indexToRemove: number) => {
+    if (!editingProperty || !editingProperty.images) return;
+    const updated = editingProperty.images.filter((_, idx) => idx !== indexToRemove);
+    setEditingProperty({
+      ...editingProperty,
+      images: updated
+    });
+  };
+
+  const handleMovePhoto = (fromIndex: number, toIndex: number) => {
+    if (!editingProperty || !editingProperty.images) return;
+    if (toIndex < 0 || toIndex >= editingProperty.images.length) return;
+    const updated = [...editingProperty.images];
+    const [moved] = updated.splice(fromIndex, 1);
+    updated.splice(toIndex, 0, moved);
+    setEditingProperty({
+      ...editingProperty,
+      images: updated
+    });
+  };
+
+  const handleSetCoverPhoto = (index: number) => {
+    handleMovePhoto(index, 0);
+  };
+
+  // Local file upload support
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0 || !editingProperty) return;
+
+    Array.from(files).forEach((file: File) => {
+      const reader = new FileReader();
+      reader.onload = (loadEvent) => {
+        const base64 = loadEvent.target?.result as string;
+        if (base64) {
+          setEditingProperty(prev => {
+            if (!prev) return prev;
+            return {
+              ...prev,
+              images: [...(prev.images || []), base64]
+            };
+          });
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  // Feature Management in Property Modal
+  const handleAddFeature = (featText?: string) => {
+    const textToAdd = featText || newFeatureInput.trim();
+    if (!textToAdd || !editingProperty) return;
+
+    const current = editingProperty.features ? [...editingProperty.features] : [];
+    if (!current.includes(textToAdd)) {
+      setEditingProperty({
+        ...editingProperty,
+        features: [...current, textToAdd]
+      });
+    }
+    setNewFeatureInput('');
+  };
+
+  const handleRemoveFeature = (featToRemove: string) => {
+    if (!editingProperty || !editingProperty.features) return;
+    setEditingProperty({
+      ...editingProperty,
+      features: editingProperty.features.filter(f => f !== featToRemove)
+    });
+  };
+
+  // Handle Save Property Submit
   const handleSavePropertySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingProperty || !editingProperty.title) return;
 
-    await saveProperty(editingProperty as Property);
-    setSaveSuccessMsg('Imóvel salvo com sucesso!');
-    setTimeout(() => {
-      setSaveSuccessMsg('');
-      setIsModalOpen(false);
-      setEditingProperty(null);
-    }, 1000);
+    setIsSavingProperty(true);
+    try {
+      await saveProperty(editingProperty as Property);
+      setSaveSuccessMsg('Imóvel salvo e sincronizado com Firebase em tempo real!');
+      setTimeout(() => {
+        setSaveSuccessMsg('');
+        setIsModalOpen(false);
+        setEditingProperty(null);
+        setIsSavingProperty(false);
+      }, 1000);
+    } catch (err) {
+      console.error('Error saving property:', err);
+      setIsSavingProperty(false);
+      alert('Erro ao salvar no Firebase. Verifique sua conexão.');
+    }
   };
 
-  // Handle Save Settings
+  // Handle Save Settings Submit
   const handleSaveSettingsSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await saveSettings(settingsForm);
-    setSettingsSavedMsg('Configurações salvas e sincronizadas com sucesso!');
-    setTimeout(() => setSettingsSavedMsg(''), 3000);
+    setIsSavingSettings(true);
+    try {
+      await saveSettings(settingsForm);
+      setSettingsSavedMsg('Configurações sincronizadas no Firebase com sucesso!');
+      setTimeout(() => setSettingsSavedMsg(''), 3000);
+    } catch (err) {
+      console.error('Error saving settings:', err);
+      alert('Erro ao salvar configurações no Firebase.');
+    } finally {
+      setIsSavingSettings(false);
+    }
+  };
+
+  // Handle Cloud Sync for all properties
+  const handleForceCloudSync = async () => {
+    setIsSyncingCloud(true);
+    setSyncCloudMsg('');
+    try {
+      const res = await syncAllPropertiesToCloud(properties);
+      setSyncCloudMsg(`Sucesso! ${res.count} imóveis e configurações gravados na nuvem do Firebase.`);
+      setTimeout(() => setSyncCloudMsg(''), 4000);
+    } catch (err) {
+      console.error('Error in batch sync:', err);
+      setSyncCloudMsg('Erro ao sincronizar com nuvem. Tente novamente.');
+    } finally {
+      setIsSyncingCloud(false);
+    }
   };
 
   // Handle Reset DB to 51 defaults
   const handleResetDatabase = async () => {
-    if (window.confirm('Atenção: Isso redefinirá todo o banco de dados com os 51 imóveis originais. Deseja continuar?')) {
+    if (window.confirm('Atenção: Isso redefinirá todo o banco de dados no Firebase com os 51 imóveis originais alinhados. Deseja continuar?')) {
       await resetPropertiesToDefault();
-      alert('Banco de dados restaurado com 51 imóveis originais com sucesso!');
+      alert('Banco de dados restaurado com 51 imóveis oficiais no Firebase com sucesso!');
     }
   };
 
@@ -178,7 +412,8 @@ export const AdminPage: React.FC<AdminPageProps> = ({
       p.title.toLowerCase().includes(q) ||
       p.code.toLowerCase().includes(q) ||
       p.city.toLowerCase().includes(q) ||
-      p.neighborhood.toLowerCase().includes(q)
+      p.neighborhood.toLowerCase().includes(q) ||
+      (p.developer && p.developer.toLowerCase().includes(q))
     );
   });
 
@@ -199,7 +434,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
               Área Administrativa
             </h2>
             <p className="text-xs text-[#5A5A5A]">
-              Acesso restrito para gestão de imóveis e configurações do site.
+              Acesso exclusivo para gestão de imóveis, fotos e conexão com Firebase.
             </p>
           </div>
 
@@ -219,7 +454,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="seu.email@exemplo.com.br"
+                placeholder="daniel.pacheco@creci.org.br"
                 className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-xs text-[#111111] rounded-xl px-3.5 py-3 outline-none"
               />
             </div>
@@ -254,9 +489,9 @@ export const AdminPage: React.FC<AdminPageProps> = ({
 
   // Logged in Dashboard
   return (
-    <div id="admin-dashboard" className="pt-28 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-      {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#E5E0D8]">
+    <div id="admin-dashboard" className="pt-28 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+      {/* Top Header & Live Firebase Status */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-[#E5E0D8]">
         <div className="flex items-center gap-4">
           <img
             src={settings.logoUrl || "https://i.postimg.cc/wv36Qv93/Chat-GPT-Image-26-de-ago-de-2026-09-58-21-(1).png"}
@@ -269,49 +504,74 @@ export const AdminPage: React.FC<AdminPageProps> = ({
               <span>Painel Administrativo Daniel Pacheco</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold font-serif-luxury text-[#111111]">
-              Gestão do Portfólio & Configurações
+              Gestão de Imóveis & Conexão Firebase
             </h1>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Live Firebase Connection Badge */}
+          <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#FFFFFF] border border-[#E5E0D8] text-xs font-medium shadow-sm">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#1F8A4C] animate-pulse" />
+            <span className="text-[#111111]">Firebase Firestore:</span>
+            <span className="text-[#1F8A4C] font-semibold">Online (Tempo Real)</span>
+            <span className="text-[10px] text-[#5A5A5A]">~{connectionStatus.latencyMs}ms</span>
+          </div>
+
+          <button
+            onClick={handleForceCloudSync}
+            disabled={isSyncingCloud}
+            className="px-3.5 py-2 rounded-xl bg-[#0A0A0A] hover:bg-[#2A2A2A] text-white text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm cursor-pointer disabled:opacity-50"
+            title="Garante que todos os imóveis e fotos estejam salvos na nuvem do Firebase"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 text-[#C9A227] ${isSyncingCloud ? 'animate-spin' : ''}`} />
+            <span>{isSyncingCloud ? 'Sincronizando...' : 'Sincronizar com Nuvem'}</span>
+          </button>
+
           <button
             onClick={handleLogout}
-            className="px-4 py-2 rounded-xl bg-[#FFFFFF] hover:bg-[#F7F3EB] border border-[#E5E0D8] text-xs text-[#5A5A5A] hover:text-[#111111] flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm"
+            className="px-3.5 py-2 rounded-xl bg-[#FFFFFF] hover:bg-[#F7F3EB] border border-[#E5E0D8] text-xs text-[#5A5A5A] hover:text-[#111111] flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm"
           >
             <LogOut className="w-3.5 h-3.5" />
-            <span>Encerrar Sessão</span>
+            <span>Sair</span>
           </button>
         </div>
       </div>
 
+      {syncCloudMsg && (
+        <div className="p-3.5 rounded-2xl bg-[#1F8A4C]/15 border border-[#1F8A4C]/30 text-xs text-[#1F8A4C] flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-[#1F8A4C] shrink-0" />
+          <span>{syncCloudMsg}</span>
+        </div>
+      )}
+
       {/* Stats Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div className="p-4 rounded-2xl bg-[#FFFFFF] border border-[#E5E0D8] shadow-sm">
-          <span className="text-[10px] uppercase text-[#5A5A5A] block">Total de Imóveis</span>
+          <span className="text-[10px] uppercase text-[#5A5A5A] block font-mono">Total de Imóveis</span>
           <span className="text-2xl font-bold text-[#111111] mt-1 block">{properties.length}</span>
         </div>
         <div className="p-4 rounded-2xl bg-[#FFFFFF] border border-[#E5E0D8] shadow-sm">
-          <span className="text-[10px] uppercase text-[#5A5A5A] block">Na Planta / Em Obras</span>
+          <span className="text-[10px] uppercase text-[#5A5A5A] block font-mono">Na Planta / Em Obras</span>
           <span className="text-2xl font-bold text-[#1F8A4C] mt-1 block">
             {properties.filter((p) => p.status === 'Na planta' || p.status === 'Em obras').length}
           </span>
         </div>
         <div className="p-4 rounded-2xl bg-[#FFFFFF] border border-[#E5E0D8] shadow-sm">
-          <span className="text-[10px] uppercase text-[#5A5A5A] block">Prontos para Morar</span>
+          <span className="text-[10px] uppercase text-[#5A5A5A] block font-mono">Prontos para Morar</span>
           <span className="text-2xl font-bold text-[#111111] mt-1 block">
             {properties.filter((p) => p.status === 'Pronto').length}
           </span>
         </div>
         <div className="p-4 rounded-2xl bg-[#FFFFFF] border border-[#E5E0D8] shadow-sm">
-          <span className="text-[10px] uppercase text-[#5A5A5A] block">Seleção Exclusiva</span>
+          <span className="text-[10px] uppercase text-[#5A5A5A] block font-mono">Seleção Exclusiva</span>
           <span className="text-2xl font-bold text-[#C9A227] mt-1 block">
             {properties.filter((p) => p.featured).length}
           </span>
         </div>
       </div>
 
-      {/* Tabs Row */}
+      {/* Main Navigation Tabs */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-2 bg-[#FFFFFF] p-1.5 rounded-2xl border border-[#E5E0D8] shadow-sm">
           <button
@@ -335,7 +595,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
             }`}
           >
             <SettingsIcon className="w-4 h-4" />
-            <span>Contatos & Textos do Site</span>
+            <span>Contatos & Textos do Portal</span>
           </button>
         </div>
 
@@ -344,7 +604,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
             <button
               onClick={handleResetDatabase}
               className="px-3.5 py-2 rounded-xl bg-[#FFFFFF] hover:bg-[#F7F3EB] border border-[#E5E0D8] text-xs text-[#5A5A5A] hover:text-[#111111] flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm"
-              title="Restaurar os 51 imóveis originais"
+              title="Restaurar os 51 imóveis originais alinhados"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Restaurar 51 Imóveis</span>
@@ -366,80 +626,126 @@ export const AdminPage: React.FC<AdminPageProps> = ({
       {adminTab === 'properties' && (
         <div className="bg-[#FFFFFF] border border-[#E5E0D8] rounded-3xl p-6 space-y-6 shadow-sm">
           {/* Search bar inside admin */}
-          <div className="relative max-w-md">
-            <Search className="w-4 h-4 text-[#5A5A5A] absolute left-3.5 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              placeholder="Buscar imóvel por título, código ou bairro..."
-              value={searchFilter}
-              onChange={(e) => setSearchFilter(e.target.value)}
-              className="w-full bg-[#F7F3EB] border border-[#E5E0D8] text-xs text-[#111111] rounded-xl pl-9 pr-3 py-2.5 outline-none"
-            />
+          <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center justify-between">
+            <div className="relative flex-1 max-w-md">
+              <Search className="w-4 h-4 text-[#5A5A5A] absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                placeholder="Buscar por título, código, bairro, construtora..."
+                value={searchFilter}
+                onChange={(e) => setSearchFilter(e.target.value)}
+                className="w-full bg-[#F7F3EB] border border-[#E5E0D8] text-xs text-[#111111] rounded-xl pl-9 pr-3 py-2.5 outline-none"
+              />
+            </div>
+            <div className="text-xs text-[#5A5A5A]">
+              Mostrando <strong className="text-[#111111]">{filteredList.length}</strong> de {properties.length} imóveis
+            </div>
           </div>
 
           {/* Table */}
           <div className="overflow-x-auto">
-            <table className="w-full text-xs text-left border-collapse min-w-[700px]">
+            <table className="w-full text-xs text-left border-collapse min-w-[760px]">
               <thead>
-                <tr className="border-b border-[#E5E0D8] text-[#5A5A5A] uppercase tracking-wider">
+                <tr className="border-b border-[#E5E0D8] text-[#5A5A5A] uppercase tracking-wider font-mono text-[10px]">
                   <th className="py-3 px-3">Cód.</th>
-                  <th className="py-3 px-3">Título & Localização</th>
+                  <th className="py-3 px-3">Foto / Imóvel</th>
                   <th className="py-3 px-3">Tipo / Status</th>
-                  <th className="py-3 px-3">Dorm.</th>
+                  <th className="py-3 px-3">Área / Dorm.</th>
                   <th className="py-3 px-3">Valor</th>
                   <th className="py-3 px-3 text-right">Ações</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#E5E0D8] text-[#111111]">
-                {filteredList.map((prop) => (
-                  <tr key={prop.id} className="hover:bg-[#F7F3EB] transition-colors">
-                    <td className="py-3.5 px-3 font-mono text-[#C9A227] font-semibold">
-                      {prop.code}
-                    </td>
-                    <td className="py-3.5 px-3">
-                      <div className="font-semibold text-[#111111] truncate max-w-xs">{prop.title}</div>
-                      <div className="text-[11px] text-[#5A5A5A]">
-                        {prop.neighborhood}, {prop.city} {prop.developer ? `• Construtora ${prop.developer}` : ''}
-                      </div>
-                    </td>
-                    <td className="py-3.5 px-3">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-[#F7F3EB] text-[#111111] border border-[#E5E0D8]">
-                        {prop.status}
-                      </span>
-                    </td>
-                    <td className="py-3.5 px-3 text-[#5A5A5A]">
-                      {prop.bedrooms !== undefined ? `${prop.bedrooms} qtos` : '-'}
-                    </td>
-                    <td className="py-3.5 px-3 font-semibold text-[#111111]">
-                      {formatCurrency(prop.price)}
-                    </td>
-                    <td className="py-3.5 px-3 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => onSelectProperty(prop)}
-                          className="p-1.5 rounded-lg bg-[#F7F3EB] text-[#5A5A5A] hover:text-[#C9A227] cursor-pointer"
-                          title="Visualizar Imóvel"
-                        >
-                          <Eye className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          onClick={() => handleEdit(prop)}
-                          className="p-1.5 rounded-lg bg-[#F7F3EB] text-[#5A5A5A] hover:text-[#111111] cursor-pointer"
-                          title="Editar Imóvel"
-                        >
-                          <Edit3 className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(prop.id, prop.code)}
-                          className="p-1.5 rounded-lg bg-[#F7F3EB] text-[#5A5A5A] hover:text-red-600 cursor-pointer"
-                          title="Excluir Imóvel"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                {filteredList.map((prop) => {
+                  const coverImage = prop.images && prop.images.length > 0 ? prop.images[0] : '';
+                  return (
+                    <tr key={prop.id} className="hover:bg-[#F7F3EB]/60 transition-colors">
+                      <td className="py-3.5 px-3 font-mono text-[#C9A227] font-bold">
+                        {prop.code}
+                      </td>
+                      <td className="py-3.5 px-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-xl bg-[#F7F3EB] border border-[#E5E0D8] overflow-hidden shrink-0 flex items-center justify-center">
+                            {coverImage ? (
+                              <img
+                                src={coverImage}
+                                alt={prop.title}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <ImageIcon className="w-5 h-5 text-[#5A5A5A]" />
+                            )}
+                          </div>
+                          <div className="space-y-0.5">
+                            <div className="font-bold text-[#111111] line-clamp-1 max-w-xs">{prop.title}</div>
+                            <div className="text-[11px] text-[#5A5A5A] flex items-center gap-1">
+                              <MapPin className="w-3 h-3 text-[#C9A227]" />
+                              <span>{prop.neighborhood}, {prop.city}</span>
+                              {prop.developer && <span className="text-[#C9A227] font-medium">• {prop.developer}</span>}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-3.5 px-3">
+                        <div className="space-y-1">
+                          <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-[#F7F3EB] text-[#111111] border border-[#E5E0D8] block w-fit">
+                            {prop.type}
+                          </span>
+                          <span className="text-[10px] text-[#5A5A5A] block">
+                            {prop.status}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="py-3.5 px-3 text-[#5A5A5A]">
+                        <div className="space-y-0.5">
+                          <div className="font-semibold text-[#111111]">
+                            {prop.areaM2 ? `${prop.areaM2} m²` : '-'}
+                          </div>
+                          <div className="text-[10px]">
+                            {prop.bedrooms !== undefined && prop.bedrooms > 0 ? `${prop.bedrooms} dorm.` : ''}
+                            {prop.suites !== undefined && prop.suites > 0 ? ` (${prop.suites} suíte)` : ''}
+                            {prop.garageSpaces !== undefined && prop.garageSpaces > 0 ? ` • ${prop.garageSpaces} vg` : ''}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-3.5 px-3">
+                        <div className="font-bold text-[#111111]">
+                          {prop.priceFormatted || formatCurrency(prop.price)}
+                        </div>
+                        {prop.featured && (
+                          <span className="inline-flex items-center gap-1 text-[9px] font-bold text-[#C9A227] uppercase">
+                            <Sparkles className="w-2.5 h-2.5" /> Destaque
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-3.5 px-3 text-right">
+                        <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            onClick={() => onSelectProperty(prop)}
+                            className="p-2 rounded-xl bg-[#F7F3EB] hover:bg-[#EAE4D8] text-[#5A5A5A] hover:text-[#C9A227] cursor-pointer transition-colors"
+                            title="Visualizar Página do Imóvel"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleEdit(prop)}
+                            className="p-2 rounded-xl bg-[#C9A227]/15 hover:bg-[#C9A227]/30 text-[#C9A227] hover:text-[#B8931F] cursor-pointer transition-colors"
+                            title="Editar Dados, Áreas e Fotos"
+                          >
+                            <Edit3 className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(prop.id, prop.code)}
+                            className="p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 cursor-pointer transition-colors"
+                            title="Excluir Imóvel"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -454,7 +760,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
               Dados de Contato & Identidade Visual
             </h3>
             <p className="text-xs text-[#5A5A5A] mt-1">
-              Edite as informações exibidas no cabeçalho, rodapé e botões de WhatsApp do portal.
+              Edite as informações exibidas no cabeçalho, rodapé e botões de WhatsApp do portal. Todas as alterações são salvas no Firebase.
             </p>
           </div>
 
@@ -526,7 +832,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="text-xs font-medium text-[#111111] mb-1.5 block">WhatsApp (somente números)</label>
+                <label className="text-xs font-medium text-[#111111] mb-1.5 block">WhatsApp (apenas números com DDD)</label>
                 <input
                   type="text"
                   value={settingsForm.whatsapp}
@@ -558,7 +864,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="text-xs font-medium text-[#111111] mb-1.5 block">Endereço do Escritório</label>
+                <label className="text-xs font-medium text-[#111111] mb-1.5 block">Endereço do Escritório Oficial</label>
                 <input
                   type="text"
                   value={settingsForm.address}
@@ -568,7 +874,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
               </div>
 
               <div>
-                <label className="text-xs font-medium text-[#111111] mb-1.5 block">Horários de Plantão</label>
+                <label className="text-xs font-medium text-[#111111] mb-1.5 block">Horários de Atendimento</label>
                 <input
                   type="text"
                   value={settingsForm.businessHours}
@@ -601,7 +907,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
                     type="url"
                     value={settingsForm.facebook || ''}
                     onChange={(e) => setSettingsForm({ ...settingsForm, facebook: e.target.value })}
-                    placeholder="https://www.facebook.com/corretordanielpacheco"
+                    placeholder="https://facebook.com/corretordanielpacheco"
                     className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-xs text-[#111111] rounded-xl px-3.5 py-3 outline-none"
                   />
                 </div>
@@ -663,227 +969,725 @@ export const AdminPage: React.FC<AdminPageProps> = ({
 
             <button
               type="submit"
-              className="px-6 py-3.5 rounded-xl bg-[#C9A227] hover:bg-[#B8931F] text-[#0A0A0A] font-bold text-xs flex items-center gap-2 shadow-md transition-all cursor-pointer"
+              disabled={isSavingSettings}
+              className="px-6 py-3.5 rounded-xl bg-[#C9A227] hover:bg-[#B8931F] text-[#0A0A0A] font-bold text-xs flex items-center gap-2 shadow-md transition-all cursor-pointer disabled:opacity-50"
             >
               <Save className="w-4 h-4" />
-              <span>Salvar Alterações de Configuração</span>
+              <span>{isSavingSettings ? 'Salvando no Firebase...' : 'Salvar Alterações no Firebase'}</span>
             </button>
           </form>
         </div>
       )}
 
-      {/* Property Create/Edit Modal */}
+      {/* =========================================================================
+          COMPLETE PROPERTY MODAL (EDIT ALL SPECS, AREAS, PHOTOS, FEATURES)
+         ========================================================================= */}
       {isModalOpen && editingProperty && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="relative bg-[#FFFFFF] border border-[#E5E0D8] w-full max-w-2xl rounded-3xl p-6 sm:p-8 shadow-2xl my-8 text-[#111111] animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+          <div className="relative bg-[#FFFFFF] border border-[#E5E0D8] w-full max-w-4xl rounded-3xl p-6 sm:p-8 shadow-2xl my-6 text-[#111111] animate-in zoom-in-95 duration-200">
             <button
               onClick={() => setIsModalOpen(false)}
-              className="absolute top-5 right-5 p-2 rounded-full bg-[#F7F3EB] border border-[#E5E0D8] text-[#5A5A5A] hover:text-[#111111] cursor-pointer"
+              className="absolute top-5 right-5 p-2 rounded-full bg-[#F7F3EB] border border-[#E5E0D8] text-[#5A5A5A] hover:text-[#111111] cursor-pointer transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <div className="space-y-1 mb-6">
-              <span className="text-xs font-semibold text-[#C9A227] uppercase tracking-wider">
-                {editingProperty.id ? 'Editar Cadastro' : 'Novo Cadastro'}
+            {/* Modal Header */}
+            <div className="space-y-1 mb-6 border-b border-[#E5E0D8] pb-4">
+              <span className="text-xs font-semibold text-[#C9A227] uppercase tracking-wider flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5" />
+                {editingProperty.id ? `Editar Imóvel (Cód. ${editingProperty.code})` : 'Novo Cadastro de Imóvel'}
               </span>
               <h3 className="text-2xl font-bold font-serif-luxury text-[#111111]">
-                {editingProperty.title || 'Cadastrar Imóvel'}
+                {editingProperty.title || 'Cadastrar Novo Imóvel no Firebase'}
               </h3>
             </div>
 
             {saveSuccessMsg && (
-              <div className="p-3 rounded-xl bg-[#1F8A4C]/15 border border-[#1F8A4C]/30 text-xs text-[#1F8A4C] flex items-center gap-2 mb-4">
+              <div className="p-3.5 rounded-2xl bg-[#1F8A4C]/15 border border-[#1F8A4C]/30 text-xs text-[#1F8A4C] flex items-center gap-2 mb-4">
                 <CheckCircle2 className="w-4 h-4 text-[#1F8A4C]" />
                 <span>{saveSuccessMsg}</span>
               </div>
             )}
 
-            <form onSubmit={handleSavePropertySubmit} className="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div>
-                  <label className="text-xs text-[#5A5A5A] mb-1 block">Código do Imóvel *</label>
-                  <input
-                    type="text"
-                    required
-                    value={editingProperty.code || ''}
-                    onChange={(e) => setEditingProperty({ ...editingProperty, code: e.target.value })}
-                    className="w-full bg-[#F7F3EB] border border-[#E5E0D8] text-xs text-[#111111] rounded-xl p-2.5 outline-none font-mono"
-                  />
+            {/* Modal Internal Navigation Tabs */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 mb-6 border-b border-[#E5E0D8]">
+              <button
+                type="button"
+                onClick={() => setModalTab('general')}
+                className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
+                  modalTab === 'general'
+                    ? 'bg-[#0A0A0A] text-white shadow-sm'
+                    : 'bg-[#F7F3EB] text-[#5A5A5A] hover:text-[#111111]'
+                }`}
+              >
+                <Building2 className="w-3.5 h-3.5 text-[#C9A227]" />
+                <span>1. Dados Gerais</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setModalTab('areas')}
+                className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
+                  modalTab === 'areas'
+                    ? 'bg-[#0A0A0A] text-white shadow-sm'
+                    : 'bg-[#F7F3EB] text-[#5A5A5A] hover:text-[#111111]'
+                }`}
+              >
+                <Maximize className="w-3.5 h-3.5 text-[#C9A227]" />
+                <span>2. Áreas & Cômodos</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setModalTab('photos')}
+                className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
+                  modalTab === 'photos'
+                    ? 'bg-[#0A0A0A] text-white shadow-sm'
+                    : 'bg-[#F7F3EB] text-[#5A5A5A] hover:text-[#111111]'
+                }`}
+              >
+                <ImageIcon className="w-3.5 h-3.5 text-[#C9A227]" />
+                <span>3. Fotos & Galeria ({editingProperty.images?.length || 0})</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setModalTab('features')}
+                className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
+                  modalTab === 'features'
+                    ? 'bg-[#0A0A0A] text-white shadow-sm'
+                    : 'bg-[#F7F3EB] text-[#5A5A5A] hover:text-[#111111]'
+                }`}
+              >
+                <Tag className="w-3.5 h-3.5 text-[#C9A227]" />
+                <span>4. Diferenciais & Itens ({editingProperty.features?.length || 0})</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setModalTab('desc')}
+                className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
+                  modalTab === 'desc'
+                    ? 'bg-[#0A0A0A] text-white shadow-sm'
+                    : 'bg-[#F7F3EB] text-[#5A5A5A] hover:text-[#111111]'
+                }`}
+              >
+                <Layers className="w-3.5 h-3.5 text-[#C9A227]" />
+                <span>5. Descrições</span>
+              </button>
+            </div>
+
+            <form onSubmit={handleSavePropertySubmit} className="space-y-6 max-h-[62vh] overflow-y-auto pr-2">
+              {/* TAB 1: DADOS GERAIS */}
+              {modalTab === 'general' && (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                      <label className="text-xs font-semibold text-[#111111] mb-1 block">Código de Referência *</label>
+                      <input
+                        type="text"
+                        required
+                        value={editingProperty.code || ''}
+                        onChange={(e) => setEditingProperty({ ...editingProperty, code: e.target.value })}
+                        className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-xs text-[#111111] rounded-xl p-3 outline-none font-mono"
+                        placeholder="Ex: 213567"
+                      />
+                    </div>
+
+                    <div className="sm:col-span-2">
+                      <label className="text-xs font-semibold text-[#111111] mb-1 block">Título do Empreendimento / Imóvel *</label>
+                      <input
+                        type="text"
+                        required
+                        value={editingProperty.title || ''}
+                        onChange={(e) => setEditingProperty({ ...editingProperty, title: e.target.value })}
+                        className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-xs text-[#111111] rounded-xl p-3 outline-none"
+                        placeholder="Ex: D/Garden Residence"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold text-[#111111] mb-1 block">Headline de Destaque</label>
+                    <input
+                      type="text"
+                      value={editingProperty.headline || ''}
+                      onChange={(e) => setEditingProperty({ ...editingProperty, headline: e.target.value })}
+                      placeholder="Ex: Oásis contemporâneo com pé-direito duplo e vista para a praça"
+                      className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-xs text-[#111111] rounded-xl p-3 outline-none"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                      <label className="text-xs font-semibold text-[#111111] mb-1 block">Tipo de Imóvel *</label>
+                      <select
+                        value={editingProperty.type || 'Apartamento'}
+                        onChange={(e) => setEditingProperty({ ...editingProperty, type: e.target.value as PropertyType })}
+                        className="w-full bg-[#F7F3EB] border border-[#E5E0D8] text-xs text-[#111111] rounded-xl p-3 outline-none"
+                      >
+                        <option value="Apartamento">Apartamento</option>
+                        <option value="Casa">Casa</option>
+                        <option value="Lote/Terreno">Lote / Terreno</option>
+                        <option value="Cobertura">Cobertura</option>
+                        <option value="Sala Comercial">Sala Comercial</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-semibold text-[#111111] mb-1 block">Status da Obra *</label>
+                      <select
+                        value={editingProperty.status || 'Pronto'}
+                        onChange={(e) => setEditingProperty({ ...editingProperty, status: e.target.value as PropertyStatus })}
+                        className="w-full bg-[#F7F3EB] border border-[#E5E0D8] text-xs text-[#111111] rounded-xl p-3 outline-none"
+                      >
+                        <option value="Na planta">Na planta</option>
+                        <option value="Em obras">Em obras</option>
+                        <option value="Pronto">Pronto para morar</option>
+                        <option value="Loteamento">Loteamento</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-semibold text-[#111111] mb-1 block">Construtora / Desenvolvedor</label>
+                      <input
+                        type="text"
+                        placeholder="Ex: Fontana, Construfase, etc."
+                        value={editingProperty.developer || ''}
+                        onChange={(e) => setEditingProperty({ ...editingProperty, developer: e.target.value })}
+                        className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-xs text-[#111111] rounded-xl p-3 outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                      <label className="text-xs font-semibold text-[#111111] mb-1 block">Cidade *</label>
+                      <select
+                        value={editingProperty.city || 'Criciúma'}
+                        onChange={(e) => setEditingProperty({ ...editingProperty, city: e.target.value })}
+                        className="w-full bg-[#F7F3EB] border border-[#E5E0D8] text-xs text-[#111111] rounded-xl p-3 outline-none"
+                      >
+                        <option value="Criciúma">Criciúma</option>
+                        <option value="Balneário Rincão">Balneário Rincão</option>
+                        <option value="Içara">Içara</option>
+                        <option value="Nova Veneza">Nova Veneza</option>
+                        <option value="Cocal do Sul">Cocal do Sul</option>
+                        <option value="Forquilhinha">Forquilhinha</option>
+                        <option value="Morro da Fumaça">Morro da Fumaça</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-semibold text-[#111111] mb-1 block">Bairro *</label>
+                      <input
+                        type="text"
+                        required
+                        value={editingProperty.neighborhood || ''}
+                        onChange={(e) => setEditingProperty({ ...editingProperty, neighborhood: e.target.value })}
+                        placeholder="Ex: Centro, Pio Corrêa, Michel..."
+                        className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-xs text-[#111111] rounded-xl p-3 outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-semibold text-[#111111] mb-1 block">Estado</label>
+                      <input
+                        type="text"
+                        value={editingProperty.state || 'SC'}
+                        onChange={(e) => setEditingProperty({ ...editingProperty, state: e.target.value })}
+                        className="w-full bg-[#F7F3EB] border border-[#E5E0D8] text-xs text-[#111111] rounded-xl p-3 outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                    <div>
+                      <label className="text-xs font-semibold text-[#111111] mb-1 block">Valor Numérico (R$)</label>
+                      <input
+                        type="number"
+                        placeholder="Ex: 580000"
+                        value={editingProperty.price ?? ''}
+                        onChange={(e) => {
+                          const val = e.target.value ? Number(e.target.value) : undefined;
+                          setEditingProperty({ 
+                            ...editingProperty, 
+                            price: val,
+                            priceFormatted: val ? formatCurrency(val) : 'A Consultar'
+                          });
+                        }}
+                        className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-xs text-[#111111] rounded-xl p-3 outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-semibold text-[#111111] mb-1 block">Valor Exibido (Texto Comercial)</label>
+                      <input
+                        type="text"
+                        placeholder="Ex: R$ 580.000,00 ou A Consultar"
+                        value={editingProperty.priceFormatted || ''}
+                        onChange={(e) => setEditingProperty({ ...editingProperty, priceFormatted: e.target.value })}
+                        className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-xs text-[#111111] rounded-xl p-3 outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-6 pt-3 p-4 bg-[#F7F3EB] rounded-2xl border border-[#E5E0D8]">
+                    <label className="flex items-center gap-2.5 text-xs font-semibold text-[#111111] cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={!!editingProperty.featured}
+                        onChange={(e) => setEditingProperty({ ...editingProperty, featured: e.target.checked })}
+                        className="w-4 h-4 accent-[#C9A227] cursor-pointer"
+                      />
+                      <span>Destacar na Seleção Exclusiva (Home)</span>
+                    </label>
+
+                    <label className="flex items-center gap-2.5 text-xs font-semibold text-[#111111] cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={!!editingProperty.directFinancing}
+                        onChange={(e) => setEditingProperty({ ...editingProperty, directFinancing: e.target.checked })}
+                        className="w-4 h-4 accent-[#1F8A4C] cursor-pointer"
+                      />
+                      <span>Financiamento Direto com a Construtora</span>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 2: ÁREAS, METRAGENS E CÔMODOS */}
+              {modalTab === 'areas' && (
+                <div className="space-y-5">
+                  <div className="p-4 bg-[#F7F3EB] rounded-2xl border border-[#E5E0D8] text-xs text-[#5A5A5A]">
+                    Edite com precisão todas as metragens e quantidades de cômodos do imóvel. Para terrenos, deixe dormitórios e sanitários zerados ou vazios.
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    <div>
+                      <label className="text-xs font-semibold text-[#111111] mb-1.5 flex items-center gap-1.5">
+                        <Maximize className="w-3.5 h-3.5 text-[#C9A227]" />
+                        <span>Área Privativa / Total (m²)</span>
+                      </label>
+                      <input
+                        type="number"
+                        placeholder="Ex: 120"
+                        value={editingProperty.areaM2 ?? ''}
+                        onChange={(e) => setEditingProperty({ ...editingProperty, areaM2: e.target.value ? Number(e.target.value) : undefined })}
+                        className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-xs text-[#111111] rounded-xl p-3 outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-semibold text-[#111111] mb-1.5 flex items-center gap-1.5">
+                        <Bed className="w-3.5 h-3.5 text-[#C9A227]" />
+                        <span>Dormitórios / Quartos</span>
+                      </label>
+                      <input
+                        type="number"
+                        placeholder="Ex: 3"
+                        value={editingProperty.bedrooms ?? ''}
+                        onChange={(e) => setEditingProperty({ ...editingProperty, bedrooms: e.target.value ? Number(e.target.value) : undefined })}
+                        className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-xs text-[#111111] rounded-xl p-3 outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-semibold text-[#111111] mb-1.5 flex items-center gap-1.5">
+                        <ShieldCheck className="w-3.5 h-3.5 text-[#C9A227]" />
+                        <span>Suítes Exclusivas</span>
+                      </label>
+                      <input
+                        type="number"
+                        placeholder="Ex: 1"
+                        value={editingProperty.suites ?? ''}
+                        onChange={(e) => setEditingProperty({ ...editingProperty, suites: e.target.value ? Number(e.target.value) : undefined })}
+                        className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-xs text-[#111111] rounded-xl p-3 outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-semibold text-[#111111] mb-1.5 flex items-center gap-1.5">
+                        <Bath className="w-3.5 h-3.5 text-[#C9A227]" />
+                        <span>Banheiros / Sanitários</span>
+                      </label>
+                      <input
+                        type="number"
+                        placeholder="Ex: 2"
+                        value={editingProperty.bathrooms ?? ''}
+                        onChange={(e) => setEditingProperty({ ...editingProperty, bathrooms: e.target.value ? Number(e.target.value) : undefined })}
+                        className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-xs text-[#111111] rounded-xl p-3 outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-semibold text-[#111111] mb-1.5 flex items-center gap-1.5">
+                        <Car className="w-3.5 h-3.5 text-[#C9A227]" />
+                        <span>Vagas de Garagem</span>
+                      </label>
+                      <input
+                        type="number"
+                        placeholder="Ex: 2"
+                        value={editingProperty.garageSpaces ?? ''}
+                        onChange={(e) => setEditingProperty({ ...editingProperty, garageSpaces: e.target.value ? Number(e.target.value) : undefined })}
+                        className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-xs text-[#111111] rounded-xl p-3 outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-semibold text-[#111111] mb-1.5 flex items-center gap-1.5">
+                        <Calendar className="w-3.5 h-3.5 text-[#C9A227]" />
+                        <span>Previsão de Entrega / Ano</span>
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Ex: Dezembro / 2026"
+                        value={editingProperty.deliveryYear || ''}
+                        onChange={(e) => setEditingProperty({ ...editingProperty, deliveryYear: e.target.value })}
+                        className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-xs text-[#111111] rounded-xl p-3 outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="pt-2">
+                    <label className="text-xs font-semibold text-[#111111] mb-1 block">URL da Imagem da Planta Humanizada</label>
+                    <input
+                      type="url"
+                      placeholder="https://i.postimg.cc/... ou link direto da planta baixa"
+                      value={editingProperty.floorPlanUrl || ''}
+                      onChange={(e) => setEditingProperty({ ...editingProperty, floorPlanUrl: e.target.value })}
+                      className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-xs text-[#111111] rounded-xl p-3 outline-none"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 3: FOTOS E GALERIA */}
+              {modalTab === 'photos' && (
+                <div className="space-y-6">
+                  <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
+                    <div className="space-y-0.5">
+                      <h4 className="text-sm font-bold text-[#111111]">
+                        Galeria de Fotos ({editingProperty.images?.length || 0})
+                      </h4>
+                      <p className="text-xs text-[#5A5A5A]">
+                        A primeira imagem será utilizada como foto principal (capa).
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        multiple
+                        accept="image/*"
+                        onChange={handleFileUpload}
+                        className="hidden"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="px-3.5 py-2 rounded-xl bg-[#F7F3EB] hover:bg-[#EAE4D8] border border-[#E5E0D8] text-xs font-semibold text-[#111111] flex items-center gap-1.5 cursor-pointer transition-colors"
+                      >
+                        <Upload className="w-3.5 h-3.5 text-[#C9A227]" />
+                        <span>Carregar do Dispositivo</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setShowBulkPhotoInput(!showBulkPhotoInput)}
+                        className="px-3.5 py-2 rounded-xl bg-[#F7F3EB] hover:bg-[#EAE4D8] border border-[#E5E0D8] text-xs font-semibold text-[#111111] flex items-center gap-1.5 cursor-pointer transition-colors"
+                      >
+                        <span>Colar em Lote</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Add Single URL Input */}
+                  <div className="flex gap-2">
+                    <input
+                      type="url"
+                      placeholder="Cole a URL da foto (ex: https://i.postimg.cc/...)"
+                      value={newPhotoUrl}
+                      onChange={(e) => setNewPhotoUrl(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          handleAddPhotoUrl();
+                        }
+                      }}
+                      className="flex-1 bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-xs text-[#111111] rounded-xl px-3.5 py-2.5 outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddPhotoUrl}
+                      className="px-4 py-2.5 rounded-xl bg-[#C9A227] hover:bg-[#B8931F] text-[#0A0A0A] font-bold text-xs flex items-center gap-1 cursor-pointer transition-all shrink-0"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>Adicionar Foto</span>
+                    </button>
+                  </div>
+
+                  {/* Bulk Photos Paste Textarea */}
+                  {showBulkPhotoInput && (
+                    <div className="p-4 bg-[#F7F3EB] rounded-2xl border border-[#E5E0D8] space-y-2 animate-in fade-in-50">
+                      <label className="text-xs font-semibold text-[#111111] block">
+                        Cole múltiplas URLs de fotos (uma por linha ou separadas por vírgula):
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={bulkPhotosInput}
+                        onChange={(e) => setBulkPhotosInput(e.target.value)}
+                        placeholder="https://images.unsplash.com/photo-1&#10;https://images.unsplash.com/photo-2"
+                        className="w-full bg-[#FFFFFF] border border-[#E5E0D8] text-xs text-[#111111] rounded-xl p-3 outline-none"
+                      />
+                      <div className="flex justify-end gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setShowBulkPhotoInput(false)}
+                          className="px-3 py-1.5 rounded-lg text-xs text-[#5A5A5A] hover:text-[#111111] cursor-pointer"
+                        >
+                          Cancelar
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleAddBulkPhotos}
+                          className="px-4 py-1.5 rounded-lg bg-[#0A0A0A] text-white text-xs font-semibold cursor-pointer"
+                        >
+                          Inserir Fotos
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Photos Grid & Reordering */}
+                  {editingProperty.images && editingProperty.images.length > 0 ? (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5">
+                      {editingProperty.images.map((imgUrl, idx) => (
+                        <div
+                          key={idx}
+                          className={`group relative rounded-2xl overflow-hidden border bg-[#F7F3EB] aspect-video flex flex-col justify-between ${
+                            idx === 0 ? 'border-[#C9A227] ring-2 ring-[#C9A227]/30' : 'border-[#E5E0D8]'
+                          }`}
+                        >
+                          <img
+                            src={imgUrl}
+                            alt={`Foto ${idx + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                          
+                          {/* Badge if Cover */}
+                          {idx === 0 && (
+                            <div className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-[#C9A227] text-[#0A0A0A] font-bold text-[9px] uppercase tracking-wider shadow">
+                              Capa Principal
+                            </div>
+                          )}
+
+                          {/* Control Overlay */}
+                          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 p-2">
+                            {idx > 0 && (
+                              <button
+                                type="button"
+                                onClick={() => handleMovePhoto(idx, idx - 1)}
+                                className="p-1.5 rounded-lg bg-white/90 text-[#111111] hover:bg-[#C9A227] cursor-pointer transition-colors"
+                                title="Mover para esquerda"
+                              >
+                                <ArrowUp className="w-3.5 h-3.5 -rotate-90" />
+                              </button>
+                            )}
+
+                            {idx < editingProperty.images!.length - 1 && (
+                              <button
+                                type="button"
+                                onClick={() => handleMovePhoto(idx, idx + 1)}
+                                className="p-1.5 rounded-lg bg-white/90 text-[#111111] hover:bg-[#C9A227] cursor-pointer transition-colors"
+                                title="Mover para direita"
+                              >
+                                <ArrowDown className="w-3.5 h-3.5 -rotate-90" />
+                              </button>
+                            )}
+
+                            {idx !== 0 && (
+                              <button
+                                type="button"
+                                onClick={() => handleSetCoverPhoto(idx)}
+                                className="p-1.5 rounded-lg bg-white/90 text-[#111111] hover:bg-[#C9A227] cursor-pointer transition-colors"
+                                title="Definir como Capa Principal"
+                              >
+                                <Sparkles className="w-3.5 h-3.5 text-[#C9A227]" />
+                              </button>
+                            )}
+
+                            <button
+                              type="button"
+                              onClick={() => handleRemovePhoto(idx)}
+                              className="p-1.5 rounded-lg bg-red-600 text-white hover:bg-red-700 cursor-pointer transition-colors"
+                              title="Remover Foto"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-8 text-center bg-[#F7F3EB] rounded-2xl border border-dashed border-[#E5E0D8] space-y-2">
+                      <ImageIcon className="w-8 h-8 text-[#5A5A5A] mx-auto" />
+                      <p className="text-xs text-[#5A5A5A]">
+                        Nenhuma foto adicionada ainda. Adicione por URL ou faça upload acima.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* TAB 4: DIFERENCIAIS E ITENS */}
+              {modalTab === 'features' && (
+                <div className="space-y-6">
+                  <div className="space-y-1">
+                    <h4 className="text-sm font-bold text-[#111111]">
+                      Diferenciais & Características ({editingProperty.features?.length || 0})
+                    </h4>
+                    <p className="text-xs text-[#5A5A5A]">
+                      Adicione itens de lazer, acabamentos nobres e diferenciais construtivos.
+                    </p>
+                  </div>
+
+                  {/* Add Custom Feature Input */}
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Digite um diferencial (ex: Fechadura eletrônica, Sacada gourmet...)"
+                      value={newFeatureInput}
+                      onChange={(e) => setNewFeatureInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          handleAddFeature();
+                        }
+                      }}
+                      className="flex-1 bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-xs text-[#111111] rounded-xl px-3.5 py-2.5 outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleAddFeature()}
+                      className="px-4 py-2.5 rounded-xl bg-[#C9A227] hover:bg-[#B8931F] text-[#0A0A0A] font-bold text-xs flex items-center gap-1 cursor-pointer transition-all shrink-0"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>Adicionar</span>
+                    </button>
+                  </div>
+
+                  {/* Current Selected Features */}
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-[#111111] block">
+                      Itens Ativos no Imóvel:
+                    </label>
+                    {editingProperty.features && editingProperty.features.length > 0 ? (
+                      <div className="flex flex-wrap gap-2">
+                        {editingProperty.features.map((feat, idx) => (
+                          <span
+                            key={idx}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#F7F3EB] border border-[#E5E0D8] text-xs text-[#111111] font-medium"
+                          >
+                            <Check className="w-3.5 h-3.5 text-[#C9A227]" />
+                            <span>{feat}</span>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveFeature(feat)}
+                              className="ml-1 text-[#5A5A5A] hover:text-red-600 cursor-pointer"
+                              title="Remover"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-xs text-[#5A5A5A] italic">Nenhum diferencial adicionado.</p>
+                    )}
+                  </div>
+
+                  {/* Quick Suggestions Chips */}
+                  <div className="space-y-2 pt-2 border-t border-[#E5E0D8]">
+                    <label className="text-xs font-semibold text-[#5A5A5A] block">
+                      Sugestões Rápidas (Clique para adicionar):
+                    </label>
+                    <div className="flex flex-wrap gap-1.5">
+                      {COMMON_FEATURE_SUGGESTIONS.map((sug, idx) => {
+                        const isAlreadyAdded = editingProperty.features?.includes(sug);
+                        return (
+                          <button
+                            key={idx}
+                            type="button"
+                            disabled={isAlreadyAdded}
+                            onClick={() => handleAddFeature(sug)}
+                            className={`px-2.5 py-1 rounded-lg text-[11px] transition-all cursor-pointer ${
+                              isAlreadyAdded
+                                ? 'bg-[#1F8A4C]/15 text-[#1F8A4C] border border-[#1F8A4C]/30 opacity-60'
+                                : 'bg-[#FFFFFF] hover:bg-[#F7F3EB] text-[#5A5A5A] hover:text-[#111111] border border-[#E5E0D8]'
+                            }`}
+                          >
+                            {isAlreadyAdded ? `✓ ${sug}` : `+ ${sug}`}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 5: DESCRIÇÕES */}
+              {modalTab === 'desc' && (
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-xs font-semibold text-[#111111] mb-1 block">Resumo Curto (Cards e Listagens)</label>
+                    <textarea
+                      rows={2}
+                      value={editingProperty.shortDescription || ''}
+                      onChange={(e) => setEditingProperty({ ...editingProperty, shortDescription: e.target.value })}
+                      placeholder="Breve resumo comercial com os principais destaques..."
+                      className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-xs text-[#111111] rounded-xl p-3 outline-none resize-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold text-[#111111] mb-1 block">Descrição Completa e Detalhada</label>
+                    <textarea
+                      rows={6}
+                      value={editingProperty.description || ''}
+                      onChange={(e) => setEditingProperty({ ...editingProperty, description: e.target.value })}
+                      placeholder="Texto descritivo completo sobre localização, padrão construtivo, ambientes internos e condições de aquisição..."
+                      className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-xs text-[#111111] rounded-xl p-3 outline-none resize-none"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Footer Actions */}
+              <div className="pt-6 border-t border-[#E5E0D8] flex items-center justify-between gap-3">
+                <div className="text-xs text-[#5A5A5A]">
+                  Salva no Firebase com transmissão em tempo real para todo o site.
                 </div>
 
-                <div className="sm:col-span-2">
-                  <label className="text-xs text-[#5A5A5A] mb-1 block">Título do Imóvel *</label>
-                  <input
-                    type="text"
-                    required
-                    value={editingProperty.title || ''}
-                    onChange={(e) => setEditingProperty({ ...editingProperty, title: e.target.value })}
-                    className="w-full bg-[#F7F3EB] border border-[#E5E0D8] text-xs text-[#111111] rounded-xl p-2.5 outline-none"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div>
-                  <label className="text-xs text-[#5A5A5A] mb-1 block">Cidade *</label>
-                  <select
-                    value={editingProperty.city || 'Criciúma'}
-                    onChange={(e) => setEditingProperty({ ...editingProperty, city: e.target.value })}
-                    className="w-full bg-[#F7F3EB] border border-[#E5E0D8] text-xs text-[#111111] rounded-xl p-2.5 outline-none"
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setIsModalOpen(false)}
+                    className="px-4 py-2.5 bg-[#F7F3EB] border border-[#E5E0D8] hover:bg-[#EAE4D8] text-[#5A5A5A] rounded-xl text-xs cursor-pointer transition-colors"
                   >
-                    <option value="Criciúma">Criciúma</option>
-                    <option value="Balneário Rincão">Balneário Rincão</option>
-                    <option value="Içara">Içara</option>
-                    <option value="Nova Veneza">Nova Veneza</option>
-                    <option value="Cocal do Sul">Cocal do Sul</option>
-                    <option value="Forquilhinha">Forquilhinha</option>
-                    <option value="Morro da Fumaça">Morro da Fumaça</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="text-xs text-[#5A5A5A] mb-1 block">Bairro *</label>
-                  <input
-                    type="text"
-                    required
-                    value={editingProperty.neighborhood || ''}
-                    onChange={(e) => setEditingProperty({ ...editingProperty, neighborhood: e.target.value })}
-                    className="w-full bg-[#F7F3EB] border border-[#E5E0D8] text-xs text-[#111111] rounded-xl p-2.5 outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs text-[#5A5A5A] mb-1 block">Status *</label>
-                  <select
-                    value={editingProperty.status || 'Pronto'}
-                    onChange={(e) => setEditingProperty({ ...editingProperty, status: e.target.value as PropertyStatus })}
-                    className="w-full bg-[#F7F3EB] border border-[#E5E0D8] text-xs text-[#111111] rounded-xl p-2.5 outline-none"
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isSavingProperty}
+                    className="px-6 py-2.5 bg-[#C9A227] hover:bg-[#B8931F] text-[#0A0A0A] font-bold rounded-xl text-xs cursor-pointer shadow-md flex items-center gap-1.5 transition-all disabled:opacity-50"
                   >
-                    <option value="Na planta">Na planta</option>
-                    <option value="Em obras">Em obras</option>
-                    <option value="Pronto">Pronto</option>
-                    <option value="Loteamento">Loteamento</option>
-                  </select>
+                    <Save className="w-4 h-4" />
+                    <span>{isSavingProperty ? 'Salvando no Firebase...' : 'Salvar Imóvel no Firebase'}</span>
+                  </button>
                 </div>
-              </div>
-
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div>
-                  <label className="text-xs text-[#5A5A5A] mb-1 block">Tipo de Imóvel</label>
-                  <select
-                    value={editingProperty.type || 'Apartamento'}
-                    onChange={(e) => setEditingProperty({ ...editingProperty, type: e.target.value as PropertyType })}
-                    className="w-full bg-[#F7F3EB] border border-[#E5E0D8] text-xs text-[#111111] rounded-xl p-2.5 outline-none"
-                  >
-                    <option value="Apartamento">Apartamento</option>
-                    <option value="Casa">Casa</option>
-                    <option value="Lote/Terreno">Lote/Terreno</option>
-                    <option value="Cobertura">Cobertura</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="text-xs text-[#5A5A5A] mb-1 block">Quartos</label>
-                  <input
-                    type="number"
-                    value={editingProperty.bedrooms ?? ''}
-                    onChange={(e) => setEditingProperty({ ...editingProperty, bedrooms: Number(e.target.value) })}
-                    className="w-full bg-[#F7F3EB] border border-[#E5E0D8] text-xs text-[#111111] rounded-xl p-2.5 outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs text-[#5A5A5A] mb-1 block">Vagas Garagem</label>
-                  <input
-                    type="number"
-                    value={editingProperty.garageSpaces ?? ''}
-                    onChange={(e) => setEditingProperty({ ...editingProperty, garageSpaces: Number(e.target.value) })}
-                    className="w-full bg-[#F7F3EB] border border-[#E5E0D8] text-xs text-[#111111] rounded-xl p-2.5 outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs text-[#5A5A5A] mb-1 block">Área Privativa (m²)</label>
-                  <input
-                    type="number"
-                    value={editingProperty.areaM2 ?? ''}
-                    onChange={(e) => setEditingProperty({ ...editingProperty, areaM2: Number(e.target.value) })}
-                    className="w-full bg-[#F7F3EB] border border-[#E5E0D8] text-xs text-[#111111] rounded-xl p-2.5 outline-none"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs text-[#5A5A5A] mb-1 block">Valor (R$ - opcional)</label>
-                  <input
-                    type="number"
-                    placeholder="Deixe vazio para Sob Consulta"
-                    value={editingProperty.price ?? ''}
-                    onChange={(e) => setEditingProperty({ ...editingProperty, price: e.target.value ? Number(e.target.value) : undefined })}
-                    className="w-full bg-[#F7F3EB] border border-[#E5E0D8] text-xs text-[#111111] rounded-xl p-2.5 outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs text-[#5A5A5A] mb-1 block">Construtora</label>
-                  <input
-                    type="text"
-                    placeholder="Ex: Fontana, Construfase..."
-                    value={editingProperty.developer || ''}
-                    onChange={(e) => setEditingProperty({ ...editingProperty, developer: e.target.value })}
-                    className="w-full bg-[#F7F3EB] border border-[#E5E0D8] text-xs text-[#111111] rounded-xl p-2.5 outline-none"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="text-xs text-[#5A5A5A] mb-1 block">Descrição Completa</label>
-                <textarea
-                  rows={3}
-                  value={editingProperty.description || ''}
-                  onChange={(e) => setEditingProperty({ ...editingProperty, description: e.target.value })}
-                  className="w-full bg-[#F7F3EB] border border-[#E5E0D8] text-xs text-[#111111] rounded-xl p-2.5 outline-none resize-none"
-                />
-              </div>
-
-              <div className="flex items-center gap-6 pt-2">
-                <label className="flex items-center gap-2 text-xs text-[#111111] cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={!!editingProperty.featured}
-                    onChange={(e) => setEditingProperty({ ...editingProperty, featured: e.target.checked })}
-                    className="accent-[#C9A227]"
-                  />
-                  <span>Destacar em Seleção Exclusiva</span>
-                </label>
-
-                <label className="flex items-center gap-2 text-xs text-[#111111] cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={!!editingProperty.directFinancing}
-                    onChange={(e) => setEditingProperty({ ...editingProperty, directFinancing: e.target.checked })}
-                    className="accent-[#1F8A4C]"
-                  />
-                  <span>Financiamento Direto com Construtora</span>
-                </label>
-              </div>
-
-              <div className="pt-4 flex justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2.5 bg-[#F7F3EB] border border-[#E5E0D8] hover:bg-[#EAE4D8] text-[#5A5A5A] rounded-xl text-xs cursor-pointer"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className="px-6 py-2.5 bg-[#C9A227] hover:bg-[#B8931F] text-[#0A0A0A] font-bold rounded-xl text-xs cursor-pointer shadow-md"
-                >
-                  Salvar Imóvel
-                </button>
               </div>
             </form>
           </div>

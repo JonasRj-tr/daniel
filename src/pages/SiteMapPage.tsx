@@ -69,6 +69,12 @@ export const SiteMapPage: React.FC<SiteMapPageProps> = ({
               </button>
             </li>
             <li>
+              <button onClick={() => navigate('terrenos')} className="hover:text-[#111111] flex items-center gap-1.5 cursor-pointer">
+                <ArrowRight className="w-3 h-3 text-[#C9A227]" />
+                <span>Terrenos & Loteamentos (120x Direto)</span>
+              </button>
+            </li>
+            <li>
               <button onClick={() => navigate('cidades')} className="hover:text-[#111111] flex items-center gap-1.5 cursor-pointer">
                 <ArrowRight className="w-3 h-3 text-[#C9A227]" />
                 <span>Cidades Atendidas no Sul de SC</span>

@@ -139,61 +139,143 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
 
   // Structured differentials list
   const differentialsList = useMemo(() => {
-    const baseItems = [
+    if (property.features && property.features.length > 0) {
+      return property.features.map((feat, idx) => {
+        const lower = feat.toLowerCase();
+        let desc = `Item selecionado de alto padrão presente no imóvel ${property.title}.`;
+        
+        if (lower.includes('churrasqueira')) {
+          desc = 'Espaço preparado para momentos de lazer e confraternização com amigos e família.';
+        } else if (lower.includes('piscina')) {
+          desc = 'Área com piscina para relaxamento, lazer e bem-estar em dias ensolarados.';
+        } else if (lower.includes('gourmet')) {
+          desc = 'Ambiente finamente planejado para experiências gastronômicas e recepções.';
+        } else if (lower.includes('mobiliado')) {
+          desc = 'Unidade com móveis sob medida instalados com alto padrão de marcenaria.';
+        } else if (lower.includes('semi-mobiliado')) {
+          desc = 'Unidade com móveis planejados fixos nos principais ambientes.';
+        } else if (lower.includes('edícula')) {
+          desc = 'Edícula anexa para suporte, espaço gourmet privativo ou dependência independente.';
+        } else if (lower.includes('portão eletrônico')) {
+          desc = 'Acesso automatizado com conforto, agilidade e segurança diária para os moradores.';
+        } else if (lower.includes('elevador')) {
+          desc = 'Acesso facilitado por elevador moderno com alta tecnologia e segurança.';
+        } else if (lower.includes('sacada')) {
+          desc = 'Sacada arejada com vista agradável e espaço para churrasco e convivência.';
+        } else if (lower.includes('salão de festas')) {
+          desc = 'Salão social amplo e equipado para comemorações e eventos exclusivos.';
+        } else if (lower.includes('playground')) {
+          desc = 'Espaço infantil dedicado para o entretenimento seguro das crianças.';
+        } else if (lower.includes('academia')) {
+          desc = 'Espaço com aparelhos para prática regular de atividades físicas e condicionamento.';
+        } else if (lower.includes('mar') || lower.includes('frente mar')) {
+          desc = 'Vista panorâmica espetacular com brisa marítima constante e valorização garantida.';
+        } else if (lower.includes('split')) {
+          desc = 'Tubulação e pontos elétricos prontos para instalação de ar-condicionado split.';
+        } else if (lower.includes('gesso')) {
+          desc = 'Acabamento refinado com teto rebaixado em gesso e projeto luminotécnico integrado.';
+        } else if (lower.includes('escriturado') || lower.includes('construir')) {
+          desc = 'Documentação 100% regularizada, com matrícula individual e pronto para construir.';
+        } else if (lower.includes('energia') || lower.includes('água')) {
+          desc = 'Infraestrutura completa instalada com redes de energia elétrica, iluminação pública e água.';
+        } else if (lower.includes('jardim') || lower.includes('quintal')) {
+          desc = 'Área externa privativa arborizada, ideal para pets e momentos ao ar livre.';
+        }
+
+        return {
+          num: String(idx + 1).padStart(2, '0'),
+          title: feat,
+          desc,
+        };
+      });
+    }
+
+    return [
       {
         num: '01',
-        title: 'Hall de Entrada Imponente',
-        desc: 'Pé-direito duplo com acabamento nobre, entregue finamente mobiliado e decorado.',
+        title: 'Localização Estratégica',
+        desc: `Situado no bairro ${property.neighborhood} em ${property.city}, com fácil acesso a vias principais e comércios.`,
       },
       {
         num: '02',
-        title: 'Living Integrado & Sacada Gourmet',
-        desc: 'Conceito aberto que amplia a convivência com churrasqueira a carvão e vista panorâmica.',
+        title: 'Documentação Regularizada',
+        desc: 'Imóvel com documentação conferida e auditada pela consultoria imobiliária Daniel Pacheco.',
       },
       {
         num: '03',
-        title: 'Acústica & Conforto Térmico',
-        desc: 'Esquadrias de alto desempenho e mantas acústicas nas lajes para silêncio e privacidade absoluta.',
-      },
-      {
-        num: '04',
-        title: 'Segurança & Acesso Digital',
-        desc: 'Fechadura eletrônica na porta de entrada, controle de acesso biométrico e monitoramento 24h.',
-      },
-      {
-        num: '05',
-        title: 'Sustentabilidade & Eficiência',
-        desc: 'Aproveitamento de água da chuva para jardins e iluminação LED inteligente em áreas condominiais.',
-      },
-      {
-        num: '06',
-        title: 'Infraestrutura Completa para Climatização',
-        desc: 'Pontos de ar-condicionado tipo split distribuídos nos dormitórios e área social.',
+        title: 'Potencial de Valorização',
+        desc: 'Excelente retorno sobre investimento e padrão construtivo consolidado na região.',
       },
     ];
+  }, [property.features, property.title, property.neighborhood, property.city]);
 
-    if (property.features && property.features.length > 0) {
-      return property.features.slice(0, 6).map((feat, idx) => ({
-        num: String(idx + 1).padStart(2, '0'),
-        title: feat,
-        desc: `Item de destaque oficial presente no projeto ${property.title} com padrão de acabamento refinado.`,
-      }));
+  // Common Area Items (Áreas Comuns do Condomínio / Loteamento)
+  const commonAreaItems = useMemo(() => {
+    // Standalone houses and standard individual lots have NO shared common areas
+    if (property.type === 'Casa') {
+      return [];
+    }
+    if (!property.features || property.features.length === 0) {
+      return [];
     }
 
-    return baseItems;
-  }, [property.features, property.title]);
+    const commonKeywords = [
+      'salão de festas',
+      'playground',
+      'elevador',
+      'academia',
+      'espaço gourmet',
+      'piscina',
+      'segurança 24h',
+      'pista de caminhada',
+      'quadra',
+      'brinquedoteca',
+      'portaria',
+      'interfone'
+    ];
 
-  // Leisure and Convenience items
-  const leisureItems = useMemo(() => [
-    { icon: Waves, label: 'Piscina Adulto & Infantil', desc: 'Deck molhado com solarium' },
-    { icon: Utensils, label: 'Espaço Gourmet & Churrasqueira', desc: 'Totalmente equipado para receber' },
-    { icon: Dumbbell, label: 'Academia / Fitness Center', desc: 'Equipamentos modernos e climatizados' },
-    { icon: Sparkles, label: 'Salão de Festas Exclusivo', desc: 'Mobiliário contemporâneo e acústica tratada' },
-    { icon: Trees, label: 'Playground & Brinquedoteca', desc: 'Espaço lúdico e seguro para crianças' },
-    { icon: Zap, label: 'Gerador de Energia', desc: 'Autonomia para elevadores e áreas essenciais' },
-    { icon: Lock, label: 'Guarita & Monitoramento 24h', desc: 'Controle de acesso rigoroso e CFTV' },
-    { icon: Award, label: 'Elevadores de Alta Velocidade', desc: 'Tecnologia de última geração com resgate automático' },
-  ], []);
+    const matched = property.features.filter((f) =>
+      commonKeywords.some((kw) => f.toLowerCase().includes(kw))
+    );
+
+    return matched.map((name) => {
+      const lower = name.toLowerCase();
+      let icon = Sparkles;
+      let desc = 'Ambiente exclusivo entregue equipado e decorado';
+
+      if (lower.includes('piscina')) {
+        icon = Waves;
+        desc = 'Área aquática de lazer e relaxamento para os moradores';
+      } else if (lower.includes('gourmet') || lower.includes('churrasqueira')) {
+        icon = Utensils;
+        desc = 'Espaço planejado para recepções e gastronomia';
+      } else if (lower.includes('academia') || lower.includes('fitness')) {
+        icon = Dumbbell;
+        desc = 'Espaço fitness com equipamentos para treino e saúde';
+      } else if (lower.includes('salão de festas') || lower.includes('festas')) {
+        icon = Sparkles;
+        desc = 'Salão social amplo para confraternizações e eventos';
+      } else if (lower.includes('playground') || lower.includes('brinquedoteca')) {
+        icon = Trees;
+        desc = 'Área recreativa segura dedicada às crianças';
+      } else if (lower.includes('elevador')) {
+        icon = Award;
+        desc = 'Acesso facilitado e tecnologia de transporte vertical';
+      } else if (lower.includes('segurança') || lower.includes('portaria')) {
+        icon = Lock;
+        desc = 'Monitoramento e controle de acesso para maior tranquilidade';
+      } else if (lower.includes('caminhada') || lower.includes('quadra')) {
+        icon = Compass;
+        desc = 'Espaço ao ar livre para esportes e bem-estar';
+      }
+
+      return {
+        icon,
+        label: name,
+        desc,
+      };
+    });
+  }, [property.features, property.type]);
 
   // FAQs
   const faqs = useMemo(() => [
@@ -446,13 +528,15 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
       <section id="as-residencias" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         <div className="max-w-3xl space-y-2 text-left">
           <span className="text-xs uppercase tracking-[0.25em] text-[#C9A227] font-semibold block">
-            Espaços Privativos
+            {property.type === 'Lote/Terreno' ? 'Especificações do Terreno' : 'Espaços Privativos'}
           </span>
           <h2 className="text-3xl sm:text-4xl font-serif font-bold text-[#111111] tracking-tight">
-            Características das residências.
+            {property.type === 'Lote/Terreno' ? 'Características do loteamento.' : 'Características do imóvel.'}
           </h2>
           <p className="text-sm sm:text-base text-[#5A5A5A] font-normal">
-            Dimensões generosas e inteligência de layout para acomodar sua família com absoluto requinte.
+            {property.type === 'Lote/Terreno' 
+              ? 'Dimensões exatas e infraestrutura completa para você construir com tranquilidade e valorização.'
+              : 'Dimensões reais e inteligência de layout para acomodar sua família com absoluto conforto.'}
           </p>
         </div>
 
@@ -466,46 +550,103 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
               <span className="text-[10px] uppercase font-mono text-[#5A5A5A]">Metragem</span>
             </div>
             <div className="text-3xl sm:text-4xl font-serif font-bold text-[#111111]">
-              {property.areaM2 ? `${property.areaM2}` : '120'} <span className="text-lg font-normal text-[#C9A227]">m²</span>
+              {property.areaM2 ? `${property.areaM2}` : 'Consulte'} <span className="text-lg font-normal text-[#C9A227]">{property.areaM2 ? 'm²' : ''}</span>
             </div>
-            <span className="text-xs text-[#5A5A5A] block font-medium">Área privativa</span>
+            <span className="text-xs text-[#5A5A5A] block font-medium">
+              {property.type === 'Lote/Terreno' ? 'Área total do lote' : 'Área privativa'}
+            </span>
           </div>
 
-          {/* Bedrooms Metric */}
-          <div className="bg-[#FFFFFF] border border-[#E5E0D8] rounded-2xl p-6 text-left space-y-2 hover:border-[#C9A227] transition-colors shadow-sm">
-            <div className="flex items-center justify-between text-[#C9A227]">
-              <Bed className="w-5 h-5" />
-              <span className="text-[10px] uppercase font-mono text-[#5A5A5A]">Dormitórios</span>
+          {/* Bedrooms Metric (Only if defined and > 0) */}
+          {property.bedrooms !== undefined && property.bedrooms > 0 && (
+            <div className="bg-[#FFFFFF] border border-[#E5E0D8] rounded-2xl p-6 text-left space-y-2 hover:border-[#C9A227] transition-colors shadow-sm">
+              <div className="flex items-center justify-between text-[#C9A227]">
+                <Bed className="w-5 h-5" />
+                <span className="text-[10px] uppercase font-mono text-[#5A5A5A]">Dormitórios</span>
+              </div>
+              <div className="text-3xl sm:text-4xl font-serif font-bold text-[#111111]">
+                {property.bedrooms}
+              </div>
+              <span className="text-xs text-[#5A5A5A] block font-medium">
+                {property.bedrooms === 1 ? 'Dormitório' : 'Dormitórios'}
+              </span>
             </div>
-            <div className="text-3xl sm:text-4xl font-serif font-bold text-[#111111]">
-              {property.bedrooms || 3}
-            </div>
-            <span className="text-xs text-[#5A5A5A] block font-medium">Dormitórios espaçosos</span>
-          </div>
+          )}
 
-          {/* Suites Metric */}
-          <div className="bg-[#FFFFFF] border border-[#E5E0D8] rounded-2xl p-6 text-left space-y-2 hover:border-[#C9A227] transition-colors shadow-sm">
-            <div className="flex items-center justify-between text-[#C9A227]">
-              <ShieldCheck className="w-5 h-5" />
-              <span className="text-[10px] uppercase font-mono text-[#5A5A5A]">Área Íntima</span>
+          {/* Suites Metric (Only if defined and > 0) */}
+          {property.suites !== undefined && property.suites > 0 && (
+            <div className="bg-[#FFFFFF] border border-[#E5E0D8] rounded-2xl p-6 text-left space-y-2 hover:border-[#C9A227] transition-colors shadow-sm">
+              <div className="flex items-center justify-between text-[#C9A227]">
+                <ShieldCheck className="w-5 h-5" />
+                <span className="text-[10px] uppercase font-mono text-[#5A5A5A]">Área Íntima</span>
+              </div>
+              <div className="text-3xl sm:text-4xl font-serif font-bold text-[#111111]">
+                {property.suites}
+              </div>
+              <span className="text-xs text-[#5A5A5A] block font-medium">
+                {property.suites === 1 ? 'Suíte privativa' : 'Suítes privativas'}
+              </span>
             </div>
-            <div className="text-3xl sm:text-4xl font-serif font-bold text-[#111111]">
-              {property.suites || (property.bedrooms ? Math.max(1, property.bedrooms - 1) : 1)}
-            </div>
-            <span className="text-xs text-[#5A5A5A] block font-medium">Suítes exclusivas</span>
-          </div>
+          )}
 
-          {/* Garage Spaces Metric */}
-          <div className="bg-[#FFFFFF] border border-[#E5E0D8] rounded-2xl p-6 text-left space-y-2 hover:border-[#C9A227] transition-colors shadow-sm">
-            <div className="flex items-center justify-between text-[#C9A227]">
-              <Car className="w-5 h-5" />
-              <span className="text-[10px] uppercase font-mono text-[#5A5A5A]">Vagas</span>
+          {/* Bathrooms Metric (Only if defined and > 0) */}
+          {property.bathrooms !== undefined && property.bathrooms > 0 && (
+            <div className="bg-[#FFFFFF] border border-[#E5E0D8] rounded-2xl p-6 text-left space-y-2 hover:border-[#C9A227] transition-colors shadow-sm">
+              <div className="flex items-center justify-between text-[#C9A227]">
+                <ShieldCheck className="w-5 h-5" />
+                <span className="text-[10px] uppercase font-mono text-[#5A5A5A]">Sanitários</span>
+              </div>
+              <div className="text-3xl sm:text-4xl font-serif font-bold text-[#111111]">
+                {property.bathrooms}
+              </div>
+              <span className="text-xs text-[#5A5A5A] block font-medium">
+                {property.bathrooms === 1 ? 'Banheiro' : 'Banheiros'}
+              </span>
             </div>
-            <div className="text-3xl sm:text-4xl font-serif font-bold text-[#111111]">
-              {property.garageSpaces || 2}
+          )}
+
+          {/* Garage Spaces Metric (Only if defined and > 0) */}
+          {property.garageSpaces !== undefined && property.garageSpaces > 0 && (
+            <div className="bg-[#FFFFFF] border border-[#E5E0D8] rounded-2xl p-6 text-left space-y-2 hover:border-[#C9A227] transition-colors shadow-sm">
+              <div className="flex items-center justify-between text-[#C9A227]">
+                <Car className="w-5 h-5" />
+                <span className="text-[10px] uppercase font-mono text-[#5A5A5A]">Vagas</span>
+              </div>
+              <div className="text-3xl sm:text-4xl font-serif font-bold text-[#111111]">
+                {property.garageSpaces}
+              </div>
+              <span className="text-xs text-[#5A5A5A] block font-medium">
+                {property.garageSpaces === 1 ? 'Vaga de garagem' : 'Vagas de garagem'}
+              </span>
             </div>
-            <span className="text-xs text-[#5A5A5A] block font-medium">Vagas de garagem</span>
-          </div>
+          )}
+
+          {/* If Lote/Terreno, show Type and Location Cards */}
+          {property.type === 'Lote/Terreno' && (
+            <>
+              <div className="bg-[#FFFFFF] border border-[#E5E0D8] rounded-2xl p-6 text-left space-y-2 hover:border-[#C9A227] transition-colors shadow-sm">
+                <div className="flex items-center justify-between text-[#C9A227]">
+                  <Sparkles className="w-5 h-5" />
+                  <span className="text-[10px] uppercase font-mono text-[#5A5A5A]">Categoria</span>
+                </div>
+                <div className="text-xl sm:text-2xl font-serif font-bold text-[#111111]">
+                  Lote / Terreno
+                </div>
+                <span className="text-xs text-[#5A5A5A] block font-medium">Pronto para construir</span>
+              </div>
+
+              <div className="bg-[#FFFFFF] border border-[#E5E0D8] rounded-2xl p-6 text-left space-y-2 hover:border-[#C9A227] transition-colors shadow-sm">
+                <div className="flex items-center justify-between text-[#C9A227]">
+                  <MapPin className="w-5 h-5" />
+                  <span className="text-[10px] uppercase font-mono text-[#5A5A5A]">Localização</span>
+                </div>
+                <div className="text-base sm:text-lg font-serif font-bold text-[#111111] truncate">
+                  {property.neighborhood}
+                </div>
+                <span className="text-xs text-[#5A5A5A] block font-medium">{property.city} - {property.state}</span>
+              </div>
+            </>
+          )}
 
         </div>
       </section>
@@ -589,19 +730,21 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
                 : 'bg-[#FFFFFF] text-[#5A5A5A] border border-[#E5E0D8] hover:text-[#111111] hover:bg-[#F7F3EB]'
             }`}
           >
-            Planta Tipo — Final 01 ({property.areaM2 || 120} m²)
+            {property.type === 'Lote/Terreno' ? 'Planta do Loteamento / Topografia' : `Planta do Imóvel (${property.areaM2 ? `${property.areaM2} m²` : 'Tipologia'})`}
           </button>
           
-          <button
-            onClick={() => setActivePlanTab('lazer')}
-            className={`px-4 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-              activePlanTab === 'lazer'
-                ? 'bg-[#C9A227] text-[#0A0A0A] font-bold shadow-sm'
-                : 'bg-[#FFFFFF] text-[#5A5A5A] border border-[#E5E0D8] hover:text-[#111111] hover:bg-[#F7F3EB]'
-            }`}
-          >
-            Planta de Lazer & Convivência
-          </button>
+          {commonAreaItems.length > 0 && (
+            <button
+              onClick={() => setActivePlanTab('lazer')}
+              className={`px-4 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                activePlanTab === 'lazer'
+                  ? 'bg-[#C9A227] text-[#0A0A0A] font-bold shadow-sm'
+                  : 'bg-[#FFFFFF] text-[#5A5A5A] border border-[#E5E0D8] hover:text-[#111111] hover:bg-[#F7F3EB]'
+              }`}
+            >
+              Planta de Lazer & Áreas Comuns
+            </button>
+          )}
 
           <button
             onClick={() => setActivePlanTab('3d')}
@@ -622,10 +765,16 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-[#E5E0D8] pb-4">
               <div>
                 <h4 className="text-lg font-serif font-bold text-[#111111]">
-                  Apartamento Tipo — Final 01
+                  {property.title}
                 </h4>
                 <p className="text-xs text-[#C9A227] mt-0.5 font-medium">
-                  {property.areaM2 || 120} m² de Área Privativa · {property.bedrooms || 3} Dormitórios ({property.suites || 1} Suíte) · {property.garageSpaces || 2} Vagas
+                  {[
+                    property.areaM2 ? `${property.areaM2} m²` : null,
+                    property.bedrooms ? `${property.bedrooms} Dormitórios` : null,
+                    property.suites ? `${property.suites} Suíte${property.suites > 1 ? 's' : ''}` : null,
+                    property.bathrooms ? `${property.bathrooms} Banheiro${property.bathrooms > 1 ? 's' : ''}` : null,
+                    property.garageSpaces ? `${property.garageSpaces} Vaga${property.garageSpaces > 1 ? 's' : ''}` : null,
+                  ].filter(Boolean).join(' · ')}
                 </p>
               </div>
               <a
@@ -634,7 +783,7 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
                 rel="noopener noreferrer"
                 className="text-xs font-bold text-[#C9A227] hover:text-[#111111] flex items-center gap-1.5"
               >
-                <span>Consultar disponibilidade desta tipologia</span>
+                <span>Consultar disponibilidade desta unidade</span>
                 <ExternalLink className="w-3.5 h-3.5" />
               </a>
             </div>
@@ -645,7 +794,7 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
             >
               <img
                 src={property.floorPlanUrl || images[images.length - 1] || images[0]}
-                alt="Planta Humanizada Tipo 01"
+                alt={`Planta ${property.title}`}
                 className="w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-105"
               />
               <div className="absolute top-4 right-4 bg-[#0A0A0A]/90 backdrop-blur-md px-3 py-1.5 rounded-lg text-xs text-white flex items-center gap-1.5 border border-white/10 shadow-md">
@@ -656,15 +805,15 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
           </div>
         )}
 
-        {activePlanTab === 'lazer' && (
+        {activePlanTab === 'lazer' && commonAreaItems.length > 0 && (
           <div className="bg-[#FFFFFF] border border-[#E5E0D8] rounded-3xl p-6 sm:p-8 space-y-6 shadow-sm">
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-[#E5E0D8] pb-4">
               <div>
                 <h4 className="text-lg font-serif font-bold text-[#111111]">
-                  Pavimento de Lazer & Áreas Sociais
+                  Pavimento de Lazer & Áreas Comuns
                 </h4>
                 <p className="text-xs text-[#C9A227] mt-0.5 font-medium">
-                  Ambientes integrados com piscina, espaço gourmet, academia e salão de festas.
+                  {commonAreaItems.map(i => i.label).join(' · ')}
                 </p>
               </div>
               <a
@@ -673,7 +822,7 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
                 rel="noopener noreferrer"
                 className="text-xs font-bold text-[#C9A227] hover:text-[#111111] flex items-center gap-1.5"
               >
-                <span>Solicitar book completo de plantas</span>
+                <span>Solicitar apresentação completa</span>
                 <ExternalLink className="w-3.5 h-3.5" />
               </a>
             </div>
@@ -706,13 +855,13 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
       <section id="diferenciais" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         <div className="max-w-3xl space-y-2 text-left">
           <span className="text-xs uppercase tracking-[0.25em] text-[#C9A227] font-semibold block">
-            Engenharia & Conforto
+            {property.type === 'Lote/Terreno' ? 'Diferenciais do Lote' : 'Diferenciais do Imóvel'}
           </span>
           <h2 className="text-3xl sm:text-4xl font-serif font-bold text-[#111111] tracking-tight">
-            Diferenciais que permanecem.
+            Itens que valorizam o imóvel.
           </h2>
           <p className="text-sm sm:text-base text-[#5A5A5A] font-normal">
-            Itens pensados para valorizar seu patrimônio, garantir segurança diária e proporcionar máxima comodidade.
+            Características selecionadas presentes nesta unidade para garantir conforto, segurança e rentabilidade.
           </p>
         </div>
 
@@ -738,45 +887,47 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
       </section>
 
       {/* =========================================================================
-          9. SEÇÃO "LAZER E CONVENIÊNCIA"
+          9. SEÇÃO "LAZER E CONVENIÊNCIA" (Renderizada SOMENTE se houver áreas comuns)
          ========================================================================= */}
-      <section id="lazer-conveniencia" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        <div className="max-w-3xl space-y-2 text-left">
-          <span className="text-xs uppercase tracking-[0.25em] text-[#C9A227] font-semibold block">
-            Áreas Comuns
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-serif font-bold text-[#111111] tracking-tight">
-            Lazer e conveniência.
-          </h2>
-          <p className="text-sm sm:text-base text-[#5A5A5A] font-normal">
-            Ambientes sociais entregues finamente decorados, mobiliados e climatizados pela construtora.
-          </p>
-        </div>
+      {commonAreaItems.length > 0 && (
+        <section id="lazer-conveniencia" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          <div className="max-w-3xl space-y-2 text-left">
+            <span className="text-xs uppercase tracking-[0.25em] text-[#C9A227] font-semibold block">
+              Áreas Comuns
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-serif font-bold text-[#111111] tracking-tight">
+              Lazer e conveniência do condomínio.
+            </h2>
+            <p className="text-sm sm:text-base text-[#5A5A5A] font-normal">
+              Ambientes sociais e coletivos presentes no empreendimento para conveniência dos moradores.
+            </p>
+          </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          {leisureItems.map((item, idx) => {
-            const Icon = item.icon;
-            return (
-              <div
-                key={idx}
-                className="bg-[#FFFFFF] border border-[#E5E0D8] rounded-2xl p-5 text-left space-y-3 hover:border-[#C9A227] transition-colors shadow-sm"
-              >
-                <div className="w-10 h-10 rounded-xl bg-[#F7F3EB] border border-[#E5E0D8] text-[#C9A227] flex items-center justify-center">
-                  <Icon className="w-5 h-5" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            {commonAreaItems.map((item, idx) => {
+              const Icon = item.icon;
+              return (
+                <div
+                  key={idx}
+                  className="bg-[#FFFFFF] border border-[#E5E0D8] rounded-2xl p-5 text-left space-y-3 hover:border-[#C9A227] transition-colors shadow-sm"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-[#F7F3EB] border border-[#E5E0D8] text-[#C9A227] flex items-center justify-center">
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-serif font-bold text-[#111111]">
+                      {item.label}
+                    </h3>
+                    <p className="text-[11px] text-[#5A5A5A] mt-0.5 leading-relaxed">
+                      {item.desc}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-sm font-serif font-bold text-[#111111]">
-                    {item.label}
-                  </h3>
-                  <p className="text-[11px] text-[#5A5A5A] mt-0.5 leading-relaxed">
-                    {item.desc}
-                  </p>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </section>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       {/* =========================================================================
           10. SEÇÃO "LOCALIZAÇÃO"

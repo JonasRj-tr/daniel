@@ -357,36 +357,7 @@ export const AIAssistantFloating: React.FC<AIAssistantFloatingProps> = ({
 
   return (
     <div className="fixed bottom-6 left-6 z-40 flex flex-col items-start gap-3 pointer-events-auto select-none">
-      
-      {/* 1. Interactive Tooltip Bubble (Discreet on Left) */}
-      {showTooltip && !isOpen && (
-        <div
-          id="ai-floating-bubble"
-          className="hidden sm:flex items-center gap-3 bg-[#FFFFFF] border border-[#E5E0D8] rounded-2xl p-3.5 shadow-xl max-w-xs text-xs text-[#111111] animate-in fade-in slide-in-from-bottom-2 duration-300"
-        >
-          <div className="w-8 h-8 rounded-full bg-[#C9A227] text-[#0A0A0A] flex items-center justify-center shrink-0 shadow-sm">
-            <Sparkles className="w-4 h-4 text-[#0A0A0A]" />
-          </div>
-          <div className="flex-1">
-            <p className="font-semibold text-[13px] text-[#111111] flex items-center gap-1.5">
-              <span>Assistente IA Daniel Pacheco</span>
-              <span className="w-2 h-2 rounded-full bg-[#1F8A4C] animate-pulse" />
-            </p>
-            <p className="text-[11px] text-[#5A5A5A] leading-tight">
-              Tire dúvidas rápidas e acesse as redes sociais oficiais!
-            </p>
-          </div>
-          <button
-            onClick={() => setShowTooltip(false)}
-            className="text-[#5A5A5A] hover:text-[#111111] p-1 cursor-pointer"
-            aria-label="Fechar dica"
-          >
-            <X className="w-3.5 h-3.5" />
-          </button>
-        </div>
-      )}
-
-      {/* 2. Floating AI Button (Left Side, Non-Intrusive) */}
+      {/* Floating AI Button (Left Side, Non-Intrusive) */}
       {!isOpen && (
         <div className="flex items-center gap-2.5">
           <button
@@ -409,7 +380,7 @@ export const AIAssistantFloating: React.FC<AIAssistantFloatingProps> = ({
                 Assistente IA
               </span>
               <span className="text-[9px] text-[#C9A227] font-semibold tracking-wider uppercase block mt-0.5">
-                Redes & Dúvidas
+                Imóveis & Loteamentos
               </span>
             </div>
 

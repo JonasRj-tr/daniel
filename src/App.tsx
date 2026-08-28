@@ -27,6 +27,7 @@ import { PortfolioPage } from './pages/PortfolioPage';
 import { PropertyDetailPage } from './pages/PropertyDetailPage';
 import { NaPlantaPage } from './pages/NaPlantaPage';
 import { ImoveisProntosPage } from './pages/ImoveisProntosPage';
+import { TerrenosPage } from './pages/TerrenosPage';
 import { CidadesPage } from './pages/CidadesPage';
 import { ComoEscolherPage } from './pages/ComoEscolherPage';
 import { SobrePage } from './pages/SobrePage';
@@ -174,6 +175,15 @@ export default function App() {
           />
         )}
 
+        {(currentRoute === 'terrenos' || currentRoute === 'loteamentos') && (
+          <TerrenosPage
+            properties={properties}
+            settings={settings}
+            onSelectProperty={handleSelectProperty}
+            onOpenCuratedModal={() => setIsCuratedModalOpen(true)}
+          />
+        )}
+
         {currentRoute === 'cidades' && (
           <CidadesPage
             properties={properties}
@@ -259,17 +269,17 @@ export default function App() {
       {/* Floating WhatsApp Contact Button (Right side) */}
       <WhatsAppFloatingButton settings={settings} onOpenCuratedModal={() => setIsCuratedModalOpen(true)} />
 
-      {/* Floating AI Virtual Assistant (Left side, discreet & non-intrusive) */}
-      <AIAssistantFloating 
-        settings={settings} 
-        properties={properties} 
-        onOpenCuratedModal={() => setIsCuratedModalOpen(true)} 
+      {/* Floating AI Assistant (Left side, discreet button without bubble) */}
+      <AIAssistantFloating
+        settings={settings}
+        properties={properties}
+        onOpenCuratedModal={() => setIsCuratedModalOpen(true)}
       />
 
       {/* LGPD Cookie Consent Banner */}
       <CookieBanner />
 
-      {/* 6-Second Luxury Cinematic Intro */}
+      {/* 3-Second Luxury Cinematic Intro */}
       <AnimatePresence>
         {showIntro && (
           <CinematicIntro

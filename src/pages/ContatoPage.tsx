@@ -107,8 +107,13 @@ export const ContatoPage: React.FC<ContatoPageProps> = ({ settings }) => {
             <div className="flex items-start gap-3 pb-3 border-b border-[#E5E0D8]">
               <MapPin className="w-4 h-4 text-[#C9A227] shrink-0 mt-0.5" />
               <div>
-                <span className="text-[#5A5A5A] block">Localização / Escritório</span>
-                <span className="text-[#111111] font-semibold">{settings.address || 'Rua Henrique Lage, Centro, Criciúma - SC'}</span>
+                <span className="text-[#5A5A5A] block">Endereço do Escritório</span>
+                <span className="text-[#111111] font-semibold block leading-relaxed">
+                  {settings.address || 'Rua Marcelo Lodetti 55 Condominio Ed. Florença - Criciúma - SC, 88801-510'}
+                </span>
+                <span className="text-[11px] text-[#C9A227] font-semibold block mt-1">
+                  (Atendimento somente sob agendamento)
+                </span>
               </div>
             </div>
 
@@ -116,7 +121,9 @@ export const ContatoPage: React.FC<ContatoPageProps> = ({ settings }) => {
               <Phone className="w-4 h-4 text-[#C9A227] shrink-0 mt-0.5" />
               <div>
                 <span className="text-[#5A5A5A] block">Telefone / WhatsApp</span>
-                <span className="text-[#111111] font-semibold">{settings.phone || '(48) 99800-1744'}</span>
+                <a href="tel:48998001744" className="text-[#111111] font-semibold hover:text-[#C9A227] transition-colors block">
+                  {settings.phone || '(48) 99800-1744'}
+                </a>
               </div>
             </div>
 
@@ -130,9 +137,38 @@ export const ContatoPage: React.FC<ContatoPageProps> = ({ settings }) => {
 
             <div className="flex items-start gap-3">
               <Clock className="w-4 h-4 text-[#C9A227] shrink-0 mt-0.5" />
-              <div>
-                <span className="text-[#5A5A5A] block">Horário de Plantão</span>
-                <span className="text-[#111111] font-semibold">{settings.businessHours || 'Seg a Sex: 8h30 às 19h | Sáb: 9h às 16h'}</span>
+              <div className="w-full">
+                <span className="text-[#5A5A5A] block mb-1.5 font-medium">Horário de funcionamento:</span>
+                <div className="space-y-1 text-[11px] bg-[#F9F7F4] p-3 rounded-xl border border-[#E5E0D8]">
+                  <div className="flex justify-between py-0.5 border-b border-[#E5E0D8]/60">
+                    <span className="text-[#5A5A5A]">segunda-feira</span>
+                    <span className="text-[#111111] font-semibold">08:00–18:00</span>
+                  </div>
+                  <div className="flex justify-between py-0.5 border-b border-[#E5E0D8]/60">
+                    <span className="text-[#5A5A5A]">terça-feira</span>
+                    <span className="text-[#111111] font-semibold">08:00–18:00</span>
+                  </div>
+                  <div className="flex justify-between py-0.5 border-b border-[#E5E0D8]/60">
+                    <span className="text-[#5A5A5A]">quarta-feira</span>
+                    <span className="text-[#111111] font-semibold">08:00–18:00</span>
+                  </div>
+                  <div className="flex justify-between py-0.5 border-b border-[#E5E0D8]/60">
+                    <span className="text-[#5A5A5A]">quinta-feira</span>
+                    <span className="text-[#111111] font-semibold">08:00–18:00</span>
+                  </div>
+                  <div className="flex justify-between py-0.5 border-b border-[#E5E0D8]/60">
+                    <span className="text-[#5A5A5A]">sexta-feira</span>
+                    <span className="text-[#111111] font-semibold">08:00–18:00</span>
+                  </div>
+                  <div className="flex justify-between py-0.5 border-b border-[#E5E0D8]/60">
+                    <span className="text-[#8A8A8A]">sábado</span>
+                    <span className="text-[#8A8A8A] font-medium">Fechado</span>
+                  </div>
+                  <div className="flex justify-between py-0.5">
+                    <span className="text-[#8A8A8A]">domingo</span>
+                    <span className="text-[#8A8A8A] font-medium">Fechado</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

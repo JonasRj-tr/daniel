@@ -141,6 +141,16 @@ export const Footer: React.FC<FooterProps> = ({
               </li>
               <li>
                 <button
+                  id="footer-nav-terrenos"
+                  onClick={() => handleLink('terrenos')}
+                  className="hover:text-[#C9A227] transition-colors flex items-center gap-1.5 cursor-pointer text-left"
+                >
+                  <ChevronRight className="w-3 h-3 text-[#5A5A5A] shrink-0" />
+                  <span>Terrenos & Loteamentos</span>
+                </button>
+              </li>
+              <li>
+                <button
                   id="footer-nav-sobre"
                   onClick={() => handleLink('sobre')}
                   className="hover:text-[#C9A227] transition-colors flex items-center gap-1.5 cursor-pointer text-left"
@@ -295,22 +305,70 @@ export const Footer: React.FC<FooterProps> = ({
             <h4 className="text-xs font-semibold text-[#FFFFFF] uppercase tracking-wider">
               Atendimento Consultivo
             </h4>
-            <div className="space-y-2.5 text-xs text-[#8A8A8A]">
-              <div className="flex items-start gap-2">
-                <MapPin className="w-3.5 h-3.5 text-[#C9A227] shrink-0 mt-0.5" />
-                <span>{settings.address || 'Criciúma - SC'}</span>
+            <div className="space-y-3 text-xs text-[#8A8A8A]">
+              <div className="space-y-1">
+                <div className="flex items-start gap-2">
+                  <MapPin className="w-3.5 h-3.5 text-[#C9A227] shrink-0 mt-0.5" />
+                  <div>
+                    <span className="text-[#FFFFFF] font-medium block">Endereço:</span>
+                    <span className="text-[#A3A3A3] leading-relaxed block">
+                      {settings.address || 'Rua Marcelo Lodetti 55 Condominio Ed. Florença - Criciúma - SC, 88801-510'}
+                    </span>
+                    <span className="text-[11px] text-[#C9A227] font-medium block mt-0.5">
+                      (Atendimento somente sob agendamento)
+                    </span>
+                  </div>
+                </div>
               </div>
+
               <div className="flex items-center gap-2">
                 <Phone className="w-3.5 h-3.5 text-[#C9A227] shrink-0" />
-                <span>{settings.phone || '(48) 99800-1744'}</span>
+                <div>
+                  <span className="text-[#FFFFFF] font-medium mr-1">Telefone:</span>
+                  <a
+                    href="tel:48998001744"
+                    className="text-[#A3A3A3] hover:text-[#C9A227] transition-colors font-medium"
+                  >
+                    {settings.phone || '(48) 99800-1744'}
+                  </a>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Mail className="w-3.5 h-3.5 text-[#C9A227] shrink-0" />
-                <span>{settings.email || 'daniel.pacheco@creci.org.br'}</span>
-              </div>
-              <div className="flex items-start gap-2 pt-1">
-                <Clock className="w-3.5 h-3.5 text-[#C9A227] shrink-0 mt-0.5" />
-                <span>{settings.businessHours || 'Seg a Sex: 8h30 às 19h'}</span>
+
+              <div className="space-y-1.5 pt-2 border-t border-[#222222]">
+                <div className="flex items-center gap-2">
+                  <Clock className="w-3.5 h-3.5 text-[#C9A227] shrink-0" />
+                  <span className="text-[#FFFFFF] font-medium">Horário de funcionamento:</span>
+                </div>
+                <div className="space-y-0.5 text-[11px] pl-5.5">
+                  <div className="flex justify-between py-0.5 border-b border-[#1A1A1A]">
+                    <span className="text-[#9A9A9A]">segunda-feira</span>
+                    <span className="text-[#D4D4D4] font-medium">08:00–18:00</span>
+                  </div>
+                  <div className="flex justify-between py-0.5 border-b border-[#1A1A1A]">
+                    <span className="text-[#9A9A9A]">terça-feira</span>
+                    <span className="text-[#D4D4D4] font-medium">08:00–18:00</span>
+                  </div>
+                  <div className="flex justify-between py-0.5 border-b border-[#1A1A1A]">
+                    <span className="text-[#9A9A9A]">quarta-feira</span>
+                    <span className="text-[#D4D4D4] font-medium">08:00–18:00</span>
+                  </div>
+                  <div className="flex justify-between py-0.5 border-b border-[#1A1A1A]">
+                    <span className="text-[#9A9A9A]">quinta-feira</span>
+                    <span className="text-[#D4D4D4] font-medium">08:00–18:00</span>
+                  </div>
+                  <div className="flex justify-between py-0.5 border-b border-[#1A1A1A]">
+                    <span className="text-[#9A9A9A]">sexta-feira</span>
+                    <span className="text-[#D4D4D4] font-medium">08:00–18:00</span>
+                  </div>
+                  <div className="flex justify-between py-0.5 border-b border-[#1A1A1A]">
+                    <span className="text-[#666666]">sábado</span>
+                    <span className="text-[#888888]">Fechado</span>
+                  </div>
+                  <div className="flex justify-between py-0.5">
+                    <span className="text-[#666666]">domingo</span>
+                    <span className="text-[#888888]">Fechado</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

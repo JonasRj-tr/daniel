@@ -24,8 +24,8 @@ const PROPERTIES_COLLECTION = 'properties';
 const SETTINGS_COLLECTION = 'settings';
 const GENERAL_SETTINGS_DOC = 'general';
 
-const LOCAL_STORAGE_PROPERTIES_KEY = 'dp_properties_cache_v4';
-const LOCAL_STORAGE_SETTINGS_KEY = 'dp_settings_cache_v2';
+const LOCAL_STORAGE_PROPERTIES_KEY = 'dp_properties_cache_v6';
+const LOCAL_STORAGE_SETTINGS_KEY = 'dp_settings_cache_v3';
 const LOCAL_STORAGE_ADMIN_KEY = 'dp_admin_session';
 
 // Helper to get cached properties
@@ -49,7 +49,12 @@ export function getLocalCachedSettings(): SiteSettings {
   try {
     const raw = localStorage.getItem(LOCAL_STORAGE_SETTINGS_KEY);
     if (raw) {
-      return { ...DEFAULT_SETTINGS, ...JSON.parse(raw) };
+      const parsed = JSON.parse(raw);
+      const res = { ...DEFAULT_SETTINGS, ...parsed };
+      if (!res.address || res.address.includes('Henrique Lage')) {
+        res.address = DEFAULT_SETTINGS.address;
+      }
+      return res;
     }
   } catch (e) {
     console.warn('Error reading local cached settings', e);

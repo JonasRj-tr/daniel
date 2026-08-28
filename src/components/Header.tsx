@@ -39,11 +39,12 @@ export const Header: React.FC<HeaderProps> = ({
 
   const navLinks = [
     { label: 'Início', route: 'home' },
-    { label: 'Imóveis & Lançamentos', route: 'portfolio' },
+    { label: 'Imóveis', route: 'portfolio' },
     { label: 'Na Planta', route: 'na-planta' },
-    { label: 'Prontos para Morar', route: 'prontos' },
+    { label: 'Prontos', route: 'prontos' },
+    { label: 'Terrenos', route: 'terrenos' },
     { label: 'Cidades', route: 'cidades' },
-    { label: 'Sobre o Corretor', route: 'sobre' },
+    { label: 'Sobre', route: 'sobre' },
     { label: 'Como Escolher', route: 'como-escolher' },
     { label: 'Contato', route: 'contato' },
   ];

@@ -120,8 +120,8 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
         </div>
 
         {/* Specifications Matrix */}
-        <div className="grid grid-cols-4 gap-2 py-3 border-y border-[#E5E0D8] text-[#5A5A5A] text-xs">
-          {property.bedrooms !== undefined && (
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 py-3 border-y border-[#E5E0D8] text-[#5A5A5A] text-xs">
+          {property.bedrooms !== undefined && property.bedrooms > 0 && (
             <div className="flex flex-col items-center justify-center text-center p-1.5 rounded-lg bg-[#F7F3EB]" title={`${property.bedrooms} Dormitórios`}>
               <div className="flex items-center gap-1 text-[#111111]">
                 <Bed className="w-3.5 h-3.5 text-[#C9A227]" />
@@ -131,7 +131,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
             </div>
           )}
 
-          {property.bathrooms !== undefined && (
+          {property.bathrooms !== undefined && property.bathrooms > 0 && (
             <div className="flex flex-col items-center justify-center text-center p-1.5 rounded-lg bg-[#F7F3EB]" title={`${property.bathrooms} Banheiros`}>
               <div className="flex items-center gap-1 text-[#111111]">
                 <Bath className="w-3.5 h-3.5 text-[#C9A227]" />
@@ -141,7 +141,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
             </div>
           )}
 
-          {property.garageSpaces !== undefined && (
+          {property.garageSpaces !== undefined && property.garageSpaces > 0 && (
             <div className="flex flex-col items-center justify-center text-center p-1.5 rounded-lg bg-[#F7F3EB]" title={`${property.garageSpaces} Vagas de Garagem`}>
               <div className="flex items-center gap-1 text-[#111111]">
                 <Car className="w-3.5 h-3.5 text-[#C9A227]" />
@@ -152,18 +152,36 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
           )}
 
           {property.areaM2 ? (
-            <div className="flex flex-col items-center justify-center text-center p-1.5 rounded-lg bg-[#F7F3EB]" title={`Área privativa: ${property.areaM2}m²`}>
+            <div className="flex flex-col items-center justify-center text-center p-1.5 rounded-lg bg-[#F7F3EB]" title={`Área: ${property.areaM2}m²`}>
               <div className="flex items-center gap-1 text-[#111111]">
                 <Maximize className="w-3.5 h-3.5 text-[#C9A227]" />
                 <span className="font-semibold">{property.areaM2}</span>
               </div>
-              <span className="text-[10px] text-[#5A5A5A] mt-0.5">m² priv.</span>
+              <span className="text-[10px] text-[#5A5A5A] mt-0.5">m² total</span>
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center text-center p-1.5 rounded-lg bg-[#F7F3EB]">
               <span className="text-xs text-[#111111] font-medium">{property.type}</span>
               <span className="text-[10px] text-[#5A5A5A] mt-0.5">Tipo</span>
             </div>
+          )}
+
+          {/* For Lots/Terrenos with few metrics, fill with Type badge */}
+          {property.bedrooms === undefined && property.bathrooms === undefined && (
+            <>
+              <div className="flex flex-col items-center justify-center text-center p-1.5 rounded-lg bg-[#F7F3EB]">
+                <span className="text-xs text-[#111111] font-semibold">{property.type}</span>
+                <span className="text-[10px] text-[#5A5A5A] mt-0.5">Categoria</span>
+              </div>
+              <div className="flex flex-col items-center justify-center text-center p-1.5 rounded-lg bg-[#F7F3EB]">
+                <span className="text-xs text-[#111111] font-semibold truncate max-w-[80px]">{property.neighborhood}</span>
+                <span className="text-[10px] text-[#5A5A5A] mt-0.5">Bairro</span>
+              </div>
+              <div className="flex flex-col items-center justify-center text-center p-1.5 rounded-lg bg-[#F7F3EB]">
+                <span className="text-xs text-[#1F8A4C] font-semibold">Regularizado</span>
+                <span className="text-[10px] text-[#5A5A5A] mt-0.5">Matrícula</span>
+              </div>
+            </>
           )}
         </div>
 

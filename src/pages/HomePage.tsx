@@ -281,6 +281,12 @@ export const HomePage: React.FC<HomePageProps> = ({
                 Na Planta
               </button>
               <button
+                onClick={() => navigate('terrenos')}
+                className="px-4 py-1.5 border border-[#0A0A0A]/20 hover:border-[#0A0A0A] text-[#0A0A0A] rounded-md transition-colors cursor-pointer"
+              >
+                Terrenos / Loteamentos
+              </button>
+              <button
                 onClick={() => navigate('cidades')}
                 className="px-4 py-1.5 border border-[#0A0A0A]/20 hover:border-[#0A0A0A] text-[#0A0A0A] rounded-md transition-colors cursor-pointer"
               >

@@ -15,7 +15,7 @@ export const CinematicIntro: React.FC<CinematicIntroProps> = ({
   realtorName = 'Daniel Pacheco',
   creci = 'CRECI: 38 813 • CNAI: 34 653',
 }) => {
-  const [secondsLeft, setSecondsLeft] = useState<number>(6);
+  const [secondsLeft, setSecondsLeft] = useState<number>(3);
   const [progress, setProgress] = useState<number>(0);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
   const [activePhase, setActivePhase] = useState<number>(1);
@@ -57,14 +57,14 @@ export const CinematicIntro: React.FC<CinematicIntroProps> = ({
     }
   };
 
-  // 6-Second Timer Loop
+  // 3-Second Timer Loop
   useEffect(() => {
-    const totalDurationMs = 6000;
-    const intervalMs = 30;
+    const totalDurationMs = 3000;
+    const intervalMs = 25;
     const startTime = Date.now();
 
     // Trigger initial chime
-    playHarmonicChime(329.63, 'sine', 1.5); // E4 note
+    playHarmonicChime(329.63, 'sine', 1.0); // E4 note
 
     const timer = setInterval(() => {
       const elapsed = Date.now() - startTime;
@@ -75,15 +75,15 @@ export const CinematicIntro: React.FC<CinematicIntroProps> = ({
       setSecondsLeft(remainingSecs);
 
       // Phase transitions with sound cues
-      if (elapsed >= 1500 && elapsed < 1600) {
+      if (elapsed >= 800 && elapsed < 900) {
         setActivePhase(2);
-        playHarmonicChime(493.88, 'triangle', 1.8); // B4 note
-      } else if (elapsed >= 3400 && elapsed < 3500) {
+        playHarmonicChime(493.88, 'triangle', 1.0); // B4 note
+      } else if (elapsed >= 1700 && elapsed < 1800) {
         setActivePhase(3);
-        playHarmonicChime(659.25, 'sine', 2.0); // E5 note
-      } else if (elapsed >= 5200 && elapsed < 5300) {
+        playHarmonicChime(659.25, 'sine', 1.0); // E5 note
+      } else if (elapsed >= 2500 && elapsed < 2600) {
         setActivePhase(4);
-        playHarmonicChime(987.77, 'sine', 1.2); // B5 high shimmer
+        playHarmonicChime(987.77, 'sine', 0.8); // B5 high shimmer
       }
 
       if (elapsed >= totalDurationMs) {

@@ -17,8 +17,9 @@ export const NaPlantaPage: React.FC<NaPlantaPageProps> = ({
   onSelectProperty,
   onOpenCuratedModal,
 }) => {
+  // Exibir estritamente empreendimentos que estão realmente na planta ou em construção (sem incluir casas prontas)
   const naPlantaProperties = properties.filter(
-    (p) => p.status === 'Na planta' || p.status === 'Em obras' || p.directFinancing
+    (p) => (p.status === 'Na planta' || p.status === 'Em obras') && p.type !== 'Casa'
   );
 
   const whatsappUrl = createWhatsAppUrl(

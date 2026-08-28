@@ -58,8 +58,8 @@ export const AdminPage: React.FC<AdminPageProps> = ({
   const isUserAdmin = isAdmin || localAdmin;
 
   // Login State
-  const [email, setEmail] = useState('daniel.pacheco@creci.org.br');
-  const [password, setPassword] = useState('daniel4321');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
@@ -86,18 +86,6 @@ export const AdminPage: React.FC<AdminPageProps> = ({
       setLocalAdmin(true);
     } catch (err: any) {
       setLoginError(err.message || 'Erro ao realizar login.');
-    } finally {
-      setIsLoggingIn(false);
-    }
-  };
-
-  const handleQuickLogin = async () => {
-    setIsLoggingIn(true);
-    try {
-      await loginAdmin('daniel.pacheco@creci.org.br', 'daniel4321');
-      setLocalAdmin(true);
-    } catch {
-      setLocalAdmin(true);
     } finally {
       setIsLoggingIn(false);
     }
@@ -231,7 +219,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="daniel.pacheco@creci.org.br"
+                placeholder="seu.email@exemplo.com.br"
                 className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-xs text-[#111111] rounded-xl px-3.5 py-3 outline-none"
               />
             </div>
@@ -244,7 +232,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
+                placeholder="Digite sua senha"
                 className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-xs text-[#111111] rounded-xl px-3.5 py-3 outline-none"
               />
             </div>
@@ -258,22 +246,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
               <ShieldCheck className="w-4 h-4" />
               <span>{isLoggingIn ? 'Autenticando...' : 'Acessar Painel'}</span>
             </button>
-
-            <button
-              id="admin-quick-access-btn"
-              type="button"
-              onClick={handleQuickLogin}
-              className="w-full py-2.5 rounded-xl bg-[#F7F3EB] hover:bg-[#EAE4D8] text-[#5A5A5A] text-[11px] font-medium border border-[#E5E0D8] flex items-center justify-center gap-1.5 transition-all cursor-pointer"
-            >
-              <span>Acesso Rápido com daniel.pacheco@creci.org.br</span>
-            </button>
           </form>
-
-          <div className="pt-2 text-center">
-            <p className="text-[11px] text-[#5A5A5A]">
-              Acesso padrão: <code className="text-[#C9A227] font-semibold">daniel.pacheco@creci.org.br</code> / Senha: <code className="text-[#C9A227] font-semibold">daniel4321</code>
-            </p>
-          </div>
         </div>
       </div>
     );

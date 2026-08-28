@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Building2, 
   Phone, 
@@ -10,24 +10,34 @@ import {
   Shield, 
   Lock, 
   ExternalLink,
-  ChevronRight
+  ChevronRight,
+  TrendingUp,
+  BarChart3,
+  ArrowUpRight,
+  FileText
 } from 'lucide-react';
 import { SiteSettings } from '../types';
 import { createWhatsAppUrl } from '../utils/formatters';
+import { EconomicIndicatorsModal, IndicatorTab } from './EconomicIndicatorsModal';
+import { SocialMediaBar } from './SocialLinks';
 
 interface FooterProps {
   navigate: (route: string) => void;
   settings: SiteSettings;
-  isAdmin: boolean;
-  onLogoutAdmin: () => void;
+  isAdmin?: boolean;
+  onLogoutAdmin?: () => void;
+  onOpenCuratedModal?: () => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({
   navigate,
   settings,
-  isAdmin,
-  onLogoutAdmin,
+  isAdmin = false,
+  onLogoutAdmin = () => {},
 }) => {
+  const [isIndicatorsModalOpen, setIsIndicatorsModalOpen] = useState<boolean>(false);
+  const [indicatorsInitialTab, setIndicatorsInitialTab] = useState<IndicatorTab>('cub');
+
   const whatsappUrl = createWhatsAppUrl(
     settings.whatsapp || '5548998001744',
     'Olá Daniel! Estava no seu site e gostaria de tirar uma dúvida.'
@@ -38,12 +48,17 @@ export const Footer: React.FC<FooterProps> = ({
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleOpenIndicators = (tab: IndicatorTab) => {
+    setIndicatorsInitialTab(tab);
+    setIsIndicatorsModalOpen(true);
+  };
+
   return (
     <footer id="main-footer" className="bg-[#0A0A0A] text-[#8A8A8A] border-t border-[#2A2A2A] pt-16 pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-[#2A2A2A]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 xl:gap-10 pb-12 border-b border-[#2A2A2A]">
           {/* Column 1: Brand & Profile */}
-          <div className="space-y-4">
+          <div className="space-y-4 sm:col-span-2 lg:col-span-1">
             <div className="flex flex-col gap-2.5">
               <img
                 src={settings.logoUrl || "https://i.postimg.cc/wv36Qv93/Chat-GPT-Image-26-de-ago-de-2026-09-58-21-(1).png"}
@@ -57,29 +72,24 @@ export const Footer: React.FC<FooterProps> = ({
             <p className="text-xs leading-relaxed text-[#8A8A8A]">
               Consultoria imobiliária especializada em lançamentos na planta, empreendimentos oficiais e imóveis selecionados no Sul de Santa Catarina.
             </p>
-            <div className="flex items-center gap-2 pt-2">
-              <a
-                id="footer-whatsapp-icon-btn"
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-8 h-8 rounded-full bg-[#181818] border border-[#2A2A2A] text-[#1F8A4C] flex items-center justify-center hover:bg-[#1F8A4C] hover:text-white transition-all"
-                title="WhatsApp Direto"
-              >
-                <MessageCircle className="w-4 h-4 fill-current" />
-              </a>
-              {settings.instagram && (
+            <div className="space-y-2 pt-2">
+              <span className="text-[11px] font-semibold text-gray-400 block uppercase tracking-wider">
+                Redes Sociais & Contato
+              </span>
+              <div className="flex flex-wrap items-center gap-2">
                 <a
-                  id="footer-instagram-icon-btn"
-                  href={settings.instagram}
+                  id="footer-whatsapp-icon-btn"
+                  href={whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-8 h-8 rounded-full bg-[#181818] border border-[#2A2A2A] text-[#E1306C] flex items-center justify-center hover:bg-[#E1306C] hover:text-white transition-all"
-                  title="Instagram"
+                  className="w-8 h-8 rounded-full bg-[#181818] border border-[#2A2A2A] text-[#1F8A4C] flex items-center justify-center hover:bg-[#1F8A4C] hover:text-white transition-all hover:scale-110 shadow-sm"
+                  title="WhatsApp Direto"
+                  aria-label="Falar no WhatsApp com Daniel Pacheco"
                 >
-                  <Instagram className="w-4 h-4" />
+                  <MessageCircle className="w-4 h-4 fill-current" />
                 </a>
-              )}
+                <SocialMediaBar settings={settings} variant="footer" />
+              </div>
             </div>
           </div>
 
@@ -93,9 +103,9 @@ export const Footer: React.FC<FooterProps> = ({
                 <button
                   id="footer-nav-home"
                   onClick={() => handleLink('home')}
-                  className="hover:text-[#C9A227] transition-colors flex items-center gap-1.5"
+                  className="hover:text-[#C9A227] transition-colors flex items-center gap-1.5 cursor-pointer text-left"
                 >
-                  <ChevronRight className="w-3 h-3 text-[#5A5A5A]" />
+                  <ChevronRight className="w-3 h-3 text-[#5A5A5A] shrink-0" />
                   <span>Página Inicial</span>
                 </button>
               </li>
@@ -103,9 +113,9 @@ export const Footer: React.FC<FooterProps> = ({
                 <button
                   id="footer-nav-portfolio"
                   onClick={() => handleLink('portfolio')}
-                  className="hover:text-[#C9A227] transition-colors flex items-center gap-1.5"
+                  className="hover:text-[#C9A227] transition-colors flex items-center gap-1.5 cursor-pointer text-left"
                 >
-                  <ChevronRight className="w-3 h-3 text-[#5A5A5A]" />
+                  <ChevronRight className="w-3 h-3 text-[#5A5A5A] shrink-0" />
                   <span>Todos os Imóveis</span>
                 </button>
               </li>
@@ -113,9 +123,9 @@ export const Footer: React.FC<FooterProps> = ({
                 <button
                   id="footer-nav-na-planta"
                   onClick={() => handleLink('na-planta')}
-                  className="hover:text-[#C9A227] transition-colors flex items-center gap-1.5"
+                  className="hover:text-[#C9A227] transition-colors flex items-center gap-1.5 cursor-pointer text-left"
                 >
-                  <ChevronRight className="w-3 h-3 text-[#5A5A5A]" />
+                  <ChevronRight className="w-3 h-3 text-[#5A5A5A] shrink-0" />
                   <span>Apartamentos na Planta</span>
                 </button>
               </li>
@@ -123,9 +133,9 @@ export const Footer: React.FC<FooterProps> = ({
                 <button
                   id="footer-nav-prontos"
                   onClick={() => handleLink('prontos')}
-                  className="hover:text-[#C9A227] transition-colors flex items-center gap-1.5"
+                  className="hover:text-[#C9A227] transition-colors flex items-center gap-1.5 cursor-pointer text-left"
                 >
-                  <ChevronRight className="w-3 h-3 text-[#5A5A5A]" />
+                  <ChevronRight className="w-3 h-3 text-[#5A5A5A] shrink-0" />
                   <span>Imóveis Prontos para Morar</span>
                 </button>
               </li>
@@ -133,19 +143,19 @@ export const Footer: React.FC<FooterProps> = ({
                 <button
                   id="footer-nav-sobre"
                   onClick={() => handleLink('sobre')}
-                  className="hover:text-[#C9A227] transition-colors flex items-center gap-1.5"
+                  className="hover:text-[#C9A227] transition-colors flex items-center gap-1.5 cursor-pointer text-left"
                 >
-                  <ChevronRight className="w-3 h-3 text-[#5A5A5A]" />
-                  <span>Sobre o Corretor Daniel Pacheco</span>
+                  <ChevronRight className="w-3 h-3 text-[#5A5A5A] shrink-0" />
+                  <span>Sobre o Corretor Daniel</span>
                 </button>
               </li>
               <li>
                 <button
                   id="footer-nav-como-escolher"
                   onClick={() => handleLink('como-escolher')}
-                  className="hover:text-[#C9A227] transition-colors flex items-center gap-1.5"
+                  className="hover:text-[#C9A227] transition-colors flex items-center gap-1.5 cursor-pointer text-left"
                 >
-                  <ChevronRight className="w-3 h-3 text-[#5A5A5A]" />
+                  <ChevronRight className="w-3 h-3 text-[#5A5A5A] shrink-0" />
                   <span>Guia: Como Escolher</span>
                 </button>
               </li>
@@ -162,25 +172,25 @@ export const Footer: React.FC<FooterProps> = ({
                 <button
                   id="footer-city-criciuma"
                   onClick={() => handleLink('cidades')}
-                  className="hover:text-[#C9A227] transition-colors"
+                  className="hover:text-[#C9A227] transition-colors text-left cursor-pointer"
                 >
-                  Criciúma (Centro, Santa Bárbara, Cruzeiro)
+                  Criciúma (Centro, Santa Bárbara)
                 </button>
               </li>
               <li>
                 <button
                   id="footer-city-rincao"
                   onClick={() => handleLink('cidades')}
-                  className="hover:text-[#C9A227] transition-colors"
+                  className="hover:text-[#C9A227] transition-colors text-left cursor-pointer"
                 >
-                  Balneário Rincão & Lagoa dos Esteves
+                  Balneário Rincão & Lagoas
                 </button>
               </li>
               <li>
                 <button
                   id="footer-city-icara"
                   onClick={() => handleLink('cidades')}
-                  className="hover:text-[#C9A227] transition-colors"
+                  className="hover:text-[#C9A227] transition-colors text-left cursor-pointer"
                 >
                   Içara (Loteamentos & Casas)
                 </button>
@@ -189,24 +199,98 @@ export const Footer: React.FC<FooterProps> = ({
                 <button
                   id="footer-city-novaveneza"
                   onClick={() => handleLink('cidades')}
-                  className="hover:text-[#C9A227] transition-colors"
+                  className="hover:text-[#C9A227] transition-colors text-left cursor-pointer"
                 >
-                  Nova Veneza (Caravaggio & Centro)
+                  Nova Veneza (Caravaggio)
                 </button>
               </li>
               <li>
                 <button
                   id="footer-city-others"
                   onClick={() => handleLink('cidades')}
-                  className="hover:text-[#C9A227] transition-colors"
+                  className="hover:text-[#C9A227] transition-colors text-left cursor-pointer"
                 >
-                  Cocal do Sul, Forquilhinha e Morro da Fumaça
+                  Cocal do Sul & Forquilhinha
                 </button>
               </li>
             </ul>
           </div>
 
-          {/* Column 4: Contact & Business Hours */}
+          {/* Column 4: Indicadores da Construção e Economia */}
+          <div className="space-y-3">
+            <h4 className="text-xs font-semibold text-[#FFFFFF] uppercase tracking-wider flex items-center gap-1.5">
+              <TrendingUp className="w-3.5 h-3.5 text-[#C9A227]" />
+              <span>Indicadores & Economia</span>
+            </h4>
+            <ul className="space-y-2.5 text-xs">
+              {/* CUB – Santa Catarina */}
+              <li>
+                <div className="group flex flex-col gap-0.5">
+                  <div className="flex items-center justify-between gap-1">
+                    <button
+                      id="footer-indicator-cub-btn"
+                      onClick={() => handleOpenIndicators('cub')}
+                      className="hover:text-[#C9A227] text-gray-200 transition-colors flex items-center gap-1.5 text-left font-medium cursor-pointer"
+                      title="Consultar CUB – Santa Catarina (Sinduscon Florianópolis)"
+                    >
+                      <Building2 className="w-3.5 h-3.5 text-[#C9A227] shrink-0" />
+                      <span>CUB – Santa Catarina</span>
+                    </button>
+                    <a
+                      id="footer-cub-ext-link"
+                      href="https://sinduscon-fpolis.org.br/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-500 hover:text-[#C9A227] p-1 transition-colors"
+                      title="Abrir site oficial do Sinduscon Florianópolis em nova aba"
+                      aria-label="Abrir site oficial do Sinduscon Florianópolis"
+                    >
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
+                  <span className="text-[10px] text-[#7A7A7A] pl-5">
+                    Sinduscon Florianópolis (Oficial)
+                  </span>
+                </div>
+              </li>
+
+              {/* IGP-M – Índice Geral de Preços – Mercado */}
+              <li>
+                <div className="group flex flex-col gap-0.5">
+                  <div className="flex items-center justify-between gap-1">
+                    <button
+                      id="footer-indicator-igpm-btn"
+                      onClick={() => handleOpenIndicators('igpm')}
+                      className="hover:text-[#C9A227] text-gray-200 transition-colors flex items-center gap-1.5 text-left font-medium cursor-pointer"
+                      title="Consultar IGP-M – Índice Geral de Preços – Mercado (FGV IBRE)"
+                    >
+                      <TrendingUp className="w-3.5 h-3.5 text-[#C9A227] shrink-0" />
+                      <span>IGP-M – Mercado</span>
+                    </button>
+                    <a
+                      id="footer-igpm-ext-link"
+                      href="https://portalibre.fgv.br/temas-de-estudo/indices-e-indicadores/igp-m"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-500 hover:text-[#C9A227] p-1 transition-colors"
+                      title="Abrir portal oficial FGV IBRE em nova aba"
+                      aria-label="Abrir portal oficial FGV IBRE"
+                    >
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
+                  <span className="text-[10px] text-[#7A7A7A] pl-5">
+                    FGV IBRE / Mercado Imobiliário
+                  </span>
+                </div>
+              </li>
+            </ul>
+            <p className="text-[10px] text-[#6A6A6A] leading-relaxed pt-1 border-t border-[#222222]">
+              Referências oficiais para reajuste de contratos e custos da construção civil.
+            </p>
+          </div>
+
+          {/* Column 5: Contact & Business Hours */}
           <div className="space-y-3">
             <h4 className="text-xs font-semibold text-[#FFFFFF] uppercase tracking-wider">
               Atendimento Consultivo
@@ -291,7 +375,7 @@ export const Footer: React.FC<FooterProps> = ({
                   onClick={() => handleLink('admin')}
                   className="px-2.5 py-1 rounded bg-[#C9A227]/10 border border-[#C9A227]/30 text-[#C9A227] hover:bg-[#C9A227]/20 flex items-center gap-1 text-[10px] uppercase tracking-wider font-bold"
                 >
-                  <Shield className="w-3 h-3" />
+                  <Shield className="w-3.5 h-3.5" />
                   <span>Painel Admin</span>
                 </button>
                 <button
@@ -315,6 +399,14 @@ export const Footer: React.FC<FooterProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Economic Indicators In-App Consultation Modal */}
+      <EconomicIndicatorsModal
+        isOpen={isIndicatorsModalOpen}
+        onClose={() => setIsIndicatorsModalOpen(false)}
+        initialTab={indicatorsInitialTab}
+      />
     </footer>
   );
 };
+

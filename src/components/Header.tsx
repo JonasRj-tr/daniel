@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { SiteSettings } from '../types';
 import { createWhatsAppUrl } from '../utils/formatters';
+import { SocialMediaBar } from './SocialLinks';
 
 interface HeaderProps {
   currentRoute: string;
@@ -219,6 +220,13 @@ export const Header: React.FC<HeaderProps> = ({
               <MessageCircle className="w-4 h-4 fill-current" />
               <span>Conversar no WhatsApp</span>
             </a>
+
+            <div className="pt-2 flex flex-col items-center gap-2">
+              <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider">
+                Redes Sociais Oficiais
+              </span>
+              <SocialMediaBar settings={settings} variant="footer" />
+            </div>
           </div>
         </div>
       )}

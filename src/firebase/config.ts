@@ -11,7 +11,7 @@ try {
   db = initializeFirestore(
     app,
     {
-      experimentalAutoDetectLongPolling: true,
+      experimentalForceLongPolling: true,
     },
     firebaseConfig.firestoreDatabaseId || '(default)'
   );

@@ -605,6 +605,69 @@ export const AdminPage: React.FC<AdminPageProps> = ({
               </div>
             </div>
 
+            {/* Social Media Links in Admin */}
+            <div className="space-y-3 pt-2">
+              <h4 className="text-xs font-bold text-[#111111] uppercase tracking-wider">
+                Redes Sociais Oficiais do Corretor
+              </h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div>
+                  <label className="text-xs font-medium text-[#111111] mb-1.5 block">Instagram URL</label>
+                  <input
+                    type="url"
+                    value={settingsForm.instagram || ''}
+                    onChange={(e) => setSettingsForm({ ...settingsForm, instagram: e.target.value })}
+                    placeholder="https://instagram.com/corretordanielpacheco"
+                    className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-xs text-[#111111] rounded-xl px-3.5 py-3 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-medium text-[#111111] mb-1.5 block">Facebook URL</label>
+                  <input
+                    type="url"
+                    value={settingsForm.facebook || ''}
+                    onChange={(e) => setSettingsForm({ ...settingsForm, facebook: e.target.value })}
+                    placeholder="https://www.facebook.com/corretordanielpacheco"
+                    className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-xs text-[#111111] rounded-xl px-3.5 py-3 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-medium text-[#111111] mb-1.5 block">YouTube URL</label>
+                  <input
+                    type="url"
+                    value={settingsForm.youtube || ''}
+                    onChange={(e) => setSettingsForm({ ...settingsForm, youtube: e.target.value })}
+                    placeholder="https://youtube.com/@danielpachecocorretor9626"
+                    className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-xs text-[#111111] rounded-xl px-3.5 py-3 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-medium text-[#111111] mb-1.5 block">TikTok URL</label>
+                  <input
+                    type="url"
+                    value={settingsForm.tiktok || ''}
+                    onChange={(e) => setSettingsForm({ ...settingsForm, tiktok: e.target.value })}
+                    placeholder="https://tiktok.com/@danielpachecocorretor"
+                    className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-xs text-[#111111] rounded-xl px-3.5 py-3 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-medium text-[#111111] mb-1.5 block">Twitter / X URL</label>
+                  <input
+                    type="url"
+                    value={settingsForm.twitter || ''}
+                    onChange={(e) => setSettingsForm({ ...settingsForm, twitter: e.target.value })}
+                    placeholder="https://twitter.com/dennyboybr"
+                    className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-xs text-[#111111] rounded-xl px-3.5 py-3 outline-none"
+                  />
+                </div>
+              </div>
+            </div>
+
             <div>
               <label className="text-xs font-medium text-[#111111] mb-1.5 block">Headline Principal (Hero)</label>
               <input

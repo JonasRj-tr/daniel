@@ -15,6 +15,7 @@ import {
 import { SiteSettings } from '../types';
 import { FAQ_LIST } from '../data/initialSettings';
 import { createWhatsAppUrl } from '../utils/formatters';
+import { SocialMediaBar } from '../components/SocialLinks';
 
 interface ContatoPageProps {
   settings: SiteSettings;
@@ -226,6 +227,23 @@ export const ContatoPage: React.FC<ContatoPageProps> = ({ settings }) => {
             </button>
           </form>
         </div>
+      </div>
+
+      {/* Official Social Media Channels */}
+      <div className="space-y-6">
+        <div className="text-center max-w-2xl mx-auto space-y-2">
+          <span className="text-xs font-semibold text-[#C9A227] uppercase tracking-wider">
+            Conecte-se nas Redes Oficiais
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-bold font-serif-luxury text-[#111111]">
+            Acompanhe o Trabalho de Daniel Pacheco
+          </h2>
+          <p className="text-xs sm:text-sm text-[#5A5A5A]">
+            Siga os perfis oficiais para conferir lançamentos em primeira mão, tours em vídeo e análises do mercado imobiliário.
+          </p>
+        </div>
+
+        <SocialMediaBar settings={settings} variant="contact" />
       </div>
 
       {/* Interactive FAQ Section */}

@@ -41,6 +41,10 @@ export interface SiteSettings {
   whatsapp: string;
   email: string;
   instagram: string;
+  facebook?: string;
+  twitter?: string;
+  youtube?: string;
+  tiktok?: string;
   address: string;
   businessHours: string;
   heroHeadline: string;

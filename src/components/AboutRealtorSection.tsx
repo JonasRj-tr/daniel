@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { SiteSettings } from '../types';
 import { createWhatsAppUrl } from '../utils/formatters';
+import { SocialMediaBar } from './SocialLinks';
 
 interface AboutRealtorSectionProps {
   settings: SiteSettings;
@@ -145,6 +146,9 @@ export const AboutRealtorSection: React.FC<AboutRealtorSectionProps> = ({
                 </div>
               </div>
             </div>
+
+            {/* Realtor Official Networks */}
+            <SocialMediaBar settings={settings} variant="about" />
 
             {/* CTAs */}
             <div className="flex flex-wrap items-center gap-3.5 pt-4">

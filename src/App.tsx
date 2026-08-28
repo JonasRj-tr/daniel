@@ -7,7 +7,8 @@ import {
   subscribeProperties, 
   subscribeSettings, 
   subscribeAdminState,
-  getIsAdminCached
+  getIsAdminCached,
+  logoutAdmin
 } from './firebase/firebaseService';
 
 // Layout Components
@@ -242,6 +243,8 @@ export default function App() {
       <Footer
         settings={settings}
         navigate={navigate}
+        isAdmin={isAdmin}
+        onLogoutAdmin={logoutAdmin}
         onOpenCuratedModal={() => setIsCuratedModalOpen(true)}
       />
 

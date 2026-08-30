@@ -50,11 +50,7 @@ export function getLocalCachedSettings(): SiteSettings {
     const raw = localStorage.getItem(LOCAL_STORAGE_SETTINGS_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      const res = { ...DEFAULT_SETTINGS, ...parsed };
-      if (!res.address || res.address.includes('Henrique Lage')) {
-        res.address = DEFAULT_SETTINGS.address;
-      }
-      return res;
+      return { ...DEFAULT_SETTINGS, ...parsed };
     }
   } catch (e) {
     console.warn('Error reading local cached settings', e);
@@ -69,7 +65,7 @@ export function subscribeToProperties(
 ) {
   const colRef = collection(db, PROPERTIES_COLLECTION);
   
-  // Seed first if local is completely empty or online check needed
+  // Seed first if remote is completely empty
   seedInitialDataIfNeeded();
 
   const unsubscribe = onSnapshot(
@@ -80,27 +76,12 @@ export function subscribeToProperties(
         seedDatabase();
         callback(getLocalCachedProperties());
       } else {
-        const initialPricesMap = new Map(INITIAL_PROPERTIES.map((p) => [p.id, p]));
         const list: Property[] = [];
         snapshot.forEach((docSnapshot) => {
           const docData = docSnapshot.data() as Property;
-          const initial = initialPricesMap.get(docSnapshot.id);
-          let mergedPriceFormatted = docData.priceFormatted;
-          let mergedPrice = docData.price;
-          if (
-            initial && 
-            initial.priceFormatted && 
-            initial.priceFormatted !== 'A Consultar' && 
-            (!docData.priceFormatted || docData.priceFormatted === 'A Consultar')
-          ) {
-            mergedPriceFormatted = initial.priceFormatted;
-            mergedPrice = initial.price;
-          }
           list.push({ 
             id: docSnapshot.id, 
-            ...docData,
-            priceFormatted: mergedPriceFormatted || docData.priceFormatted,
-            price: mergedPrice ?? docData.price
+            ...docData
           } as Property);
         });
         

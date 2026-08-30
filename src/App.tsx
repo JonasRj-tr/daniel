@@ -8,6 +8,8 @@ import {
   subscribeSettings, 
   subscribeAdminState,
   getIsAdminCached,
+  getLocalCachedProperties,
+  getLocalCachedSettings,
   logoutAdmin
 } from './firebase/firebaseService';
 
@@ -39,11 +41,21 @@ import { SiteMapPage } from './pages/SiteMapPage';
 export default function App() {
   const [showIntro, setShowIntro] = useState<boolean>(true);
   const [currentRoute, setCurrentRoute] = useState<string>('home');
-  const [properties, setProperties] = useState<Property[]>(INITIAL_PROPERTIES);
-  const [settings, setSettings] = useState<SiteSettings>(DEFAULT_SETTINGS);
+  const [properties, setProperties] = useState<Property[]>(() => getLocalCachedProperties());
+  const [settings, setSettings] = useState<SiteSettings>(() => getLocalCachedSettings());
   const [isAdmin, setIsAdmin] = useState<boolean>(() => getIsAdminCached());
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [isCuratedModalOpen, setIsCuratedModalOpen] = useState<boolean>(false);
+
+  // Keep selectedProperty live and up-to-date when properties state changes
+  useEffect(() => {
+    if (selectedProperty) {
+      const refreshed = properties.find((p) => p.id === selectedProperty.id || p.code === selectedProperty.code);
+      if (refreshed && refreshed !== selectedProperty) {
+        setSelectedProperty(refreshed);
+      }
+    }
+  }, [properties, selectedProperty]);
 
   // Initialize and subscribe to Firestore
   useEffect(() => {

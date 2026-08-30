@@ -9,7 +9,8 @@ import {
   MessageCircle, 
   ArrowUpRight,
   Sparkles,
-  ShieldCheck
+  ShieldCheck,
+  Landmark
 } from 'lucide-react';
 import { Property, SiteSettings } from '../types';
 import { formatCurrency, getStatusBadgeColor, createWhatsAppUrl, getHighResImageUrl } from '../utils/formatters';
@@ -77,18 +78,24 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
           </div>
         </div>
 
-        {/* Construtora / Direct Financing Badge */}
-        <div className="absolute bottom-3 left-3 flex items-center gap-1.5 pointer-events-none flex-wrap">
+        {/* Construtora / Direct Financing / Bank Financing Badges */}
+        <div className="absolute bottom-3 left-3 flex items-center gap-1.5 pointer-events-none flex-wrap max-w-[85%]">
           {property.developer && (
-            <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-[#0A0A0A]/85 text-[#FFFFFF] border border-white/10 flex items-center gap-1 backdrop-blur-sm">
+            <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-[#0A0A0A]/85 text-[#FFFFFF] border border-white/10 flex items-center gap-1 backdrop-blur-sm shadow-sm">
               <Building className="w-2.5 h-2.5 text-[#C9A227]" />
               <span>{property.developer}</span>
+            </span>
+          )}
+          {property.bankFinancing && (
+            <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#0284C7]/90 text-white border border-[#38BDF8]/40 flex items-center gap-1 backdrop-blur-sm shadow-sm">
+              <Landmark className="w-2.5 h-2.5 text-white" />
+              <span>Aceita Financiamento Bancário</span>
             </span>
           )}
           {property.directFinancing && (
             <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-[#1F8A4C]/90 text-white border border-[#1F8A4C]/30 flex items-center gap-1 backdrop-blur-sm shadow-sm">
               <ShieldCheck className="w-2.5 h-2.5 text-white" />
-              <span>Direto com Construtora</span>
+              <span>Direto c/ Construtora</span>
             </span>
           )}
         </div>

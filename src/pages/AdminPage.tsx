@@ -32,7 +32,14 @@ import {
   Check,
   RefreshCw,
   CloudCheck,
-  ExternalLink
+  ExternalLink,
+  Landmark,
+  Camera,
+  Smartphone,
+  HardDrive,
+  CheckCircle,
+  Info,
+  ImagePlus
 } from 'lucide-react';
 import { Property, SiteSettings, PropertyStatus, PropertyType } from '../types';
 import { 
@@ -47,6 +54,7 @@ import {
   getIsAdminCached
 } from '../firebase/firebaseService';
 import { formatCurrency } from '../utils/formatters';
+import { processAndUploadDeviceImages, formatBytes } from '../utils/imageUploader';
 
 interface AdminPageProps {
   properties: Property[];
@@ -118,6 +126,14 @@ export const AdminPage: React.FC<AdminPageProps> = ({
   const [bulkPhotosInput, setBulkPhotosInput] = useState('');
   const [showBulkPhotoInput, setShowBulkPhotoInput] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const cameraInputRef = useRef<HTMLInputElement | null>(null);
+  const [isUploadingImages, setIsUploadingImages] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<{ current: number; total: number; fileName: string; percent: number } | null>(null);
+  const [uploadStatsMsg, setUploadStatsMsg] = useState<string | null>(null);
+  const [isDraggingPhotos, setIsDraggingPhotos] = useState(false);
+
+  // Admin table filter
+  const [financingAdminFilter, setFinancingAdminFilter] = useState<'Todos' | 'Bancario' | 'Construtora' | 'Destaques'>('Todos');
 
   // Features Helper state in Modal
   const [newFeatureInput, setNewFeatureInput] = useState('');
@@ -292,31 +308,87 @@ export const AdminPage: React.FC<AdminPageProps> = ({
     handleMovePhoto(index, 0);
   };
 
-  // Local file upload support
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length === 0 || !editingProperty) return;
+  // High-performance direct device image upload (Camera + Gallery + Desktop Drag-and-Drop)
+  const processDeviceFiles = async (fileList: FileList | File[]) => {
+    const rawFiles = Array.from(fileList).filter((f) => f.type.startsWith('image/'));
+    if (rawFiles.length === 0 || !editingProperty) return;
 
-    Array.from(files).forEach((file: File) => {
-      const reader = new FileReader();
-      reader.onload = (loadEvent) => {
-        const base64 = loadEvent.target?.result as string;
-        if (base64) {
-          setEditingProperty(prev => {
-            if (!prev) return prev;
-            return {
-              ...prev,
-              images: [...(prev.images || []), base64]
-            };
-          });
-        }
-      };
-      reader.readAsDataURL(file);
-    });
+    setIsUploadingImages(true);
+    setUploadStatsMsg(null);
+    setUploadProgress({ current: 1, total: rawFiles.length, fileName: rawFiles[0].name, percent: 5 });
 
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+    try {
+      const uploadedUrls = await processAndUploadDeviceImages(rawFiles, (info) => {
+        setUploadProgress(info);
+      });
+
+      if (uploadedUrls.length > 0) {
+        setEditingProperty((prev) => {
+          if (!prev) return prev;
+          const currentImages = prev.images || [];
+          return {
+            ...prev,
+            images: [...currentImages, ...uploadedUrls]
+          };
+        });
+
+        setUploadStatsMsg(`✓ ${uploadedUrls.length} ${uploadedUrls.length === 1 ? 'foto otimizada e salva' : 'fotos otimizadas e salvas'} com sucesso direto do seu dispositivo!`);
+        setTimeout(() => setUploadStatsMsg(null), 6000);
+      }
+    } catch (err) {
+      console.error('Erro no processamento de fotos:', err);
+      setUploadStatsMsg('Erro ao processar algumas fotos. Tente novamente.');
+    } finally {
+      setIsUploadingImages(false);
+      setUploadProgress(null);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      if (cameraInputRef.current) cameraInputRef.current.value = '';
     }
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      processDeviceFiles(e.target.files);
+    }
+  };
+
+  const handleDropPhotos = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDraggingPhotos(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      processDeviceFiles(e.dataTransfer.files);
+    }
+  };
+
+  // Quick 1-Click Toggles for Admin Table rows (synchronizes directly to Firebase Firestore)
+  const handleToggleBankFinancing = async (prop: Property, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    const updated: Property = {
+      ...prop,
+      bankFinancing: !prop.bankFinancing,
+      updatedAt: Date.now()
+    };
+    await saveProperty(updated);
+  };
+
+  const handleToggleDirectFinancing = async (prop: Property, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    const updated: Property = {
+      ...prop,
+      directFinancing: !prop.directFinancing,
+      updatedAt: Date.now()
+    };
+    await saveProperty(updated);
+  };
+
+  const handleToggleFeatured = async (prop: Property, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    const updated: Property = {
+      ...prop,
+      featured: !prop.featured,
+      updatedAt: Date.now()
+    };
+    await saveProperty(updated);
   };
 
   // Feature Management in Property Modal
@@ -406,6 +478,10 @@ export const AdminPage: React.FC<AdminPageProps> = ({
 
   // Filter properties in admin
   const filteredList = properties.filter((p) => {
+    if (financingAdminFilter === 'Bancario' && !p.bankFinancing) return false;
+    if (financingAdminFilter === 'Construtora' && !p.directFinancing) return false;
+    if (financingAdminFilter === 'Destaques' && !p.featured) return false;
+
     if (!searchFilter) return true;
     const q = searchFilter.toLowerCase();
     return (
@@ -625,8 +701,8 @@ export const AdminPage: React.FC<AdminPageProps> = ({
       {/* Tab 1: Properties Table */}
       {adminTab === 'properties' && (
         <div className="bg-[#FFFFFF] border border-[#E5E0D8] rounded-3xl p-6 space-y-6 shadow-sm">
-          {/* Search bar inside admin */}
-          <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center justify-between">
+          {/* Search bar and quick filters inside admin */}
+          <div className="flex flex-col lg:flex-row gap-3 items-stretch lg:items-center justify-between">
             <div className="relative flex-1 max-w-md">
               <Search className="w-4 h-4 text-[#5A5A5A] absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
@@ -637,14 +713,58 @@ export const AdminPage: React.FC<AdminPageProps> = ({
                 className="w-full bg-[#F7F3EB] border border-[#E5E0D8] text-xs text-[#111111] rounded-xl pl-9 pr-3 py-2.5 outline-none"
               />
             </div>
-            <div className="text-xs text-[#5A5A5A]">
-              Mostrando <strong className="text-[#111111]">{filteredList.length}</strong> de {properties.length} imóveis
+
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="text-[11px] text-[#5A5A5A] mr-1 hidden sm:inline">Exibir:</span>
+              <button
+                onClick={() => setFinancingAdminFilter('Todos')}
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-medium cursor-pointer transition-all ${
+                  financingAdminFilter === 'Todos'
+                    ? 'bg-[#0A0A0A] text-white shadow-sm font-semibold'
+                    : 'bg-[#F7F3EB] text-[#5A5A5A] hover:text-[#111111]'
+                }`}
+              >
+                Todos ({properties.length})
+              </button>
+              <button
+                onClick={() => setFinancingAdminFilter('Bancario')}
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1 cursor-pointer transition-all ${
+                  financingAdminFilter === 'Bancario'
+                    ? 'bg-[#0284C7] text-white shadow-sm font-semibold'
+                    : 'bg-[#F7F3EB] text-[#5A5A5A] hover:text-[#0284C7]'
+                }`}
+              >
+                <Landmark className="w-3 h-3" />
+                <span>Fin. Bancário ({properties.filter(p => p.bankFinancing).length})</span>
+              </button>
+              <button
+                onClick={() => setFinancingAdminFilter('Construtora')}
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1 cursor-pointer transition-all ${
+                  financingAdminFilter === 'Construtora'
+                    ? 'bg-[#1F8A4C] text-white shadow-sm font-semibold'
+                    : 'bg-[#F7F3EB] text-[#5A5A5A] hover:text-[#1F8A4C]'
+                }`}
+              >
+                <ShieldCheck className="w-3 h-3" />
+                <span>Construtora ({properties.filter(p => p.directFinancing).length})</span>
+              </button>
+              <button
+                onClick={() => setFinancingAdminFilter('Destaques')}
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1 cursor-pointer transition-all ${
+                  financingAdminFilter === 'Destaques'
+                    ? 'bg-[#C9A227] text-[#0A0A0A] shadow-sm font-semibold'
+                    : 'bg-[#F7F3EB] text-[#5A5A5A] hover:text-[#C9A227]'
+                }`}
+              >
+                <Sparkles className="w-3 h-3" />
+                <span>Destaques ({properties.filter(p => p.featured).length})</span>
+              </button>
             </div>
           </div>
 
           {/* Table */}
           <div className="overflow-x-auto">
-            <table className="w-full text-xs text-left border-collapse min-w-[760px]">
+            <table className="w-full text-xs text-left border-collapse min-w-[860px]">
               <thead>
                 <tr className="border-b border-[#E5E0D8] text-[#5A5A5A] uppercase tracking-wider font-mono text-[10px]">
                   <th className="py-3 px-3">Cód.</th>
@@ -652,6 +772,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
                   <th className="py-3 px-3">Tipo / Status</th>
                   <th className="py-3 px-3">Área / Dorm.</th>
                   <th className="py-3 px-3">Valor</th>
+                  <th className="py-3 px-3">Financiamento / Destaque (1-Clique)</th>
                   <th className="py-3 px-3 text-right">Ações</th>
                 </tr>
               </thead>
@@ -712,11 +833,51 @@ export const AdminPage: React.FC<AdminPageProps> = ({
                         <div className="font-bold text-[#111111]">
                           {prop.priceFormatted || formatCurrency(prop.price)}
                         </div>
-                        {prop.featured && (
-                          <span className="inline-flex items-center gap-1 text-[9px] font-bold text-[#C9A227] uppercase">
-                            <Sparkles className="w-2.5 h-2.5" /> Destaque
-                          </span>
-                        )}
+                      </td>
+                      <td className="py-3.5 px-3">
+                        <div className="flex flex-wrap gap-1 max-w-[210px]">
+                          {/* 1-click Bank Financing Toggle */}
+                          <button
+                            onClick={(e) => handleToggleBankFinancing(prop, e)}
+                            className={`px-2 py-0.5 rounded text-[10px] font-semibold flex items-center gap-1 transition-all cursor-pointer ${
+                              prop.bankFinancing
+                                ? 'bg-[#0284C7] text-white shadow-xs'
+                                : 'bg-[#F7F3EB] text-[#5A5A5A] hover:text-[#0284C7] border border-[#E5E0D8]'
+                            }`}
+                            title="Clique para alternar Financiamento Bancário no Firebase"
+                          >
+                            <Landmark className="w-2.5 h-2.5" />
+                            <span>{prop.bankFinancing ? 'Bancário: SIM' : 'Bancário: NÃO'}</span>
+                          </button>
+
+                          {/* 1-click Construction Financing Toggle */}
+                          <button
+                            onClick={(e) => handleToggleDirectFinancing(prop, e)}
+                            className={`px-2 py-0.5 rounded text-[10px] font-semibold flex items-center gap-1 transition-all cursor-pointer ${
+                              prop.directFinancing
+                                ? 'bg-[#1F8A4C] text-white shadow-xs'
+                                : 'bg-[#F7F3EB] text-[#5A5A5A] hover:text-[#1F8A4C] border border-[#E5E0D8]'
+                            }`}
+                            title="Clique para alternar Direto com a Construtora no Firebase"
+                          >
+                            <ShieldCheck className="w-2.5 h-2.5" />
+                            <span>{prop.directFinancing ? 'Construtora: SIM' : 'Construtora: NÃO'}</span>
+                          </button>
+
+                          {/* 1-click Featured Toggle */}
+                          <button
+                            onClick={(e) => handleToggleFeatured(prop, e)}
+                            className={`px-2 py-0.5 rounded text-[10px] font-semibold flex items-center gap-1 transition-all cursor-pointer ${
+                              prop.featured
+                                ? 'bg-[#C9A227] text-[#0A0A0A] shadow-xs'
+                                : 'bg-[#F7F3EB] text-[#5A5A5A] hover:text-[#C9A227] border border-[#E5E0D8]'
+                            }`}
+                            title="Clique para destacar na Home (Seleção Exclusiva)"
+                          >
+                            <Sparkles className="w-2.5 h-2.5" />
+                            <span>{prop.featured ? 'Destaque: SIM' : 'Destaque: NÃO'}</span>
+                          </button>
+                        </div>
                       </td>
                       <td className="py-3.5 px-3 text-right">
                         <div className="flex items-center justify-end gap-1.5">
@@ -1233,26 +1394,131 @@ export const AdminPage: React.FC<AdminPageProps> = ({
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-6 pt-3 p-4 bg-[#F7F3EB] rounded-2xl border border-[#E5E0D8]">
-                    <label className="flex items-center gap-2.5 text-xs font-semibold text-[#111111] cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={!!editingProperty.featured}
-                        onChange={(e) => setEditingProperty({ ...editingProperty, featured: e.target.checked })}
-                        className="w-4 h-4 accent-[#C9A227] cursor-pointer"
-                      />
-                      <span>Destacar na Seleção Exclusiva (Home)</span>
-                    </label>
+                  {/* Condições de Financiamento & Destaques */}
+                  <div className="p-4 bg-[#F7F3EB] rounded-2xl border border-[#E5E0D8] space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-[#111111] uppercase tracking-wider flex items-center gap-1.5">
+                        <Landmark className="w-4 h-4 text-[#0284C7]" />
+                        <span>Condições de Financiamento & Destaques</span>
+                      </span>
+                      <span className="text-[10px] text-[#5A5A5A]">Atalhos rápidos:</span>
+                    </div>
 
-                    <label className="flex items-center gap-2.5 text-xs font-semibold text-[#111111] cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={!!editingProperty.directFinancing}
-                        onChange={(e) => setEditingProperty({ ...editingProperty, directFinancing: e.target.checked })}
-                        className="w-4 h-4 accent-[#1F8A4C] cursor-pointer"
-                      />
-                      <span>Financiamento Direto com a Construtora</span>
-                    </label>
+                    {/* Quick Preset Buttons */}
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setEditingProperty({
+                          ...editingProperty,
+                          bankFinancing: true,
+                          directFinancing: false
+                        })}
+                        className="px-2.5 py-1 rounded-lg bg-[#FFFFFF] hover:bg-[#0284C7]/15 border border-[#0284C7]/40 text-[#0284C7] text-xs font-semibold flex items-center gap-1 transition-all cursor-pointer shadow-xs"
+                      >
+                        <Landmark className="w-3 h-3" />
+                        <span>Apenas Fin. Bancário</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setEditingProperty({
+                          ...editingProperty,
+                          bankFinancing: false,
+                          directFinancing: true
+                        })}
+                        className="px-2.5 py-1 rounded-lg bg-[#FFFFFF] hover:bg-[#1F8A4C]/15 border border-[#1F8A4C]/40 text-[#1F8A4C] text-xs font-semibold flex items-center gap-1 transition-all cursor-pointer shadow-xs"
+                      >
+                        <ShieldCheck className="w-3 h-3" />
+                        <span>Apenas Construtora</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setEditingProperty({
+                          ...editingProperty,
+                          bankFinancing: true,
+                          directFinancing: true
+                        })}
+                        className="px-2.5 py-1 rounded-lg bg-[#FFFFFF] hover:bg-[#C9A227]/20 border border-[#C9A227]/50 text-[#C9A227] text-xs font-semibold flex items-center gap-1 transition-all cursor-pointer shadow-xs"
+                      >
+                        <Sparkles className="w-3 h-3" />
+                        <span>Aceita Ambos</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setEditingProperty({
+                          ...editingProperty,
+                          bankFinancing: false,
+                          directFinancing: false
+                        })}
+                        className="px-2.5 py-1 rounded-lg bg-[#FFFFFF] hover:bg-[#EAE4D8] border border-[#E5E0D8] text-[#5A5A5A] text-xs font-medium transition-all cursor-pointer"
+                      >
+                        <span>À Vista / Outros</span>
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-[#E5E0D8]">
+                      {/* Bank Financing Checkbox */}
+                      <label className={`flex items-start gap-2.5 p-2.5 rounded-xl border transition-all cursor-pointer ${
+                        editingProperty.bankFinancing 
+                          ? 'bg-[#0284C7]/10 border-[#0284C7]/40 text-[#0284C7]' 
+                          : 'bg-[#FFFFFF] border-[#E5E0D8] text-[#111111]'
+                      }`}>
+                        <input
+                          type="checkbox"
+                          checked={!!editingProperty.bankFinancing}
+                          onChange={(e) => setEditingProperty({ ...editingProperty, bankFinancing: e.target.checked })}
+                          className="w-4 h-4 mt-0.5 accent-[#0284C7] cursor-pointer shrink-0"
+                        />
+                        <div className="space-y-0.5">
+                          <span className="text-xs font-bold block">Financiamento Bancário</span>
+                          <span className="text-[10px] text-[#5A5A5A] leading-tight block">
+                            Imóvel averbado/apto para Caixa, Itaú, etc.
+                          </span>
+                        </div>
+                      </label>
+
+                      {/* Direct Builder Financing Checkbox */}
+                      <label className={`flex items-start gap-2.5 p-2.5 rounded-xl border transition-all cursor-pointer ${
+                        editingProperty.directFinancing 
+                          ? 'bg-[#1F8A4C]/10 border-[#1F8A4C]/40 text-[#1F8A4C]' 
+                          : 'bg-[#FFFFFF] border-[#E5E0D8] text-[#111111]'
+                      }`}>
+                        <input
+                          type="checkbox"
+                          checked={!!editingProperty.directFinancing}
+                          onChange={(e) => setEditingProperty({ ...editingProperty, directFinancing: e.target.checked })}
+                          className="w-4 h-4 mt-0.5 accent-[#1F8A4C] cursor-pointer shrink-0"
+                        />
+                        <div className="space-y-0.5">
+                          <span className="text-xs font-bold block">Direto c/ Construtora</span>
+                          <span className="text-[10px] text-[#5A5A5A] leading-tight block">
+                            Parcelamento facilitado direto na obra.
+                          </span>
+                        </div>
+                      </label>
+
+                      {/* Featured Checkbox */}
+                      <label className={`flex items-start gap-2.5 p-2.5 rounded-xl border transition-all cursor-pointer ${
+                        editingProperty.featured 
+                          ? 'bg-[#C9A227]/15 border-[#C9A227]/50 text-[#C9A227]' 
+                          : 'bg-[#FFFFFF] border-[#E5E0D8] text-[#111111]'
+                      }`}>
+                        <input
+                          type="checkbox"
+                          checked={!!editingProperty.featured}
+                          onChange={(e) => setEditingProperty({ ...editingProperty, featured: e.target.checked })}
+                          className="w-4 h-4 mt-0.5 accent-[#C9A227] cursor-pointer shrink-0"
+                        />
+                        <div className="space-y-0.5">
+                          <span className="text-xs font-bold block">Seleção Exclusiva (Home)</span>
+                          <span className="text-[10px] text-[#5A5A5A] leading-tight block">
+                            Destaca o imóvel no topo do site.
+                          </span>
+                        </div>
+                      </label>
+                    </div>
                   </div>
                 </div>
               )}
@@ -1366,17 +1632,19 @@ export const AdminPage: React.FC<AdminPageProps> = ({
               {/* TAB 3: FOTOS E GALERIA */}
               {modalTab === 'photos' && (
                 <div className="space-y-6">
+                  {/* Header and Actions */}
                   <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
                     <div className="space-y-0.5">
-                      <h4 className="text-sm font-bold text-[#111111]">
-                        Galeria de Fotos ({editingProperty.images?.length || 0})
+                      <h4 className="text-sm font-bold text-[#111111] flex items-center gap-2">
+                        <ImagePlus className="w-4 h-4 text-[#C9A227]" />
+                        <span>Galeria de Fotos ({editingProperty.images?.length || 0})</span>
                       </h4>
                       <p className="text-xs text-[#5A5A5A]">
-                        A primeira imagem será utilizada como foto principal (capa).
+                        Fotos salvas com alta resolução e carregamento instantâneo. A primeira imagem é a <strong>Capa Principal</strong>.
                       </p>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       <input
                         type="file"
                         ref={fileInputRef}
@@ -1385,30 +1653,111 @@ export const AdminPage: React.FC<AdminPageProps> = ({
                         onChange={handleFileUpload}
                         className="hidden"
                       />
+                      <input
+                        type="file"
+                        ref={cameraInputRef}
+                        accept="image/*"
+                        capture="environment"
+                        onChange={handleFileUpload}
+                        className="hidden"
+                      />
+
+                      {/* Upload from Device / Gallery */}
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="px-3.5 py-2 rounded-xl bg-[#F7F3EB] hover:bg-[#EAE4D8] border border-[#E5E0D8] text-xs font-semibold text-[#111111] flex items-center gap-1.5 cursor-pointer transition-colors"
+                        disabled={isUploadingImages}
+                        className="px-3.5 py-2 rounded-xl bg-[#0A0A0A] hover:bg-[#2A2A2A] text-white text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-all shadow-sm disabled:opacity-50"
                       >
                         <Upload className="w-3.5 h-3.5 text-[#C9A227]" />
                         <span>Carregar do Dispositivo</span>
                       </button>
 
+                      {/* Mobile Camera Direct Capture */}
+                      <button
+                        type="button"
+                        onClick={() => cameraInputRef.current?.click()}
+                        disabled={isUploadingImages}
+                        className="sm:hidden px-3 py-2 rounded-xl bg-[#F7F3EB] hover:bg-[#EAE4D8] border border-[#E5E0D8] text-xs font-semibold text-[#111111] flex items-center gap-1.5 cursor-pointer transition-colors"
+                      >
+                        <Camera className="w-3.5 h-3.5 text-[#C9A227]" />
+                        <span>Câmera</span>
+                      </button>
+
+                      {/* Bulk URLs */}
                       <button
                         type="button"
                         onClick={() => setShowBulkPhotoInput(!showBulkPhotoInput)}
-                        className="px-3.5 py-2 rounded-xl bg-[#F7F3EB] hover:bg-[#EAE4D8] border border-[#E5E0D8] text-xs font-semibold text-[#111111] flex items-center gap-1.5 cursor-pointer transition-colors"
+                        className="px-3 py-2 rounded-xl bg-[#F7F3EB] hover:bg-[#EAE4D8] border border-[#E5E0D8] text-xs font-semibold text-[#111111] flex items-center gap-1.5 cursor-pointer transition-colors"
                       >
-                        <span>Colar em Lote</span>
+                        <span>Colar URLs em Lote</span>
                       </button>
                     </div>
                   </div>
+
+                  {/* Drag & Drop Upload Zone */}
+                  <div
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      setIsDraggingPhotos(true);
+                    }}
+                    onDragLeave={() => setIsDraggingPhotos(false)}
+                    onDrop={handleDropPhotos}
+                    onClick={() => fileInputRef.current?.click()}
+                    className={`p-6 rounded-2xl border-2 border-dashed transition-all cursor-pointer text-center space-y-2 ${
+                      isDraggingPhotos
+                        ? 'border-[#C9A227] bg-[#C9A227]/10 scale-[1.01]'
+                        : 'border-[#E5E0D8] hover:border-[#C9A227]/70 bg-[#F7F3EB]/60 hover:bg-[#F7F3EB]'
+                    }`}
+                  >
+                    <div className="w-10 h-10 rounded-full bg-[#FFFFFF] border border-[#E5E0D8] flex items-center justify-center mx-auto text-[#C9A227] shadow-xs">
+                      <Upload className="w-5 h-5" />
+                    </div>
+                    <div className="space-y-0.5">
+                      <p className="text-xs font-bold text-[#111111]">
+                        Arraste fotos para cá ou clique para selecionar do celular / computador
+                      </p>
+                      <p className="text-[11px] text-[#5A5A5A]">
+                        Suporta JPEG, PNG, WEBP, HEIC. As imagens são automaticamente compactadas e hospedadas na nuvem para máxima velocidade na Vercel.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Uploading Progress Indicator */}
+                  {isUploadingImages && uploadProgress && (
+                    <div className="p-4 bg-[#FFFFFF] rounded-2xl border border-[#C9A227] shadow-md space-y-2 animate-in fade-in-50">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-bold text-[#111111] flex items-center gap-2">
+                          <RefreshCw className="w-3.5 h-3.5 text-[#C9A227] animate-spin" />
+                          <span>Otimizando e enviando foto {uploadProgress.current} de {uploadProgress.total}...</span>
+                        </span>
+                        <span className="font-mono text-[#C9A227] font-bold">{uploadProgress.percent}%</span>
+                      </div>
+                      <div className="w-full bg-[#E5E0D8] h-2 rounded-full overflow-hidden">
+                        <div
+                          className="bg-[#C9A227] h-full transition-all duration-300 rounded-full"
+                          style={{ width: `${uploadProgress.percent}%` }}
+                        />
+                      </div>
+                      <p className="text-[10px] text-[#5A5A5A] truncate">
+                        Processando arquivo: {uploadProgress.fileName}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Success / Status Notification */}
+                  {uploadStatsMsg && (
+                    <div className="p-3.5 rounded-2xl bg-[#1F8A4C]/15 border border-[#1F8A4C]/30 text-xs text-[#1F8A4C] font-semibold flex items-center gap-2 animate-in fade-in-50">
+                      <CheckCircle className="w-4 h-4 text-[#1F8A4C] shrink-0" />
+                      <span>{uploadStatsMsg}</span>
+                    </div>
+                  )}
 
                   {/* Add Single URL Input */}
                   <div className="flex gap-2">
                     <input
                       type="url"
-                      placeholder="Cole a URL da foto (ex: https://i.postimg.cc/...)"
+                      placeholder="Ou cole o link direto da imagem (ex: https://i.postimg.cc/...)"
                       value={newPhotoUrl}
                       onChange={(e) => setNewPhotoUrl(e.target.value)}
                       onKeyDown={(e) => {
@@ -1425,7 +1774,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
                       className="px-4 py-2.5 rounded-xl bg-[#C9A227] hover:bg-[#B8931F] text-[#0A0A0A] font-bold text-xs flex items-center gap-1 cursor-pointer transition-all shrink-0"
                     >
                       <Plus className="w-4 h-4" />
-                      <span>Adicionar Foto</span>
+                      <span>Adicionar Link</span>
                     </button>
                   </div>
 
@@ -1463,79 +1812,87 @@ export const AdminPage: React.FC<AdminPageProps> = ({
 
                   {/* Photos Grid & Reordering */}
                   {editingProperty.images && editingProperty.images.length > 0 ? (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5">
-                      {editingProperty.images.map((imgUrl, idx) => (
-                        <div
-                          key={idx}
-                          className={`group relative rounded-2xl overflow-hidden border bg-[#F7F3EB] aspect-video flex flex-col justify-between ${
-                            idx === 0 ? 'border-[#C9A227] ring-2 ring-[#C9A227]/30' : 'border-[#E5E0D8]'
-                          }`}
-                        >
-                          <img
-                            src={imgUrl}
-                            alt={`Foto ${idx + 1}`}
-                            className="w-full h-full object-cover"
-                          />
-                          
-                          {/* Badge if Cover */}
-                          {idx === 0 && (
-                            <div className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-[#C9A227] text-[#0A0A0A] font-bold text-[9px] uppercase tracking-wider shadow">
-                              Capa Principal
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-xs text-[#5A5A5A]">
+                        <span>Passe o mouse ou toque nas fotos para ordenar ou definir capa:</span>
+                        <span className="font-semibold text-[#111111]">{editingProperty.images.length} {editingProperty.images.length === 1 ? 'foto' : 'fotos'}</span>
+                      </div>
+
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5">
+                        {editingProperty.images.map((imgUrl, idx) => (
+                          <div
+                            key={idx}
+                            className={`group relative rounded-2xl overflow-hidden border bg-[#F7F3EB] aspect-video flex flex-col justify-between shadow-xs transition-all ${
+                              idx === 0 ? 'border-[#C9A227] ring-2 ring-[#C9A227]/30' : 'border-[#E5E0D8]'
+                            }`}
+                          >
+                            <img
+                              src={imgUrl}
+                              alt={`Foto ${idx + 1}`}
+                              className="w-full h-full object-cover"
+                              loading="lazy"
+                            />
+                            
+                            {/* Badge if Cover */}
+                            {idx === 0 && (
+                              <div className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-[#C9A227] text-[#0A0A0A] font-bold text-[9px] uppercase tracking-wider shadow z-10">
+                                Capa Principal
+                              </div>
+                            )}
+
+                            {/* Control Overlay */}
+                            <div className="absolute inset-0 bg-black/65 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 p-2 z-20">
+                              {idx > 0 && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleMovePhoto(idx, idx - 1)}
+                                  className="p-1.5 rounded-lg bg-white/90 text-[#111111] hover:bg-[#C9A227] cursor-pointer transition-colors"
+                                  title="Mover para esquerda"
+                                >
+                                  <ArrowUp className="w-3.5 h-3.5 -rotate-90" />
+                                </button>
+                              )}
+
+                              {idx < editingProperty.images!.length - 1 && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleMovePhoto(idx, idx + 1)}
+                                  className="p-1.5 rounded-lg bg-white/90 text-[#111111] hover:bg-[#C9A227] cursor-pointer transition-colors"
+                                  title="Mover para direita"
+                                >
+                                  <ArrowDown className="w-3.5 h-3.5 -rotate-90" />
+                                </button>
+                              )}
+
+                              {idx !== 0 && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleSetCoverPhoto(idx)}
+                                  className="p-1.5 rounded-lg bg-white/90 text-[#111111] hover:bg-[#C9A227] cursor-pointer transition-colors"
+                                  title="Definir como Capa Principal"
+                                >
+                                  <Sparkles className="w-3.5 h-3.5 text-[#C9A227]" />
+                                </button>
+                              )}
+
+                              <button
+                                type="button"
+                                onClick={() => handleRemovePhoto(idx)}
+                                className="p-1.5 rounded-lg bg-red-600 text-white hover:bg-red-700 cursor-pointer transition-colors"
+                                title="Remover Foto"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
                             </div>
-                          )}
-
-                          {/* Control Overlay */}
-                          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 p-2">
-                            {idx > 0 && (
-                              <button
-                                type="button"
-                                onClick={() => handleMovePhoto(idx, idx - 1)}
-                                className="p-1.5 rounded-lg bg-white/90 text-[#111111] hover:bg-[#C9A227] cursor-pointer transition-colors"
-                                title="Mover para esquerda"
-                              >
-                                <ArrowUp className="w-3.5 h-3.5 -rotate-90" />
-                              </button>
-                            )}
-
-                            {idx < editingProperty.images!.length - 1 && (
-                              <button
-                                type="button"
-                                onClick={() => handleMovePhoto(idx, idx + 1)}
-                                className="p-1.5 rounded-lg bg-white/90 text-[#111111] hover:bg-[#C9A227] cursor-pointer transition-colors"
-                                title="Mover para direita"
-                              >
-                                <ArrowDown className="w-3.5 h-3.5 -rotate-90" />
-                              </button>
-                            )}
-
-                            {idx !== 0 && (
-                              <button
-                                type="button"
-                                onClick={() => handleSetCoverPhoto(idx)}
-                                className="p-1.5 rounded-lg bg-white/90 text-[#111111] hover:bg-[#C9A227] cursor-pointer transition-colors"
-                                title="Definir como Capa Principal"
-                              >
-                                <Sparkles className="w-3.5 h-3.5 text-[#C9A227]" />
-                              </button>
-                            )}
-
-                            <button
-                              type="button"
-                              onClick={() => handleRemovePhoto(idx)}
-                              className="p-1.5 rounded-lg bg-red-600 text-white hover:bg-red-700 cursor-pointer transition-colors"
-                              title="Remover Foto"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
                   ) : (
                     <div className="p-8 text-center bg-[#F7F3EB] rounded-2xl border border-dashed border-[#E5E0D8] space-y-2">
                       <ImageIcon className="w-8 h-8 text-[#5A5A5A] mx-auto" />
                       <p className="text-xs text-[#5A5A5A]">
-                        Nenhuma foto adicionada ainda. Adicione por URL ou faça upload acima.
+                        Nenhuma foto adicionada ainda. Use o botão <strong>Carregar do Dispositivo</strong> ou arraste fotos diretamente.
                       </p>
                     </div>
                   )}

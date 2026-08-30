@@ -27,6 +27,7 @@ export interface Property {
   features: string[]; // Diferenciais (ex: Sacada com churrasqueira, Piscina, Vista mar)
   floorPlanUrl?: string;
   directFinancing?: boolean; // Financiamento direto com construtora
+  bankFinancing?: boolean; // Aceita Financiamento Bancário (Averbado / Caixa / Bancos)
   deliveryYear?: string;
   createdAt?: number;
   updatedAt?: number;
@@ -64,6 +65,7 @@ export interface PropertyFilter {
   maxPrice?: number;
   developer?: string;
   onlySignature?: boolean;
+  financing?: 'Todos' | 'Bancario' | 'Construtora';
 }
 
 export interface CuratedInquiry {

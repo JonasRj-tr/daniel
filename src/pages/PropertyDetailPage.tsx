@@ -35,7 +35,8 @@ import {
   Zap,
   Lock,
   UserCheck,
-  Check
+  Check,
+  Landmark
 } from 'lucide-react';
 import { Property, SiteSettings } from '../types';
 import { formatCurrency, getStatusBadgeColor, createWhatsAppUrl, getHighResImages, getHighResImageUrl } from '../utils/formatters';
@@ -401,6 +402,24 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
                   </div>
                 </div>
               </div>
+
+              {/* Financing Conditions Strip */}
+              {(property.bankFinancing || property.directFinancing) && (
+                <div className="flex flex-wrap items-center gap-2 pt-1">
+                  {property.bankFinancing && (
+                    <div className="px-3 py-1.5 rounded-xl bg-[#0284C7]/10 border border-[#0284C7]/30 text-[#0284C7] text-xs font-semibold flex items-center gap-1.5 shadow-sm">
+                      <Landmark className="w-4 h-4 text-[#0284C7]" />
+                      <span>Aceita Financiamento Bancário (Averbado / Caixa / Bancos)</span>
+                    </div>
+                  )}
+                  {property.directFinancing && (
+                    <div className="px-3 py-1.5 rounded-xl bg-[#1F8A4C]/10 border border-[#1F8A4C]/30 text-[#1F8A4C] text-xs font-semibold flex items-center gap-1.5 shadow-sm">
+                      <ShieldCheck className="w-4 h-4 text-[#1F8A4C]" />
+                      <span>Financiamento Direto com a Construtora</span>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Dual CTA Buttons */}
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">

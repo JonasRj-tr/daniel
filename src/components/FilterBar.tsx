@@ -7,7 +7,9 @@ import {
   RotateCcw, 
   SlidersHorizontal,
   Home,
-  Check
+  Check,
+  Landmark,
+  ShieldCheck
 } from 'lucide-react';
 import { PropertyFilter, PropertyStatus, PropertyType } from '../types';
 
@@ -47,6 +49,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
       type: 'Todos',
       bedrooms: 'Todos',
       onlySignature: false,
+      financing: 'Todos',
     });
   };
 
@@ -56,6 +59,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
     (filters.status && filters.status !== 'Todos') ||
     (filters.type && filters.type !== 'Todos') ||
     (filters.bedrooms && filters.bedrooms !== 'Todos') ||
+    (filters.financing && filters.financing !== 'Todos') ||
     filters.onlySignature;
 
   return (
@@ -151,10 +155,10 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         </div>
       </div>
 
-      {/* Secondary Row: Status Pills & Action Counts */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-3 border-t border-[#E5E0D8]">
-        {/* Status quick tabs */}
-        <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
+      {/* Secondary Row: Status Pills, Financing Filters & Action Counts */}
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 pt-3 border-t border-[#E5E0D8]">
+        {/* Status quick tabs & Financing options */}
+        <div className="flex flex-wrap items-center gap-1.5 w-full lg:w-auto">
           <span className="text-xs text-[#5A5A5A] mr-1 hidden sm:inline">Status:</span>
           {statusOptions.map((status) => {
             const isActive = (filters.status || 'Todos') === status;
@@ -174,6 +178,42 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             );
           })}
 
+          <div className="h-4 w-px bg-[#E5E0D8] mx-1 hidden sm:block" />
+
+          {/* Bank Financing Filter Button */}
+          <button
+            id="filter-bank-financing-toggle"
+            onClick={() => setFilters((prev) => ({ 
+              ...prev, 
+              financing: prev.financing === 'Bancario' ? 'Todos' : 'Bancario' 
+            }))}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1 transition-all whitespace-nowrap cursor-pointer ${
+              filters.financing === 'Bancario'
+                ? 'bg-[#0284C7] text-white font-semibold shadow-sm'
+                : 'bg-[#F7F3EB] text-[#5A5A5A] hover:text-[#0284C7] border border-[#E5E0D8]'
+            }`}
+          >
+            <Landmark className="w-3.5 h-3.5" />
+            <span>Financiamento Bancário</span>
+          </button>
+
+          {/* Direct Financing Filter Button */}
+          <button
+            id="filter-direct-financing-toggle"
+            onClick={() => setFilters((prev) => ({ 
+              ...prev, 
+              financing: prev.financing === 'Construtora' ? 'Todos' : 'Construtora' 
+            }))}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1 transition-all whitespace-nowrap cursor-pointer ${
+              filters.financing === 'Construtora'
+                ? 'bg-[#1F8A4C] text-white font-semibold shadow-sm'
+                : 'bg-[#F7F3EB] text-[#5A5A5A] hover:text-[#1F8A4C] border border-[#E5E0D8]'
+            }`}
+          >
+            <ShieldCheck className="w-3.5 h-3.5" />
+            <span>Direto Construtora</span>
+          </button>
+
           {/* Signature Toggle */}
           <button
             id="filter-signature-toggle"
@@ -190,7 +230,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         </div>
 
         {/* Count and Clear */}
-        <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto text-xs">
+        <div className="flex items-center justify-between lg:justify-end gap-3 w-full lg:w-auto text-xs pt-1 lg:pt-0">
           <div className="text-[#5A5A5A]">
             <span className="font-semibold text-[#111111]">{totalCount}</span> {totalCount === 1 ? 'imóvel encontrado' : 'imóveis encontrados'}
           </div>

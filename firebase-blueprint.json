@@ -85,6 +85,10 @@
           "type": "boolean",
           "description": "Whether the property is featured on the homepage"
         },
+        "bankFinancing": {
+          "type": "boolean",
+          "description": "Bank financing eligibility flag"
+        },
         "directFinancing": {
           "type": "boolean",
           "description": "Direct financing option available"

@@ -62,6 +62,12 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({
       if (filters.onlySignature && !p.featured) {
         return false;
       }
+      if (filters.financing === 'Bancario' && !p.bankFinancing) {
+        return false;
+      }
+      if (filters.financing === 'Construtora' && !p.directFinancing) {
+        return false;
+      }
       return true;
     }).sort((a, b) => {
       if (sortBy === 'bedrooms') {

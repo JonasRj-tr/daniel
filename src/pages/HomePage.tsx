@@ -73,6 +73,12 @@ export const HomePage: React.FC<HomePageProps> = ({
     if (homeFilters.onlySignature && !p.featured) {
       return false;
     }
+    if (homeFilters.financing === 'Bancario' && !p.bankFinancing) {
+      return false;
+    }
+    if (homeFilters.financing === 'Construtora' && !p.directFinancing) {
+      return false;
+    }
     return true;
   });
 

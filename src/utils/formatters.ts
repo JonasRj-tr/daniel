@@ -23,7 +23,13 @@ export function createWhatsAppUrl(phone: string, text: string): string {
 }
 
 export function getHighResImageUrl(url?: string): string {
-  if (!url) return '';
+  if (!url || typeof url !== 'string') return '';
+  
+  // Data URLs e CDNs de upload direto não necessitam de substituição de query
+  if (url.startsWith('data:') || url.includes('ibb.co') || url.includes('postimg') || url.includes('cloudinary')) {
+    return url;
+  }
+
   // Upgrade Odoo/eucorretorimoveis images to maximum 1920/Full HD & Ultra HD resolution
   let res = url.replace(/field=image_1024/g, 'field=image_1920');
   res = res.replace(/field=image_512/g, 'field=image_1920');
@@ -41,10 +47,16 @@ export function getHighResImageUrl(url?: string): string {
 }
 
 export function getHighResImages(images?: string[]): string[] {
-  if (!images || images.length === 0) {
+  if (!images || !Array.isArray(images) || images.length === 0) {
     return ['https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2560&q=95'];
   }
-  return images.map((img) => getHighResImageUrl(img));
+  const filtered = images
+    .map((img) => (typeof img === 'string' ? getHighResImageUrl(img) : ''))
+    .filter((img) => typeof img === 'string' && img.trim().length > 0);
+
+  return filtered.length > 0
+    ? filtered
+    : ['https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2560&q=95'];
 }
 
 export function getStatusBadgeColor(status: string): { bg: string; text: string; border: string; dot: string } {

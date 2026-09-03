@@ -54,7 +54,7 @@ import {
   getIsAdminCached
 } from '../firebase/firebaseService';
 import { formatCurrency } from '../utils/formatters';
-import { processAndUploadDeviceImages, formatBytes } from '../utils/imageUploader';
+import { processAndUploadDeviceImages, formatBytes, isImageFile } from '../utils/imageUploader';
 import { AdminLandingPageBuilder } from '../components/AdminLandingPageBuilder';
 
 interface AdminPageProps {
@@ -120,6 +120,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
   const [modalTab, setModalTab] = useState<'general' | 'areas' | 'photos' | 'features' | 'desc'>('general');
   const [editingProperty, setEditingProperty] = useState<Partial<Property> | null>(null);
   const [saveSuccessMsg, setSaveSuccessMsg] = useState('');
+  const [formValidationError, setFormValidationError] = useState<string | null>(null);
   const [isSavingProperty, setIsSavingProperty] = useState(false);
 
   // Photos Helper state in Modal
@@ -227,13 +228,12 @@ export const AdminPage: React.FC<AdminPageProps> = ({
       featured: false,
       directFinancing: true,
       deliveryYear: 'Dezembro / 2026',
-      images: [
-        'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
-        'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1200&q=80'
-      ],
+      images: [],
       features: ['Sacada com churrasqueira a carvão', 'Piso porcelanato polido', 'Espera para ar-condicionado Split'],
     });
     setModalTab('general');
+    setFormValidationError(null);
+    setSaveSuccessMsg('');
     setIsModalOpen(true);
   };
 
@@ -245,6 +245,8 @@ export const AdminPage: React.FC<AdminPageProps> = ({
       features: prop.features && prop.features.length > 0 ? [...prop.features] : []
     });
     setModalTab('general');
+    setFormValidationError(null);
+    setSaveSuccessMsg('');
     setIsModalOpen(true);
   };
 
@@ -311,8 +313,13 @@ export const AdminPage: React.FC<AdminPageProps> = ({
 
   // High-performance direct device image upload (Camera + Gallery + Desktop Drag-and-Drop)
   const processDeviceFiles = async (fileList: FileList | File[]) => {
-    const rawFiles = Array.from(fileList).filter((f) => f.type.startsWith('image/'));
-    if (rawFiles.length === 0 || !editingProperty) return;
+    const rawFiles = Array.from(fileList).filter((f) => isImageFile(f));
+    if (rawFiles.length === 0) {
+      setUploadStatsMsg('Nenhum arquivo de imagem válido selecionado. Selecione arquivos JPG, PNG, WEBP ou HEIC.');
+      setTimeout(() => setUploadStatsMsg(null), 5000);
+      return;
+    }
+    if (!editingProperty) return;
 
     setIsUploadingImages(true);
     setUploadStatsMsg(null);
@@ -333,12 +340,12 @@ export const AdminPage: React.FC<AdminPageProps> = ({
           };
         });
 
-        setUploadStatsMsg(`✓ ${uploadedUrls.length} ${uploadedUrls.length === 1 ? 'foto otimizada e salva' : 'fotos otimizadas e salvas'} com sucesso direto do seu dispositivo!`);
+        setUploadStatsMsg(`✓ ${uploadedUrls.length} ${uploadedUrls.length === 1 ? 'foto otimizada e adicionada' : 'fotos otimizadas e adicionadas'} com sucesso!`);
         setTimeout(() => setUploadStatsMsg(null), 6000);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Erro no processamento de fotos:', err);
-      setUploadStatsMsg('Erro ao processar algumas fotos. Tente novamente.');
+      setUploadStatsMsg(`Erro ao processar fotos: ${err?.message || 'Tente novamente'}`);
     } finally {
       setIsUploadingImages(false);
       setUploadProgress(null);
@@ -418,22 +425,51 @@ export const AdminPage: React.FC<AdminPageProps> = ({
   // Handle Save Property Submit
   const handleSavePropertySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editingProperty || !editingProperty.title) return;
+    setFormValidationError(null);
+
+    if (!editingProperty) return;
+
+    // Validation 1: Title is required
+    if (!editingProperty.title || !editingProperty.title.trim()) {
+      setModalTab('general');
+      setFormValidationError('Preencha o Título do Empreendimento / Imóvel para salvar no Firebase.');
+      return;
+    }
+
+    // Validation 2: Wait if images are still uploading
+    if (isUploadingImages) {
+      setFormValidationError('Aguarde o processamento e envio das fotos terminar antes de salvar.');
+      return;
+    }
+
+    // Auto-generate code if empty
+    const propCode = editingProperty.code?.trim() || Math.floor(100000 + Math.random() * 900000).toString();
+    const propNeighborhood = editingProperty.neighborhood?.trim() || 'Centro';
+    const propCity = editingProperty.city?.trim() || 'Criciúma';
+
+    const propertyToSave: Property = {
+      ...(editingProperty as Property),
+      code: propCode,
+      neighborhood: propNeighborhood,
+      city: propCity,
+      images: editingProperty.images || [],
+      features: editingProperty.features || [],
+    };
 
     setIsSavingProperty(true);
     try {
-      await saveProperty(editingProperty as Property);
-      setSaveSuccessMsg('Imóvel salvo e sincronizado com Firebase em tempo real!');
+      await saveProperty(propertyToSave);
+      setSaveSuccessMsg('✓ Imóvel e fotos salvos com sucesso e sincronizados no Firebase!');
       setTimeout(() => {
         setSaveSuccessMsg('');
         setIsModalOpen(false);
         setEditingProperty(null);
         setIsSavingProperty(false);
-      }, 1000);
-    } catch (err) {
+      }, 1200);
+    } catch (err: any) {
       console.error('Error saving property:', err);
       setIsSavingProperty(false);
-      alert('Erro ao salvar no Firebase. Verifique sua conexão.');
+      setFormValidationError(`Erro ao salvar no Firebase: ${err?.message || 'Falha de comunicação'}. Verifique sua internet.`);
     }
   };
 
@@ -1182,6 +1218,13 @@ export const AdminPage: React.FC<AdminPageProps> = ({
               </div>
             )}
 
+            {formValidationError && (
+              <div className="p-3.5 rounded-2xl bg-red-500/10 border border-red-500/30 text-xs text-red-700 font-semibold flex items-center gap-2 mb-4 animate-in fade-in-50">
+                <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+                <span>{formValidationError}</span>
+              </div>
+            )}
+
             {/* Modal Internal Navigation Tabs */}
             <div className="flex items-center gap-2 overflow-x-auto pb-2 mb-6 border-b border-[#E5E0D8]">
               <button
@@ -1250,7 +1293,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
               </button>
             </div>
 
-            <form onSubmit={handleSavePropertySubmit} className="space-y-6 max-h-[62vh] overflow-y-auto pr-2">
+            <form noValidate onSubmit={handleSavePropertySubmit} className="space-y-6 max-h-[62vh] overflow-y-auto pr-2">
               {/* TAB 1: DADOS GERAIS */}
               {modalTab === 'general' && (
                 <div className="space-y-4">
@@ -1823,77 +1866,140 @@ export const AdminPage: React.FC<AdminPageProps> = ({
 
                   {/* Photos Grid & Reordering */}
                   {editingProperty.images && editingProperty.images.length > 0 ? (
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                       <div className="flex items-center justify-between text-xs text-[#5A5A5A]">
-                        <span>Passe o mouse ou toque nas fotos para ordenar ou definir capa:</span>
-                        <span className="font-semibold text-[#111111]">{editingProperty.images.length} {editingProperty.images.length === 1 ? 'foto' : 'fotos'}</span>
+                        <span>Passe o mouse ou use os botões abaixo para ordenar ou definir capa:</span>
+                        <div className="flex items-center gap-3">
+                          <span className="font-semibold text-[#111111]">{editingProperty.images.length} {editingProperty.images.length === 1 ? 'foto' : 'fotos'}</span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (window.confirm('Deseja remover todas as fotos deste imóvel?')) {
+                                setEditingProperty({ ...editingProperty, images: [] });
+                              }
+                            }}
+                            className="text-red-600 hover:text-red-700 text-[11px] font-semibold cursor-pointer"
+                          >
+                            Limpar Todas
+                          </button>
+                        </div>
                       </div>
 
                       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5">
                         {editingProperty.images.map((imgUrl, idx) => (
                           <div
                             key={idx}
-                            className={`group relative rounded-2xl overflow-hidden border bg-[#F7F3EB] aspect-video flex flex-col justify-between shadow-xs transition-all ${
+                            className={`group relative rounded-2xl overflow-hidden border bg-[#FFFFFF] flex flex-col justify-between shadow-xs transition-all ${
                               idx === 0 ? 'border-[#C9A227] ring-2 ring-[#C9A227]/30' : 'border-[#E5E0D8]'
                             }`}
                           >
-                            <img
-                              src={imgUrl}
-                              alt={`Foto ${idx + 1}`}
-                              className="w-full h-full object-cover"
-                              loading="lazy"
-                            />
-                            
-                            {/* Badge if Cover */}
-                            {idx === 0 && (
-                              <div className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-[#C9A227] text-[#0A0A0A] font-bold text-[9px] uppercase tracking-wider shadow z-10">
-                                Capa Principal
+                            <div className="relative aspect-video bg-[#F7F3EB] overflow-hidden">
+                              <img
+                                src={imgUrl}
+                                alt={`Foto ${idx + 1}`}
+                                className="w-full h-full object-cover"
+                                loading="lazy"
+                              />
+                              
+                              {/* Badge if Cover */}
+                              {idx === 0 && (
+                                <div className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-[#C9A227] text-[#0A0A0A] font-bold text-[9px] uppercase tracking-wider shadow z-10">
+                                  Capa Principal
+                                </div>
+                              )}
+
+                              {/* Desktop Hover Overlay */}
+                              <div className="hidden sm:flex absolute inset-0 bg-black/65 opacity-0 group-hover:opacity-100 transition-opacity items-center justify-center gap-1.5 p-2 z-20">
+                                {idx > 0 && (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleMovePhoto(idx, idx - 1)}
+                                    className="p-1.5 rounded-lg bg-white/90 text-[#111111] hover:bg-[#C9A227] cursor-pointer transition-colors"
+                                    title="Mover para esquerda"
+                                  >
+                                    <ArrowUp className="w-3.5 h-3.5 -rotate-90" />
+                                  </button>
+                                )}
+
+                                {idx < editingProperty.images!.length - 1 && (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleMovePhoto(idx, idx + 1)}
+                                    className="p-1.5 rounded-lg bg-white/90 text-[#111111] hover:bg-[#C9A227] cursor-pointer transition-colors"
+                                    title="Mover para direita"
+                                  >
+                                    <ArrowDown className="w-3.5 h-3.5 -rotate-90" />
+                                  </button>
+                                )}
+
+                                {idx !== 0 && (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleSetCoverPhoto(idx)}
+                                    className="p-1.5 rounded-lg bg-white/90 text-[#111111] hover:bg-[#C9A227] cursor-pointer transition-colors"
+                                    title="Definir como Capa Principal"
+                                  >
+                                    <Sparkles className="w-3.5 h-3.5 text-[#C9A227]" />
+                                  </button>
+                                )}
+
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemovePhoto(idx)}
+                                  className="p-1.5 rounded-lg bg-red-600 text-white hover:bg-red-700 cursor-pointer transition-colors"
+                                  title="Remover Foto"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
                               </div>
-                            )}
+                            </div>
 
-                            {/* Control Overlay */}
-                            <div className="absolute inset-0 bg-black/65 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 p-2 z-20">
-                              {idx > 0 && (
-                                <button
-                                  type="button"
-                                  onClick={() => handleMovePhoto(idx, idx - 1)}
-                                  className="p-1.5 rounded-lg bg-white/90 text-[#111111] hover:bg-[#C9A227] cursor-pointer transition-colors"
-                                  title="Mover para esquerda"
-                                >
-                                  <ArrowUp className="w-3.5 h-3.5 -rotate-90" />
-                                </button>
-                              )}
-
-                              {idx < editingProperty.images!.length - 1 && (
-                                <button
-                                  type="button"
-                                  onClick={() => handleMovePhoto(idx, idx + 1)}
-                                  className="p-1.5 rounded-lg bg-white/90 text-[#111111] hover:bg-[#C9A227] cursor-pointer transition-colors"
-                                  title="Mover para direita"
-                                >
-                                  <ArrowDown className="w-3.5 h-3.5 -rotate-90" />
-                                </button>
-                              )}
-
-                              {idx !== 0 && (
+                            {/* Mobile and Quick Actions Bar */}
+                            <div className="p-2 bg-[#FAF7F0] border-t border-[#E5E0D8] flex items-center justify-between text-[11px]">
+                              {idx === 0 ? (
+                                <span className="text-[#C9A227] font-bold text-[10px] flex items-center gap-1">
+                                  <Sparkles className="w-3 h-3" /> Capa
+                                </span>
+                              ) : (
                                 <button
                                   type="button"
                                   onClick={() => handleSetCoverPhoto(idx)}
-                                  className="p-1.5 rounded-lg bg-white/90 text-[#111111] hover:bg-[#C9A227] cursor-pointer transition-colors"
-                                  title="Definir como Capa Principal"
+                                  className="text-[#5A5A5A] hover:text-[#C9A227] font-semibold text-[10px] cursor-pointer transition-colors"
                                 >
-                                  <Sparkles className="w-3.5 h-3.5 text-[#C9A227]" />
+                                  Fazer Capa
                                 </button>
                               )}
 
-                              <button
-                                type="button"
-                                onClick={() => handleRemovePhoto(idx)}
-                                className="p-1.5 rounded-lg bg-red-600 text-white hover:bg-red-700 cursor-pointer transition-colors"
-                                title="Remover Foto"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
+                              <div className="flex items-center gap-1">
+                                {idx > 0 && (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleMovePhoto(idx, idx - 1)}
+                                    className="p-1 text-[#5A5A5A] hover:text-[#111111] cursor-pointer"
+                                    title="Mover para esquerda"
+                                  >
+                                    <ArrowUp className="w-3 h-3 -rotate-90" />
+                                  </button>
+                                )}
+                                {idx < editingProperty.images!.length - 1 && (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleMovePhoto(idx, idx + 1)}
+                                    className="p-1 text-[#5A5A5A] hover:text-[#111111] cursor-pointer"
+                                    title="Mover para direita"
+                                  >
+                                    <ArrowDown className="w-3 h-3 -rotate-90" />
+                                  </button>
+                                )}
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemovePhoto(idx)}
+                                  className="p-1 text-red-600 hover:text-red-700 cursor-pointer"
+                                  title="Remover foto"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
                             </div>
                           </div>
                         ))}

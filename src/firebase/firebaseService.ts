@@ -97,8 +97,8 @@ export async function resolvePropertiesPhotos(properties: Property[]): Promise<P
 
 /**
  * Processes property images before saving:
- * - If images total under 350KB, stores directly in property document for instant zero-latency loading.
- * - If heavy galleries, stores each photo in property_photos collection to guarantee Firestore's 1MB limit is never exceeded.
+ * - Up to 800KB total kept directly in property document for instant rendering across all components.
+ * - If gallery is extraordinarily large, splits across property_photos to guarantee Firestore document limit (1MB).
  */
 async function processPropertyImages(propertyId: string, images: string[]): Promise<string[]> {
   if (!images || images.length === 0) return [];
@@ -111,8 +111,8 @@ async function processPropertyImages(propertyId: string, images: string[]): Prom
     }
   }
 
-  // If under 350KB total, keep directly in document
-  const canFitInDoc = totalDataLength < 350 * 1024;
+  // Firestore hard limit is 1MB (1,048,576 bytes). We keep up to 800KB directly in document
+  const canFitInDoc = totalDataLength < 800 * 1024;
 
   for (let idx = 0; idx < images.length; idx++) {
     const img = images[idx];
@@ -124,7 +124,11 @@ async function processPropertyImages(propertyId: string, images: string[]): Prom
     }
 
     if (img.startsWith('firestore_photo://')) {
-      processed.push(img);
+      if (canFitInDoc && photoCache.has(img)) {
+        processed.push(photoCache.get(img)!);
+      } else {
+        processed.push(img);
+      }
       continue;
     }
 
@@ -157,11 +161,13 @@ async function processPropertyImages(propertyId: string, images: string[]): Prom
 // Helper to get cached properties
 export function getLocalCachedProperties(): Property[] {
   try {
-    const raw = localStorage.getItem(LOCAL_STORAGE_PROPERTIES_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed;
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      const raw = localStorage.getItem(LOCAL_STORAGE_PROPERTIES_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
       }
     }
   } catch (e) {
@@ -173,10 +179,12 @@ export function getLocalCachedProperties(): Property[] {
 // Helper to get cached settings
 export function getLocalCachedSettings(): SiteSettings {
   try {
-    const raw = localStorage.getItem(LOCAL_STORAGE_SETTINGS_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      return { ...DEFAULT_SETTINGS, ...parsed };
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      const raw = localStorage.getItem(LOCAL_STORAGE_SETTINGS_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        return { ...DEFAULT_SETTINGS, ...parsed };
+      }
     }
   } catch (e) {
     console.warn('Error reading local cached settings', e);
@@ -271,11 +279,14 @@ export function subscribeToSettings(
 }
 
 // Save / update property with guaranteed Firestore persistence
-export async function saveProperty(property: Property): Promise<void> {
+export async function saveProperty(property: Property): Promise<Property> {
   const propId = property.id || `prop-${property.code || Date.now()}`;
   
-  // 1. Process images (safely storing large galleries in property_photos to prevent 1MB limit)
-  const processedImages = await processPropertyImages(propId, property.images || []);
+  // Clean invalid / empty values from images
+  const cleanImages = (property.images || []).filter((img) => typeof img === 'string' && img.trim().length > 0);
+
+  // 1. Process images (safely storing up to 800KB directly in doc for instant rendering)
+  const processedImages = await processPropertyImages(propId, cleanImages);
 
   const rawData: Property = {
     ...property,
@@ -305,11 +316,23 @@ export async function saveProperty(property: Property): Promise<void> {
   } else {
     updatedList = [finalLocalItem, ...current];
   }
+
   try {
     localStorage.setItem(LOCAL_STORAGE_PROPERTIES_KEY, JSON.stringify(updatedList));
   } catch {
-    // quota safe
+    // Quota fallback: keep lightweight version (only cover image per property) in localStorage
+    try {
+      const lightweight = updatedList.map((p) => ({
+        ...p,
+        images: (p.images || []).slice(0, 1),
+      }));
+      localStorage.setItem(LOCAL_STORAGE_PROPERTIES_KEY, JSON.stringify(lightweight));
+    } catch {
+      // quota safe
+    }
   }
+
+  return finalLocalItem;
 }
 
 // Delete property with guaranteed Firestore persistence

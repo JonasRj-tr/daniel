@@ -1,8 +1,8 @@
 /**
  * Utilitário de Processamento, Otimização e Upload de Imagens
- * Desenvolvido para suportar fotos tiradas diretamente de smartphones (iPhone/Android)
- * ou computadores, reduzindo arquivos pesados de 5MB-25MB para formatos ultra otimizados
- * e enviando para CDN permanente na nuvem com fallback automático.
+ * Suporta fotos tiradas diretamente de smartphones (iPhone iOS / Android)
+ * ou computadores, reduzindo arquivos pesados de 5MB-30MB para fotos WebP/JPEG ultra leves (~20KB-40KB)
+ * com máxima nitidez visual, prontas para gravação vitalícia no Firebase Firestore.
  */
 
 export interface OptimizedImageResult {
@@ -15,7 +15,7 @@ export interface OptimizedImageResult {
 }
 
 /**
- * Formata bytes para exibição amigável (ex: 85 KB, 1.2 MB)
+ * Formata bytes para exibição amigável (ex: 35 KB, 1.2 MB)
  */
 export function formatBytes(bytes: number, decimals = 1): string {
   if (!bytes || bytes === 0) return '0 B';
@@ -27,110 +27,185 @@ export function formatBytes(bytes: number, decimals = 1): string {
 }
 
 /**
+ * Verifica se um arquivo é uma imagem válida (por MIME type ou extensão)
+ */
+export function isImageFile(file: File): boolean {
+  if (file.type && file.type.startsWith('image/')) return true;
+  const name = (file.name || '').toLowerCase();
+  return /\.(jpe?g|png|webp|gif|avif|heic|heif|bmp|tiff)$/i.test(name);
+}
+
+/**
  * Otimiza e redimensiona um arquivo de imagem local usando Canvas no navegador.
- * Suporta WebP e JPEG de alta fidelidade visual para qualquer dispositivo móvel ou desktop.
- * Reduz fotos pesadas de celulares (5MB-20MB) para 30KB-60KB de alta nitidez.
+ * Reduz fotos pesadas de celulares (5MB-25MB) para 20KB-40KB de alta nitidez.
  */
 export async function optimizeImageFile(
   file: File | Blob,
   maxWidth = 1080,
   maxHeight = 810,
-  quality = 0.72
+  quality = 0.70
 ): Promise<{ dataUrl: string; blob: Blob; width: number; height: number; originalSize: number; optimizedSize: number }> {
   const originalSize = file.size || 0;
 
   return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onerror = () => reject(new Error('Falha ao ler o arquivo de imagem'));
-    reader.onload = (readerEvent) => {
-      const img = new Image();
-      img.onerror = () => reject(new Error('Formato de imagem inválido ou corrompido'));
-      img.onload = () => {
-        let width = img.width;
-        let height = img.height;
+    // Usar URL.createObjectURL para performance instantânea e economia drástica de memória RAM
+    let objectUrl: string | null = null;
+    try {
+      objectUrl = URL.createObjectURL(file);
+    } catch {
+      // Fallback se createObjectURL não estiver disponível
+    }
 
-        // Calcular novas dimensões mantendo a proporção original
-        if (width > maxWidth || height > maxHeight) {
-          const ratio = Math.min(maxWidth / width, maxHeight / height);
-          width = Math.round(width * ratio);
-          height = Math.round(height * ratio);
+    const img = new Image();
+
+    const cleanup = () => {
+      if (objectUrl) {
+        try {
+          URL.revokeObjectURL(objectUrl);
+        } catch {
+          // ignore
         }
-
-        const canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
-
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
-          reject(new Error('Não foi possível inicializar contexto de renderização 2D'));
-          return;
-        }
-
-        // Suavização de alta qualidade
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = 'high';
-        ctx.drawImage(img, 0, 0, width, height);
-
-        // WebP primeiro (melhor compressão e nitidez para todos os navegadores modernos)
-        let mimeType = 'image/webp';
-        let dataUrl = canvas.toDataURL(mimeType, quality);
-
-        // Fallback para JPEG caso WebP não esteja disponível
-        if (!dataUrl.startsWith('data:image/webp')) {
-          mimeType = 'image/jpeg';
-          dataUrl = canvas.toDataURL(mimeType, quality);
-        }
-
-        canvas.toBlob(
-          (blob) => {
-            if (blob) {
-              resolve({
-                dataUrl,
-                blob,
-                width,
-                height,
-                originalSize,
-                optimizedSize: blob.size,
-              });
-            } else {
-              // Conversão manual caso toBlob retorne nulo
-              const byteString = atob(dataUrl.split(',')[1]);
-              const ab = new ArrayBuffer(byteString.length);
-              const ia = new Uint8Array(ab);
-              for (let i = 0; i < byteString.length; i++) {
-                ia[i] = byteString.charCodeAt(i);
-              }
-              const fallbackBlob = new Blob([ab], { type: mimeType });
-              resolve({
-                dataUrl,
-                blob: fallbackBlob,
-                width,
-                height,
-                originalSize,
-                optimizedSize: fallbackBlob.size,
-              });
-            }
-          },
-          mimeType,
-          quality
-        );
-      };
-
-      img.src = readerEvent.target?.result as string;
+      }
     };
 
-    reader.readAsDataURL(file);
+    img.onerror = () => {
+      cleanup();
+      // Se falhou com objectUrl, tentar FileReader como fallback secundário
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error('Formato de foto não suportado ou arquivo corrompido'));
+      reader.onload = (e) => {
+        const fallbackImg = new Image();
+        fallbackImg.onerror = () => reject(new Error('Formato de foto não suportado ou arquivo corrompido'));
+        fallbackImg.onload = () => processImageElement(fallbackImg, resolve, reject, originalSize, maxWidth, maxHeight, quality);
+        fallbackImg.src = e.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+    };
+
+    img.onload = () => {
+      cleanup();
+      processImageElement(img, resolve, reject, originalSize, maxWidth, maxHeight, quality);
+    };
+
+    if (objectUrl) {
+      img.src = objectUrl;
+    } else {
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error('Falha ao ler o arquivo de imagem'));
+      reader.onload = (e) => {
+        img.src = e.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
   });
 }
 
+function processImageElement(
+  img: HTMLImageElement,
+  resolve: (value: { dataUrl: string; blob: Blob; width: number; height: number; originalSize: number; optimizedSize: number }) => void,
+  reject: (reason?: any) => void,
+  originalSize: number,
+  maxWidth: number,
+  maxHeight: number,
+  quality: number
+) {
+  try {
+    let width = img.naturalWidth || img.width;
+    let height = img.naturalHeight || img.height;
+
+    if (!width || !height) {
+      reject(new Error('Dimensões da imagem inválidas'));
+      return;
+    }
+
+    // Manter proporção original respeitando os limites máximos
+    if (width > maxWidth || height > maxHeight) {
+      const ratio = Math.min(maxWidth / width, maxHeight / height);
+      width = Math.max(1, Math.round(width * ratio));
+      height = Math.max(1, Math.round(height * ratio));
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      reject(new Error('Não foi possível inicializar renderizador 2D'));
+      return;
+    }
+
+    // Suavização bilinear de alta qualidade
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(img, 0, 0, width, height);
+
+    // Priorizar WebP para máxima compressão e nitidez
+    let mimeType = 'image/webp';
+    let dataUrl = canvas.toDataURL(mimeType, quality);
+
+    // Fallback para JPEG caso o navegador não suporte codificação WebP
+    if (!dataUrl.startsWith('data:image/webp')) {
+      mimeType = 'image/jpeg';
+      dataUrl = canvas.toDataURL(mimeType, quality);
+    }
+
+    canvas.toBlob(
+      (blob) => {
+        if (blob) {
+          resolve({
+            dataUrl,
+            blob,
+            width,
+            height,
+            originalSize,
+            optimizedSize: blob.size,
+          });
+        } else {
+          // Conversão manual caso toBlob falhe
+          try {
+            const byteString = atob(dataUrl.split(',')[1]);
+            const ab = new ArrayBuffer(byteString.length);
+            const ia = new Uint8Array(ab);
+            for (let i = 0; i < byteString.length; i++) {
+              ia[i] = byteString.charCodeAt(i);
+            }
+            const fallbackBlob = new Blob([ab], { type: mimeType });
+            resolve({
+              dataUrl,
+              blob: fallbackBlob,
+              width,
+              height,
+              originalSize,
+              optimizedSize: fallbackBlob.size,
+            });
+          } catch {
+            const emptyBlob = new Blob([], { type: mimeType });
+            resolve({
+              dataUrl,
+              blob: emptyBlob,
+              width,
+              height,
+              originalSize,
+              optimizedSize: Math.round(dataUrl.length * 0.75),
+            });
+          }
+        }
+      },
+      mimeType,
+      quality
+    );
+  } catch (err) {
+    reject(err);
+  }
+}
+
 /**
- * Prepara a foto para armazenamento permanente e vitalício.
- * Otimiza para WebP de alta nitidez (~30KB-50KB) que é salvo de forma definitiva
- * no banco de dados Firebase Firestore com sincronização em tempo real.
+ * Prepara uma foto individual para armazenamento permanente.
  */
 export async function uploadToPermanentHost(blobOrFile: Blob | File): Promise<string> {
   if (blobOrFile instanceof File || blobOrFile instanceof Blob) {
-    const opt = await optimizeImageFile(blobOrFile, 1080, 810, 0.72);
+    const opt = await optimizeImageFile(blobOrFile, 1080, 810, 0.70);
     return opt.dataUrl;
   }
   return '';
@@ -157,13 +232,17 @@ export async function processAndUploadDeviceImages(
         current: i + 1,
         total,
         fileName: file.name,
-        percent: Math.round(((i) / total) * 100),
+        percent: Math.round((i / total) * 100),
       });
     }
 
     try {
-      // 1. Otimização de alta performance para WebP ultra leve (~30KB-50KB)
-      const opt = await optimizeImageFile(file, 1080, 810, 0.72);
+      // Para galerias grandes (mais de 10 fotos), reduzir levemente dimensões para garantir leveza máxima
+      const maxWidth = total > 12 ? 960 : 1080;
+      const maxHeight = total > 12 ? 720 : 810;
+      const quality = total > 12 ? 0.65 : 0.70;
+
+      const opt = await optimizeImageFile(file, maxWidth, maxHeight, quality);
       if (opt.dataUrl) {
         finalUrls.push(opt.dataUrl);
       }

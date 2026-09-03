@@ -20,6 +20,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   aboutTitle: 'Consultoria Imobiliária com olhar técnico e foco em valorização',
   aboutText: 'Com sólida atuação no mercado do Sul de Santa Catarina, a assessoria do corretor Daniel Pacheco é pautada pela transparência, análise minuciosa de oportunidades na planta e facilidade no financiamento direto com as melhores construtoras da região.',
   signatureSubtitle: 'Imóveis para morar e investir com os mais altos padrões de acabamento, localização e retorno.',
+  siteUrl: 'https://www.corretordanielpacheco.com.br',
 };
 
 export interface CityGuide {

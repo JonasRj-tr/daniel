@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Property, SiteSettings } from './types';
+import { Property, SiteSettings, LandingPage } from './types';
 import { DEFAULT_SETTINGS } from './data/initialSettings';
 import { INITIAL_PROPERTIES } from './data/initialProperties';
 import { 
@@ -7,11 +7,14 @@ import {
   subscribeProperties, 
   subscribeSettings, 
   subscribeAdminState,
+  subscribeLandingPages,
   getIsAdminCached,
   getLocalCachedProperties,
   getLocalCachedSettings,
+  getLocalCachedLandingPages,
   logoutAdmin
 } from './firebase/firebaseService';
+import { generateSmartLandingPage } from './utils/landingPageGenerator';
 
 // Layout Components
 import { Header } from './components/Header';
@@ -37,12 +40,15 @@ import { ContatoPage } from './pages/ContatoPage';
 import { AdminPage } from './pages/AdminPage';
 import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
 import { SiteMapPage } from './pages/SiteMapPage';
+import { LandingPageView } from './pages/LandingPageView';
 
 export default function App() {
   const [showIntro, setShowIntro] = useState<boolean>(true);
   const [currentRoute, setCurrentRoute] = useState<string>('home');
   const [properties, setProperties] = useState<Property[]>(() => getLocalCachedProperties());
   const [settings, setSettings] = useState<SiteSettings>(() => getLocalCachedSettings());
+  const [landingPages, setLandingPages] = useState<LandingPage[]>(() => getLocalCachedLandingPages());
+  const [activeLandingPage, setActiveLandingPage] = useState<LandingPage | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean>(() => getIsAdminCached());
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [isCuratedModalOpen, setIsCuratedModalOpen] = useState<boolean>(false);
@@ -77,6 +83,12 @@ export default function App() {
       setIsAdmin(loggedIn);
     });
 
+    const unsubLandingPages = subscribeLandingPages((list) => {
+      if (list && list.length > 0) {
+        setLandingPages(list);
+      }
+    });
+
     const handleCustomAuth = (e: Event) => {
       const customEvent = e as CustomEvent<{ isAdmin: boolean }>;
       if (customEvent.detail && typeof customEvent.detail.isAdmin === 'boolean') {
@@ -97,31 +109,79 @@ export default function App() {
       unsubProps();
       unsubSettings();
       unsubAdmin();
+      unsubLandingPages();
       window.removeEventListener('dp_admin_auth_changed', handleCustomAuth);
       window.removeEventListener('dp_replay_intro', handleReplayIntro);
     };
   }, []);
 
-  // Handle URL hash navigation if present
+  // Handle URL navigation (both pathname e.g. /lp-dp-101 and hash e.g. #lp-dp-101)
   useEffect(() => {
-    const handleHash = () => {
-      const hash = window.location.hash.replace('#', '');
-      if (hash.startsWith('imovel-')) {
-        const code = hash.replace('imovel-', '');
-        const found = properties.find((p) => p.code === code);
+    const handleUrlRoute = () => {
+      // 1. Check pathname (e.g. /reserva-da-mata or /lp-dp-101)
+      const pathname = window.location.pathname.replace(/^\/+/, '').split('?')[0];
+      // 2. Check hash (e.g. #reserva-da-mata or #lp-dp-101)
+      const rawHash = window.location.hash.replace(/^#\/?/, '').split('?')[0];
+
+      const target = (rawHash || pathname).trim();
+      if (!target) return;
+
+      const RESERVED_ROUTES = ['home', 'portfolio', 'na-planta', 'prontos', 'terrenos', 'cidades', 'como-escolher', 'sobre', 'contato', 'admin', 'privacy', 'sitemap'];
+
+      // Check if target is a Property Detail route (e.g. imovel-dp-101)
+      if (target.startsWith('imovel-')) {
+        const code = target.replace('imovel-', '');
+        const found = properties.find((p) => p.code?.toLowerCase() === code.toLowerCase() || p.id?.toLowerCase() === code.toLowerCase());
         if (found) {
           setSelectedProperty(found);
           setCurrentRoute('property-detail');
+          return;
         }
-      } else if (['home', 'portfolio', 'na-planta', 'prontos', 'cidades', 'como-escolher', 'sobre', 'contato', 'admin', 'privacy', 'sitemap'].includes(hash)) {
-        setCurrentRoute(hash);
+      }
+
+      // Check standard reserved routes
+      if (RESERVED_ROUTES.includes(target.toLowerCase())) {
+        setCurrentRoute(target.toLowerCase());
+        return;
+      }
+
+      // Check if it's a Landing Page URL created from domain (e.g. /reserva-da-mata, /lp-dp-101, /nomedapagina)
+      const cleanSlug = target.replace(/^lp\//, '').replace(/^landing\//, '');
+      
+      // Find in saved landing pages by slug or id
+      let foundLP = landingPages.find((lp) => 
+        lp.slug?.toLowerCase() === target.toLowerCase() ||
+        lp.slug?.toLowerCase() === cleanSlug.toLowerCase() ||
+        lp.id?.toLowerCase() === target.toLowerCase() ||
+        `lp-${lp.propertyCode?.toLowerCase()}` === cleanSlug.toLowerCase()
+      );
+
+      // If not saved yet, but slug matches a property code, generate dynamic landing page on the fly
+      if (!foundLP) {
+        const matchedProp = properties.find((p) => 
+          cleanSlug.toLowerCase().includes(p.code.toLowerCase()) ||
+          cleanSlug.toLowerCase().includes(p.id.toLowerCase())
+        );
+        if (matchedProp) {
+          foundLP = generateSmartLandingPage(matchedProp, 'investidor', 'luxury-dark');
+        }
+      }
+
+      if (foundLP) {
+        setActiveLandingPage(foundLP);
+        setCurrentRoute('landing-page');
+        return;
       }
     };
 
-    handleHash();
-    window.addEventListener('hashchange', handleHash);
-    return () => window.removeEventListener('hashchange', handleHash);
-  }, [properties]);
+    handleUrlRoute();
+    window.addEventListener('hashchange', handleUrlRoute);
+    window.addEventListener('popstate', handleUrlRoute);
+    return () => {
+      window.removeEventListener('hashchange', handleUrlRoute);
+      window.removeEventListener('popstate', handleUrlRoute);
+    };
+  }, [properties, landingPages]);
 
   // Navigate helper
   const navigate = (route: string) => {
@@ -137,6 +197,22 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     window.location.hash = `imovel-${property.code}`;
   };
+
+  // Dedicated Landing Page Standalone Render (No distracting navigation, maximum conversion)
+  if (currentRoute === 'landing-page' && activeLandingPage) {
+    const linkedProperty = properties.find(
+      (p) => p.id === activeLandingPage.propertyId || p.code === activeLandingPage.propertyCode
+    ) || properties[0];
+
+    return (
+      <LandingPageView
+        landingPage={activeLandingPage}
+        property={linkedProperty}
+        settings={settings}
+        onNavigateHome={() => navigate('home')}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#F7F3EB] text-[#111111] flex flex-col font-sans selection:bg-[#C9A227]/30 selection:text-[#111111]">

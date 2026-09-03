@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { MessageCircle, X, Sparkles } from 'lucide-react';
+import React from 'react';
+import { MessageCircle, Sparkles } from 'lucide-react';
 import { SiteSettings } from '../types';
 import { createWhatsAppUrl } from '../utils/formatters';
 
@@ -12,8 +12,6 @@ export const WhatsAppFloatingButton: React.FC<WhatsAppFloatingButtonProps> = ({
   settings,
   onOpenCuratedModal,
 }) => {
-  const [showTooltip, setShowTooltip] = useState(true);
-
   const whatsappUrl = createWhatsAppUrl(
     settings.whatsapp || '5548998001744',
     'Olá Daniel Pacheco! Gostaria de conversar sobre as opções de imóveis disponíveis no Sul de Santa Catarina.'
@@ -21,31 +19,6 @@ export const WhatsAppFloatingButton: React.FC<WhatsAppFloatingButtonProps> = ({
 
   return (
     <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-3 pointer-events-auto">
-      {/* Interactive Tooltip Bubble */}
-      {showTooltip && (
-        <div 
-          id="whatsapp-floating-bubble"
-          className="hidden sm:flex items-center gap-3 bg-[#FFFFFF] border border-[#E5E0D8] rounded-2xl p-3.5 shadow-xl max-w-xs text-xs text-[#111111] animate-in fade-in slide-in-from-bottom-2 duration-300"
-        >
-          <div className="w-8 h-8 rounded-full bg-[#C9A227]/20 border border-[#C9A227]/40 text-[#C9A227] flex items-center justify-center shrink-0">
-            <span className="font-serif-luxury font-bold text-xs">DP</span>
-          </div>
-          <div className="flex-1">
-            <p className="font-semibold text-[13px] text-[#111111]">Corretor Online</p>
-            <p className="text-[11px] text-[#5A5A5A] leading-tight">
-              Tire dúvidas sobre financiamento direto e lançamentos na planta.
-            </p>
-          </div>
-          <button
-            onClick={() => setShowTooltip(false)}
-            className="text-[#5A5A5A] hover:text-[#111111] p-1 cursor-pointer"
-            aria-label="Fechar dica"
-          >
-            <X className="w-3.5 h-3.5" />
-          </button>
-        </div>
-      )}
-
       {/* Floating Buttons Group */}
       <div className="flex items-center gap-3">
         {/* Consultoria VIP Quick button */}

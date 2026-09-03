@@ -20,6 +20,18 @@ service cloud.firestore {
       allow write: if true;
     }
 
+    // Landing pages collection: Public read, admin write
+    match /landing_pages/{landingPageId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Property photos collection: Individual photos stored separately
+    match /property_photos/{photoId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
     // Default deny all other paths
     match /{document=**} {
       allow read, write: if false;

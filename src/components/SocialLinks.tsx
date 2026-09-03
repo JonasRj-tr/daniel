@@ -95,18 +95,6 @@ export const getSocialChannelsList = (settings?: Partial<SiteSettings>): SocialC
       brandText: 'text-[#EE1D52]',
       description: 'Vídeos curtos, dicas rápidas e novidades do mercado'
     },
-    {
-      id: 'twitter',
-      name: 'Twitter / X',
-      handle: '@dennyboybr',
-      url: settings?.twitter || 'https://twitter.com/dennyboybr',
-      icon: <TwitterXIcon className="w-4 h-4" />,
-      brandColor: '#FFFFFF',
-      brandHoverBg: 'hover:bg-[#FFFFFF] hover:text-[#0A0A0A]',
-      brandBorder: 'border-white/30',
-      brandText: 'text-white',
-      description: 'Atualizações em tempo real e visão sobre o mercado'
-    },
   ];
 };
 

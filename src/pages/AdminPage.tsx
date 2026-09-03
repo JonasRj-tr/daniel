@@ -55,6 +55,7 @@ import {
 } from '../firebase/firebaseService';
 import { formatCurrency } from '../utils/formatters';
 import { processAndUploadDeviceImages, formatBytes } from '../utils/imageUploader';
+import { AdminLandingPageBuilder } from '../components/AdminLandingPageBuilder';
 
 interface AdminPageProps {
   properties: Property[];
@@ -110,8 +111,8 @@ export const AdminPage: React.FC<AdminPageProps> = ({
   const [loginError, setLoginError] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
-  // Admin Tab: 'properties' | 'settings'
-  const [adminTab, setAdminTab] = useState<'properties' | 'settings'>('properties');
+  // Admin Tab: 'properties' | 'settings' | 'landing_pages'
+  const [adminTab, setAdminTab] = useState<'properties' | 'settings' | 'landing_pages'>('properties');
   const [searchFilter, setSearchFilter] = useState('');
 
   // Property Modal State
@@ -663,6 +664,19 @@ export const AdminPage: React.FC<AdminPageProps> = ({
           </button>
 
           <button
+            id="admin-tab-landing-pages"
+            onClick={() => setAdminTab('landing_pages')}
+            className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer ${
+              adminTab === 'landing_pages'
+                ? 'bg-[#0A0A0A] text-[#C9A227] shadow-sm font-bold border border-[#C9A227]/40'
+                : 'text-[#5A5A5A] hover:text-[#111111]'
+            }`}
+          >
+            <Sparkles className="w-4 h-4 text-[#C9A227]" />
+            <span>CRIAR LANDING PAGE (IA & Anúncios)</span>
+          </button>
+
+          <button
             onClick={() => setAdminTab('settings')}
             className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer ${
               adminTab === 'settings'
@@ -1050,7 +1064,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({
               <h4 className="text-xs font-bold text-[#111111] uppercase tracking-wider">
                 Redes Sociais Oficiais do Corretor
               </h4>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
                   <label className="text-xs font-medium text-[#111111] mb-1.5 block">Instagram URL</label>
                   <input
@@ -1094,17 +1108,6 @@ export const AdminPage: React.FC<AdminPageProps> = ({
                     className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-xs text-[#111111] rounded-xl px-3.5 py-3 outline-none"
                   />
                 </div>
-
-                <div>
-                  <label className="text-xs font-medium text-[#111111] mb-1.5 block">Twitter / X URL</label>
-                  <input
-                    type="url"
-                    value={settingsForm.twitter || ''}
-                    onChange={(e) => setSettingsForm({ ...settingsForm, twitter: e.target.value })}
-                    placeholder="https://twitter.com/dennyboybr"
-                    className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-xs text-[#111111] rounded-xl px-3.5 py-3 outline-none"
-                  />
-                </div>
               </div>
             </div>
 
@@ -1138,6 +1141,14 @@ export const AdminPage: React.FC<AdminPageProps> = ({
             </button>
           </form>
         </div>
+      )}
+
+      {/* Tab 3: Smart Landing Page Builder */}
+      {adminTab === 'landing_pages' && (
+        <AdminLandingPageBuilder 
+          properties={properties} 
+          settings={settings} 
+        />
       )}
 
       {/* =========================================================================

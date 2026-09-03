@@ -53,6 +53,7 @@ export interface SiteSettings {
   aboutTitle: string;
   aboutText: string;
   signatureSubtitle: string;
+  siteUrl?: string;
 }
 
 export interface PropertyFilter {
@@ -78,3 +79,43 @@ export interface CuratedInquiry {
   timeframe: 'Imediato' | 'Até 6 meses' | 'Na planta (Longo prazo)';
   notes?: string;
 }
+
+export type LandingPageTheme = 'luxury-dark' | 'clean-gold' | 'ocean-modern' | 'minimalist-stone';
+export type LandingPageAudience = 'investidor' | 'familia' | 'luxo' | 'primeiro_imovel' | 'geral';
+
+export interface LandingPageBenefit {
+  title: string;
+  description: string;
+  icon?: string;
+}
+
+export interface LandingPage {
+  id: string;
+  slug: string;
+  propertyId: string;
+  propertyCode: string;
+  title: string;
+  heroHeadline: string;
+  heroSubheadline: string;
+  badgeText: string;
+  themeStyle: LandingPageTheme;
+  targetAudience: LandingPageAudience;
+  customPriceDisplay?: string;
+  customWhatsappMessage?: string;
+  videoUrl?: string;
+  customBenefits: LandingPageBenefit[];
+  locationHighlights: string[];
+  financingPitch?: string;
+  urgencyText?: string;
+  showMortgageSimulator?: boolean;
+  showFloorPlan?: boolean;
+  metaTitle?: string;
+  metaDescription?: string;
+  utmCampaign?: string;
+  viewsCount?: number;
+  leadsCount?: number;
+  active: boolean;
+  createdAt: number;
+  updatedAt: number;
+}
+

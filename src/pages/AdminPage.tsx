@@ -39,7 +39,10 @@ import {
   HardDrive,
   CheckCircle,
   Info,
-  ImagePlus
+  ImagePlus,
+  Stamp,
+  Wand2,
+  Sliders
 } from 'lucide-react';
 import { Property, SiteSettings, PropertyStatus, PropertyType } from '../types';
 import { 
@@ -51,10 +54,22 @@ import {
   resetPropertiesToDefault,
   syncAllPropertiesToCloud,
   checkFirestoreConnection,
-  getIsAdminCached
+  getIsAdminCached,
+  fetchFullPropertyGallery
 } from '../firebase/firebaseService';
 import { formatCurrency } from '../utils/formatters';
 import { processAndUploadDeviceImages, formatBytes, isImageFile } from '../utils/imageUploader';
+import { 
+  WatermarkPosition, 
+  WatermarkOptions, 
+  DEFAULT_WATERMARK_URL, 
+  DEFAULT_WATERMARK_OPACITY, 
+  DEFAULT_WATERMARK_POSITION, 
+  DEFAULT_WATERMARK_SCALE,
+  applyWatermarkToImage,
+  applyWatermarkToBatch
+} from '../utils/watermark';
+import { WatermarkModal } from '../components/WatermarkModal';
 import { AdminLandingPageBuilder } from '../components/AdminLandingPageBuilder';
 
 interface AdminPageProps {
@@ -133,6 +148,13 @@ export const AdminPage: React.FC<AdminPageProps> = ({
   const [uploadProgress, setUploadProgress] = useState<{ current: number; total: number; fileName: string; percent: number } | null>(null);
   const [uploadStatsMsg, setUploadStatsMsg] = useState<string | null>(null);
   const [isDraggingPhotos, setIsDraggingPhotos] = useState(false);
+
+  // Watermark States (Marca d'Água Daniel Pacheco)
+  const [isWatermarkModalOpen, setIsWatermarkModalOpen] = useState(false);
+  const [watermarkTargetIdx, setWatermarkTargetIdx] = useState<number>(0);
+  const [autoWatermarkOnUpload, setAutoWatermarkOnUpload] = useState<boolean>(true);
+  const [watermarkStatsMsg, setWatermarkStatsMsg] = useState<string | null>(null);
+  const [isApplyingWatermarkBatch, setIsApplyingWatermarkBatch] = useState(false);
 
   // Admin table filter
   const [financingAdminFilter, setFinancingAdminFilter] = useState<'Todos' | 'Bancario' | 'Construtora' | 'Destaques'>('Todos');
@@ -238,10 +260,22 @@ export const AdminPage: React.FC<AdminPageProps> = ({
   };
 
   // Handle Edit Property
-  const handleEdit = (prop: Property) => {
+  const handleEdit = async (prop: Property) => {
+    let imagesToEdit = prop.images && prop.images.length > 0 ? [...prop.images] : [];
+    if (prop.hasExtendedGallery || (prop.totalImagesCount && prop.totalImagesCount > imagesToEdit.length)) {
+      try {
+        const full = await fetchFullPropertyGallery(prop.id);
+        if (full && full.length > imagesToEdit.length) {
+          imagesToEdit = full;
+        }
+      } catch (err) {
+        console.warn('Erro ao carregar galeria completa no admin:', err);
+      }
+    }
+
     setEditingProperty({ 
       ...prop,
-      images: prop.images && prop.images.length > 0 ? [...prop.images] : [],
+      images: imagesToEdit,
       features: prop.features && prop.features.length > 0 ? [...prop.features] : []
     });
     setModalTab('general');
@@ -258,17 +292,36 @@ export const AdminPage: React.FC<AdminPageProps> = ({
   };
 
   // Photo Management in Property Modal
-  const handleAddPhotoUrl = () => {
-    if (!newPhotoUrl.trim() || !editingProperty) return;
+  const handleAddPhotoUrl = async () => {
+    const rawUrl = newPhotoUrl.trim();
+    if (!rawUrl || !editingProperty) return;
+    setNewPhotoUrl('');
+
+    let finalUrl = rawUrl;
+    if (autoWatermarkOnUpload) {
+      try {
+        setWatermarkStatsMsg('Aplicando marca d\'água oficial na foto...');
+        finalUrl = await applyWatermarkToImage(rawUrl, {
+          watermarkUrl: settings.watermarkUrl || DEFAULT_WATERMARK_URL,
+          opacity: settings.watermarkOpacity ?? DEFAULT_WATERMARK_OPACITY,
+          position: (settings.watermarkPosition as WatermarkPosition) || DEFAULT_WATERMARK_POSITION,
+          scale: settings.watermarkScale || DEFAULT_WATERMARK_SCALE,
+        });
+        setWatermarkStatsMsg('✓ Foto adicionada com marca d\'água oficial!');
+        setTimeout(() => setWatermarkStatsMsg(null), 4000);
+      } catch (err) {
+        console.warn('Não foi possível aplicar marca d água no link:', err);
+      }
+    }
+
     const currentImages = editingProperty.images ? [...editingProperty.images] : [];
     setEditingProperty({
       ...editingProperty,
-      images: [...currentImages, newPhotoUrl.trim()]
+      images: [...currentImages, finalUrl]
     });
-    setNewPhotoUrl('');
   };
 
-  const handleAddBulkPhotos = () => {
+  const handleAddBulkPhotos = async () => {
     if (!bulkPhotosInput.trim() || !editingProperty) return;
     const lines = bulkPhotosInput
       .split(/[\n,]+/)
@@ -276,14 +329,37 @@ export const AdminPage: React.FC<AdminPageProps> = ({
       .filter(url => url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:image'));
     
     if (lines.length === 0) return;
+    setBulkPhotosInput('');
+    setShowBulkPhotoInput(false);
+
+    let processedLines = lines;
+    if (autoWatermarkOnUpload) {
+      try {
+        setWatermarkStatsMsg(`Aplicando marca d'água oficial em ${lines.length} fotos...`);
+        processedLines = await applyWatermarkToBatch(
+          lines,
+          {
+            watermarkUrl: settings.watermarkUrl || DEFAULT_WATERMARK_URL,
+            opacity: settings.watermarkOpacity ?? DEFAULT_WATERMARK_OPACITY,
+            position: (settings.watermarkPosition as WatermarkPosition) || DEFAULT_WATERMARK_POSITION,
+            scale: settings.watermarkScale || DEFAULT_WATERMARK_SCALE,
+          },
+          (current, total) => {
+            setWatermarkStatsMsg(`Aplicando marca d'água na foto ${current} de ${total}...`);
+          }
+        );
+        setWatermarkStatsMsg(`✓ ${processedLines.length} fotos adicionadas com marca d'água oficial!`);
+        setTimeout(() => setWatermarkStatsMsg(null), 4000);
+      } catch (err) {
+        console.warn('Erro ao aplicar marca d água em lote de URLs:', err);
+      }
+    }
 
     const currentImages = editingProperty.images ? [...editingProperty.images] : [];
     setEditingProperty({
       ...editingProperty,
-      images: [...currentImages, ...lines]
+      images: [...currentImages, ...processedLines]
     });
-    setBulkPhotosInput('');
-    setShowBulkPhotoInput(false);
   };
 
   const handleRemovePhoto = (indexToRemove: number) => {
@@ -326,9 +402,20 @@ export const AdminPage: React.FC<AdminPageProps> = ({
     setUploadProgress({ current: 1, total: rawFiles.length, fileName: rawFiles[0].name, percent: 5 });
 
     try {
-      const uploadedUrls = await processAndUploadDeviceImages(rawFiles, (info) => {
-        setUploadProgress(info);
-      });
+      const watermarkOptions = autoWatermarkOnUpload ? {
+        watermarkUrl: settings.watermarkUrl || DEFAULT_WATERMARK_URL,
+        opacity: settings.watermarkOpacity ?? DEFAULT_WATERMARK_OPACITY,
+        position: (settings.watermarkPosition as WatermarkPosition) || DEFAULT_WATERMARK_POSITION,
+        scale: settings.watermarkScale || DEFAULT_WATERMARK_SCALE,
+      } : null;
+
+      const uploadedUrls = await processAndUploadDeviceImages(
+        rawFiles, 
+        (info) => {
+          setUploadProgress(info);
+        },
+        watermarkOptions
+      );
 
       if (uploadedUrls.length > 0) {
         setEditingProperty((prev) => {
@@ -340,7 +427,8 @@ export const AdminPage: React.FC<AdminPageProps> = ({
           };
         });
 
-        setUploadStatsMsg(`✓ ${uploadedUrls.length} ${uploadedUrls.length === 1 ? 'foto otimizada e adicionada' : 'fotos otimizadas e adicionadas'} com sucesso!`);
+        const wmNote = autoWatermarkOnUpload ? ' com marca d\'água oficial' : '';
+        setUploadStatsMsg(`✓ ${uploadedUrls.length} ${uploadedUrls.length === 1 ? 'foto otimizada e adicionada' : 'fotos otimizadas e adicionadas'}${wmNote} com sucesso!`);
         setTimeout(() => setUploadStatsMsg(null), 6000);
       }
     } catch (err: any) {
@@ -351,6 +439,80 @@ export const AdminPage: React.FC<AdminPageProps> = ({
       setUploadProgress(null);
       if (fileInputRef.current) fileInputRef.current.value = '';
       if (cameraInputRef.current) cameraInputRef.current.value = '';
+    }
+  };
+
+  // Quick Apply Watermark to All Current Photos
+  const handleQuickApplyWatermarkAll = async () => {
+    if (!editingProperty || !editingProperty.images || editingProperty.images.length === 0) {
+      setWatermarkStatsMsg('Nenhuma foto disponível para aplicar marca d\'água.');
+      setTimeout(() => setWatermarkStatsMsg(null), 4000);
+      return;
+    }
+
+    setIsApplyingWatermarkBatch(true);
+    setWatermarkStatsMsg('Aplicando marca d\'água oficial nas fotos...');
+
+    try {
+      const options: WatermarkOptions = {
+        watermarkUrl: settings.watermarkUrl || DEFAULT_WATERMARK_URL,
+        opacity: settings.watermarkOpacity ?? DEFAULT_WATERMARK_OPACITY,
+        position: (settings.watermarkPosition as WatermarkPosition) || DEFAULT_WATERMARK_POSITION,
+        scale: settings.watermarkScale || DEFAULT_WATERMARK_SCALE,
+      };
+
+      const watermarkedList = await applyWatermarkToBatch(
+        editingProperty.images,
+        options,
+        (current, total) => {
+          setWatermarkStatsMsg(`Aplicando marca d'água na foto ${current} de ${total}...`);
+        }
+      );
+
+      setEditingProperty({
+        ...editingProperty,
+        images: watermarkedList,
+      });
+
+      setWatermarkStatsMsg(`✓ Marca d'água oficial aplicada em todas as ${watermarkedList.length} fotos com sucesso!`);
+      setTimeout(() => setWatermarkStatsMsg(null), 5000);
+    } catch (err: any) {
+      console.error('Erro ao aplicar marca d\'água em lote:', err);
+      setWatermarkStatsMsg(`Erro ao aplicar marca d'água: ${err?.message || 'Falha no processamento'}`);
+      setTimeout(() => setWatermarkStatsMsg(null), 6000);
+    } finally {
+      setIsApplyingWatermarkBatch(false);
+    }
+  };
+
+  // Quick Apply Watermark to Single Photo
+  const handleQuickApplyWatermarkSingle = async (index: number) => {
+    if (!editingProperty || !editingProperty.images || !editingProperty.images[index]) return;
+
+    setWatermarkStatsMsg(`Aplicando marca d'água na foto ${index + 1}...`);
+    try {
+      const options: WatermarkOptions = {
+        watermarkUrl: settings.watermarkUrl || DEFAULT_WATERMARK_URL,
+        opacity: settings.watermarkOpacity ?? DEFAULT_WATERMARK_OPACITY,
+        position: (settings.watermarkPosition as WatermarkPosition) || DEFAULT_WATERMARK_POSITION,
+        scale: settings.watermarkScale || DEFAULT_WATERMARK_SCALE,
+      };
+
+      const watermarked = await applyWatermarkToImage(editingProperty.images[index], options);
+      const updated = [...editingProperty.images];
+      updated[index] = watermarked;
+
+      setEditingProperty({
+        ...editingProperty,
+        images: updated,
+      });
+
+      setWatermarkStatsMsg(`✓ Marca d'água aplicada na foto ${index + 1} com sucesso!`);
+      setTimeout(() => setWatermarkStatsMsg(null), 4000);
+    } catch (err: any) {
+      console.error('Erro ao aplicar marca d\'água na foto:', err);
+      setWatermarkStatsMsg(`Erro ao aplicar marca d'água: ${err?.message || 'Falha no processamento'}`);
+      setTimeout(() => setWatermarkStatsMsg(null), 5000);
     }
   };
 
@@ -1167,6 +1329,86 @@ export const AdminPage: React.FC<AdminPageProps> = ({
               />
             </div>
 
+            {/* Seção de Marca d'Água Oficial dos Imóveis */}
+            <div className="p-5 bg-[#FFFFFF] border border-[#C9A227]/40 rounded-2xl space-y-4 shadow-xs">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-[#C9A227]/15 border border-[#C9A227]/30 flex items-center justify-center text-[#C9A227]">
+                  <Stamp className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-[#111111]">Marca d'Água Oficial dos Imóveis</h4>
+                  <p className="text-xs text-[#5A5A5A]">
+                    Configuração aplicada automaticamente ao adicionar fotos nos imóveis. Fundo transparente preservado.
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-3 pt-2">
+                <div>
+                  <label className="text-xs font-semibold text-[#111111] mb-1 block">
+                    URL da Imagem da Marca d'Água (PNG com Fundo Transparente)
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="url"
+                      value={settingsForm.watermarkUrl || DEFAULT_WATERMARK_URL}
+                      onChange={(e) => setSettingsForm({ ...settingsForm, watermarkUrl: e.target.value })}
+                      placeholder="https://..."
+                      className="flex-1 bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-xs text-[#111111] rounded-xl p-3 outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setSettingsForm({ ...settingsForm, watermarkUrl: DEFAULT_WATERMARK_URL })}
+                      className="px-3 py-2 bg-[#F7F3EB] hover:bg-[#EAE4D8] border border-[#E5E0D8] text-xs font-semibold text-[#5A5A5A] rounded-xl cursor-pointer"
+                    >
+                      Padrão
+                    </button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-xs font-semibold text-[#111111]">
+                        Opacidade Padrão (Transparência)
+                      </label>
+                      <span className="text-xs font-mono font-bold text-[#C9A227]">
+                        {Math.round((settingsForm.watermarkOpacity ?? DEFAULT_WATERMARK_OPACITY) * 100)}%
+                      </span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0.15"
+                      max="0.85"
+                      step="0.01"
+                      value={settingsForm.watermarkOpacity ?? DEFAULT_WATERMARK_OPACITY}
+                      onChange={(e) => setSettingsForm({ ...settingsForm, watermarkOpacity: parseFloat(e.target.value) })}
+                      className="w-full accent-[#C9A227] cursor-pointer"
+                    />
+                    <p className="text-[10px] text-[#5A5A5A]">Recomendado: 42% (translúcida e elegante)</p>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold text-[#111111] mb-1 block">
+                      Posicionamento Padrão
+                    </label>
+                    <select
+                      value={settingsForm.watermarkPosition || DEFAULT_WATERMARK_POSITION}
+                      onChange={(e) => setSettingsForm({ ...settingsForm, watermarkPosition: e.target.value as any })}
+                      className="w-full bg-[#F7F3EB] border border-[#E5E0D8] focus:border-[#C9A227] text-xs text-[#111111] rounded-xl p-3 outline-none"
+                    >
+                      <option value="bottom-right">Canto Inferior Direito (Recomendado)</option>
+                      <option value="center">Centro (Destaque total)</option>
+                      <option value="bottom-left">Canto Inferior Esquerdo</option>
+                      <option value="bottom-center">Centro Inferior</option>
+                      <option value="top-right">Canto Superior Direito</option>
+                      <option value="top-left">Canto Superior Esquerdo</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <button
               type="submit"
               disabled={isSavingSettings}
@@ -1749,6 +1991,89 @@ export const AdminPage: React.FC<AdminPageProps> = ({
                     </div>
                   </div>
 
+                  {/* PAINEL DE MARCA D'ÁGUA OFICIAL DANIEL PACHECO */}
+                  <div className="p-4 rounded-2xl bg-[#FFFFFF] border border-[#C9A227]/40 shadow-xs space-y-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-xl bg-[#C9A227]/15 border border-[#C9A227]/30 flex items-center justify-center text-[#C9A227] shrink-0">
+                          <Stamp className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h5 className="text-xs font-bold text-[#111111]">Marca d'Água Oficial dos Imóveis</h5>
+                            <span className="px-2 py-0.5 rounded-full bg-[#1F8A4C]/15 text-[#1F8A4C] text-[10px] font-bold">
+                              Fundo Transparente
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-[#5A5A5A]">
+                            Selo translúcido (PNG original transparente) para proteger as fotos do imóvel com máxima elegância.
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Quick Action Buttons */}
+                      <div className="flex flex-wrap items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setWatermarkTargetIdx(0);
+                            setIsWatermarkModalOpen(true);
+                          }}
+                          className="px-3 py-1.5 rounded-xl border border-[#E5E0D8] bg-[#F7F3EB] hover:bg-[#EAE4D8] text-xs font-semibold text-[#111111] flex items-center gap-1.5 cursor-pointer transition-colors"
+                        >
+                          <Sliders className="w-3.5 h-3.5 text-[#C9A227]" />
+                          <span>Ajustar & Visualizar</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={handleQuickApplyWatermarkAll}
+                          disabled={isApplyingWatermarkBatch || !editingProperty.images || editingProperty.images.length === 0}
+                          className="px-3.5 py-1.5 rounded-xl bg-[#C9A227] hover:bg-[#B8931F] text-[#0A0A0A] text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-all shadow-xs disabled:opacity-50"
+                        >
+                          {isApplyingWatermarkBatch ? (
+                            <>
+                              <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                              <span>Processando...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Wand2 className="w-3.5 h-3.5" />
+                              <span>Aplicar em Todas ({editingProperty.images?.length || 0})</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Auto-Watermark Toggle & Quick Status */}
+                    <div className="pt-2 border-t border-[#E5E0D8] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs">
+                      <label className="flex items-center gap-2 cursor-pointer select-none">
+                        <input
+                          type="checkbox"
+                          checked={autoWatermarkOnUpload}
+                          onChange={(e) => setAutoWatermarkOnUpload(e.target.checked)}
+                          className="w-4 h-4 accent-[#C9A227] rounded cursor-pointer"
+                        />
+                        <span className="text-[11px] text-[#111111] font-medium">
+                          Aplicar marca d'água automaticamente ao enviar fotos novas (câmera ou galeria)
+                        </span>
+                      </label>
+
+                      <div className="text-[11px] text-[#5A5A5A]">
+                        Opacidade: <strong className="text-[#C9A227]">42%</strong> • Posicionamento: <strong className="text-[#111111]">Canto Inferior Direito</strong>
+                      </div>
+                    </div>
+
+                    {/* Watermark Status Alert */}
+                    {watermarkStatsMsg && (
+                      <div className="p-2.5 rounded-xl bg-[#C9A227]/15 border border-[#C9A227]/30 text-xs text-[#111111] font-semibold flex items-center gap-2 animate-in fade-in-50">
+                        <Sparkles className="w-3.5 h-3.5 text-[#C9A227] shrink-0" />
+                        <span>{watermarkStatsMsg}</span>
+                      </div>
+                    )}
+                  </div>
+
                   {/* Drag & Drop Upload Zone */}
                   <div
                     onDragOver={(e) => {
@@ -1945,6 +2270,18 @@ export const AdminPage: React.FC<AdminPageProps> = ({
 
                                 <button
                                   type="button"
+                                  onClick={() => {
+                                    setWatermarkTargetIdx(idx);
+                                    setIsWatermarkModalOpen(true);
+                                  }}
+                                  className="p-1.5 rounded-lg bg-[#C9A227] text-[#0A0A0A] hover:bg-[#B8931F] cursor-pointer transition-colors"
+                                  title="Aplicar / Ajustar Marca d'Água nesta foto"
+                                >
+                                  <Stamp className="w-3.5 h-3.5" />
+                                </button>
+
+                                <button
+                                  type="button"
                                   onClick={() => handleRemovePhoto(idx)}
                                   className="p-1.5 rounded-lg bg-red-600 text-white hover:bg-red-700 cursor-pointer transition-colors"
                                   title="Remover Foto"
@@ -1971,6 +2308,17 @@ export const AdminPage: React.FC<AdminPageProps> = ({
                               )}
 
                               <div className="flex items-center gap-1">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setWatermarkTargetIdx(idx);
+                                    setIsWatermarkModalOpen(true);
+                                  }}
+                                  className="p-1 text-[#C9A227] hover:text-[#B8931F] cursor-pointer"
+                                  title="Marca d'água"
+                                >
+                                  <Stamp className="w-3.5 h-3.5" />
+                                </button>
                                 {idx > 0 && (
                                   <button
                                     type="button"
@@ -2166,6 +2514,39 @@ export const AdminPage: React.FC<AdminPageProps> = ({
             </form>
           </div>
         </div>
+      )}
+
+      {/* MODAL DE CUSTOMIZAÇÃO E PRÉ-VISUALIZAÇÃO DA MARCA D'ÁGUA */}
+      {isWatermarkModalOpen && editingProperty && (
+        <WatermarkModal
+          isOpen={isWatermarkModalOpen}
+          onClose={() => setIsWatermarkModalOpen(false)}
+          images={editingProperty.images || []}
+          selectedPhotoIndex={watermarkTargetIdx}
+          initialWatermarkUrl={settings.watermarkUrl || DEFAULT_WATERMARK_URL}
+          initialOpacity={settings.watermarkOpacity ?? DEFAULT_WATERMARK_OPACITY}
+          initialPosition={(settings.watermarkPosition as WatermarkPosition) || DEFAULT_WATERMARK_POSITION}
+          initialScale={settings.watermarkScale || DEFAULT_WATERMARK_SCALE}
+          onApplyToAll={(watermarkedImages) => {
+            setEditingProperty({
+              ...editingProperty,
+              images: watermarkedImages,
+            });
+            setWatermarkStatsMsg(`✓ Marca d'água aplicada com sucesso em todas as ${watermarkedImages.length} fotos!`);
+            setTimeout(() => setWatermarkStatsMsg(null), 5000);
+          }}
+          onApplyToSingle={(index, watermarkedUrl) => {
+            if (!editingProperty.images) return;
+            const updated = [...editingProperty.images];
+            updated[index] = watermarkedUrl;
+            setEditingProperty({
+              ...editingProperty,
+              images: updated,
+            });
+            setWatermarkStatsMsg(`✓ Marca d'água aplicada na foto ${index + 1} com sucesso!`);
+            setTimeout(() => setWatermarkStatsMsg(null), 4000);
+          }}
+        />
       )}
     </div>
   );

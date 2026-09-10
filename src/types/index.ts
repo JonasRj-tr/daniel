@@ -29,6 +29,8 @@ export interface Property {
   directFinancing?: boolean; // Financiamento direto com construtora
   bankFinancing?: boolean; // Aceita Financiamento Bancário (Averbado / Caixa / Bancos)
   deliveryYear?: string;
+  hasExtendedGallery?: boolean; // Indicador de galeria completa estendida
+  totalImagesCount?: number; // Total real de fotos salvas sem limites
   createdAt?: number;
   updatedAt?: number;
 }
@@ -54,6 +56,10 @@ export interface SiteSettings {
   aboutText: string;
   signatureSubtitle: string;
   siteUrl?: string;
+  watermarkUrl?: string;
+  watermarkOpacity?: number;
+  watermarkPosition?: 'bottom-right' | 'center' | 'bottom-left' | 'bottom-center' | 'top-right' | 'top-left';
+  watermarkScale?: number;
 }
 
 export interface PropertyFilter {

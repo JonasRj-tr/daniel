@@ -37,7 +37,7 @@ export const TerrenosPage: React.FC<TerrenosPageProps> = ({
 
   const whatsappUrl = createWhatsAppUrl(
     settings.whatsapp || '5548998001744',
-    'Olá Daniel! Gostaria de consultar os Lotes e Terrenos disponíveis com financiamento direto em até 120x no Sul de SC.'
+    'Olá Daniel! Gostaria de consultar os Lotes e Terrenos disponíveis com financiamento direto em até 120x pela variação do CUB ou até 240 vezes com correções.'
   );
 
   return (
@@ -55,7 +55,7 @@ export const TerrenosPage: React.FC<TerrenosPageProps> = ({
           </h1>
 
           <p className="text-sm sm:text-base text-[#8A8A8A] leading-relaxed font-light">
-            Encontre o lote ideal para construir sua casa própria ou investir com alta taxa de valorização. Loteamentos com infraestrutura completa e parcelamento direto com a loteadora em até 120x sem comprovação bancária complexa.
+            Encontre o lote ideal para construir sua casa própria ou investir com alta taxa de valorização. Loteamentos com infraestrutura completa e parcelamento direto com a loteadora em <strong className="text-white">até 120 vezes pela variação do CUB</strong>, ou em <strong className="text-white">até 240 vezes com correções</strong>, sem burocracia bancária.
           </p>
 
           <div className="pt-2 flex flex-wrap gap-4">
@@ -73,7 +73,7 @@ export const TerrenosPage: React.FC<TerrenosPageProps> = ({
               onClick={onOpenCuratedModal}
               className="px-6 py-3.5 rounded-xl bg-[#141414] hover:bg-[#1E1E1E] border border-[#2A2A2A] text-xs font-semibold text-[#FFFFFF] hover:text-[#C9A227] transition-all cursor-pointer"
             >
-              Simular Entrada e 120x Sem Correções
+              Simular Parcelamento em até 120x ou 240x
             </button>
           </div>
         </div>
@@ -85,9 +85,9 @@ export const TerrenosPage: React.FC<TerrenosPageProps> = ({
           <div className="p-3 rounded-2xl bg-[#C9A227]/10 text-[#C9A227] w-fit">
             <Calculator className="w-6 h-6" />
           </div>
-          <h3 className="text-lg font-bold text-[#111111]">Financiamento em até 120x Direto</h3>
+          <h3 className="text-lg font-bold text-[#111111]">Até 120x (CUB) ou até 240x Direto</h3>
           <p className="text-xs text-[#5A5A5A] leading-relaxed">
-            Planos de pagamento facilitados com entrada a partir de R$ 5.600 e parcelas mensais acessíveis diretamente com as principais loteadoras da região.
+            Condições flexíveis: parcele em até 120 vezes pela variação do CUB ou em até 240 vezes com correções monetárias, diretamente com as loteadoras parceiras e sem intermediários.
           </p>
         </div>
 

@@ -202,6 +202,15 @@
         "updatedAt": { "type": "number", "description": "Update timestamp" }
       },
       "required": ["id", "slug", "propertyId", "title", "heroHeadline"]
+    },
+    "PropertyGallery": {
+      "type": "object",
+      "properties": {
+        "propertyId": { "type": "string", "description": "Property ID reference" },
+        "images": { "type": "array", "description": "Full array of image URLs or WebP data URLs" },
+        "updatedAt": { "type": "number", "description": "Timestamp" }
+      },
+      "required": ["propertyId", "images"]
     }
   },
   "firestore": {
@@ -220,6 +229,10 @@
     "/property_photos/{photoId}": {
       "schema": "PropertyPhoto",
       "description": "Individual high-definition property photos stored separately to prevent exceeding 1MB document limit"
+    },
+    "/property_galleries/{galleryId}": {
+      "schema": "PropertyGallery",
+      "description": "Extended photo galleries for properties with large photo sets"
     }
   }
 }

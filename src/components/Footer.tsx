@@ -66,7 +66,7 @@ export const Footer: React.FC<FooterProps> = ({
                 className="h-14 sm:h-16 w-auto max-w-[230px] object-contain filter drop-shadow-[0_2px_12px_rgba(201,162,39,0.25)]"
               />
               <p className="text-xs text-[#C9A227] font-semibold tracking-wider">
-                {settings.creci || 'CRECI: 38 813'} {settings.cnai ? `• ${settings.cnai}` : '• CNAI: 34 653'}
+                {settings.creci || 'CRECI-38.813'} • {settings.cnai || 'CNAI 34.653'}
               </p>
             </div>
             <p className="text-xs leading-relaxed text-[#8A8A8A]">
@@ -172,10 +172,10 @@ export const Footer: React.FC<FooterProps> = ({
             </ul>
           </div>
 
-          {/* Column 3: Regional Hubs */}
+          {/* Column 3: AMREC 12 Municipalities */}
           <div className="space-y-3">
-            <h4 className="text-xs font-semibold text-[#FFFFFF] uppercase tracking-wider">
-              Regiões Atendidas
+            <h4 className="text-xs font-semibold text-[#FFFFFF] uppercase tracking-wider flex items-center gap-1.5">
+              <span>Região AMREC (12 Cidades)</span>
             </h4>
             <ul className="space-y-2 text-xs">
               <li>
@@ -184,7 +184,7 @@ export const Footer: React.FC<FooterProps> = ({
                   onClick={() => handleLink('cidades')}
                   className="hover:text-[#C9A227] transition-colors text-left cursor-pointer"
                 >
-                  Criciúma (Centro, Santa Bárbara)
+                  Criciúma (sede)
                 </button>
               </li>
               <li>
@@ -211,16 +211,16 @@ export const Footer: React.FC<FooterProps> = ({
                   onClick={() => handleLink('cidades')}
                   className="hover:text-[#C9A227] transition-colors text-left cursor-pointer"
                 >
-                  Nova Veneza (Caravaggio)
+                  Nova Veneza (Gastronomia)
                 </button>
               </li>
               <li>
                 <button
                   id="footer-city-others"
                   onClick={() => handleLink('cidades')}
-                  className="hover:text-[#C9A227] transition-colors text-left cursor-pointer"
+                  className="hover:text-[#C9A227] transition-colors text-left cursor-pointer text-[11px] text-[#A0A0A0]"
                 >
-                  Cocal do Sul & Forquilhinha
+                  + Forquilhinha, Cocal do Sul, Lauro Müller, Morro da Fumaça, Orleans, Siderópolis, Treviso e Urussanga
                 </button>
               </li>
             </ul>
@@ -379,16 +379,30 @@ export const Footer: React.FC<FooterProps> = ({
           <div className="flex items-center gap-6 flex-wrap justify-center sm:justify-start">
             <span>© {new Date().getFullYear()} Daniel Pacheco Consultoria. Todos os direitos reservados.</span>
             <button
+              id="footer-terms-btn"
+              onClick={() => handleLink('termos-de-uso')}
+              className="hover:text-white hover:underline transition-colors cursor-pointer"
+            >
+              Termos de Uso
+            </button>
+            <button
               id="footer-privacy-btn"
-              onClick={() => handleLink('privacidade')}
-              className="hover:text-white transition-colors cursor-pointer"
+              onClick={() => handleLink('politica-de-privacidade')}
+              className="hover:text-white hover:underline transition-colors cursor-pointer"
             >
               Política de Privacidade
             </button>
             <button
+              id="footer-cookie-policy-btn"
+              onClick={() => handleLink('cookie-policy')}
+              className="hover:text-white hover:underline transition-colors cursor-pointer"
+            >
+              Política de Cookies
+            </button>
+            <button
               id="footer-sitemap-btn"
               onClick={() => handleLink('mapa-do-site')}
-              className="hover:text-white transition-colors cursor-pointer"
+              className="hover:text-white hover:underline transition-colors cursor-pointer"
             >
               Mapa do Site
             </button>

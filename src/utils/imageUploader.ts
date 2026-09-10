@@ -1,3 +1,5 @@
+import { applyWatermarkToImage, WatermarkOptions } from './watermark';
+
 /**
  * Utilitário de Processamento, Otimização e Upload de Imagens
  * Suporta fotos tiradas diretamente de smartphones (iPhone iOS / Android)
@@ -41,9 +43,9 @@ export function isImageFile(file: File): boolean {
  */
 export async function optimizeImageFile(
   file: File | Blob,
-  maxWidth = 1080,
-  maxHeight = 810,
-  quality = 0.70
+  maxWidth = 1200,
+  maxHeight = 900,
+  quality = 0.62
 ): Promise<{ dataUrl: string; blob: Blob; width: number; height: number; originalSize: number; optimizedSize: number }> {
   const originalSize = file.size || 0;
 
@@ -205,7 +207,7 @@ function processImageElement(
  */
 export async function uploadToPermanentHost(blobOrFile: Blob | File): Promise<string> {
   if (blobOrFile instanceof File || blobOrFile instanceof Blob) {
-    const opt = await optimizeImageFile(blobOrFile, 1080, 810, 0.70);
+    const opt = await optimizeImageFile(blobOrFile, 1200, 900, 0.62);
     return opt.dataUrl;
   }
   return '';
@@ -220,7 +222,8 @@ export async function uploadToPermanentHost(blobOrFile: Blob | File): Promise<st
  */
 export async function processAndUploadDeviceImages(
   files: File[],
-  onProgress?: (info: { current: number; total: number; fileName: string; percent: number }) => void
+  onProgress?: (info: { current: number; total: number; fileName: string; percent: number }) => void,
+  watermarkOptions?: WatermarkOptions | null
 ): Promise<string[]> {
   const finalUrls: string[] = [];
   const total = files.length;
@@ -237,14 +240,23 @@ export async function processAndUploadDeviceImages(
     }
 
     try {
-      // Para galerias grandes (mais de 10 fotos), reduzir levemente dimensões para garantir leveza máxima
-      const maxWidth = total > 12 ? 960 : 1080;
-      const maxHeight = total > 12 ? 720 : 810;
-      const quality = total > 12 ? 0.65 : 0.70;
+      // Otimização ultra leve com qualidade visual nítida (1200x900, qualidade 0.62)
+      // Mantém cada foto entre 20KB e 35KB, permitindo subir dezenas de fotos sem limites
+      const maxWidth = total > 15 ? 1080 : 1200;
+      const maxHeight = total > 15 ? 810 : 900;
+      const quality = total > 15 ? 0.60 : 0.62;
 
       const opt = await optimizeImageFile(file, maxWidth, maxHeight, quality);
       if (opt.dataUrl) {
-        finalUrls.push(opt.dataUrl);
+        let finalUrl = opt.dataUrl;
+        if (watermarkOptions) {
+          try {
+            finalUrl = await applyWatermarkToImage(opt.dataUrl, watermarkOptions);
+          } catch (wmErr) {
+            console.warn(`Aviso ao aplicar marca d'água na foto ${file.name}:`, wmErr);
+          }
+        }
+        finalUrls.push(finalUrl);
       }
     } catch (error) {
       console.error(`Erro ao processar imagem ${file.name}:`, error);

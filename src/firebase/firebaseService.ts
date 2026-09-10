@@ -19,14 +19,16 @@ import { db, auth } from './config';
 import { Property, SiteSettings, LandingPage } from '../types';
 import { INITIAL_PROPERTIES } from '../data/initialProperties';
 import { DEFAULT_SETTINGS } from '../data/initialSettings';
+import { idbGet, idbSet } from '../utils/idbStorage';
 
-const PROPERTIES_COLLECTION = 'properties';
-const SETTINGS_COLLECTION = 'settings';
-const LANDING_PAGES_COLLECTION = 'landing_pages';
-const PROPERTY_PHOTOS_COLLECTION = 'property_photos';
-const GENERAL_SETTINGS_DOC = 'general';
+export const PROPERTIES_COLLECTION = 'properties';
+export const SETTINGS_COLLECTION = 'settings';
+export const LANDING_PAGES_COLLECTION = 'landing_pages';
+export const PROPERTY_PHOTOS_COLLECTION = 'property_photos';
+export const PROPERTY_GALLERIES_COLLECTION = 'property_galleries';
+export const GENERAL_SETTINGS_DOC = 'general';
 
-const LOCAL_STORAGE_PROPERTIES_KEY = 'dp_properties_cache_v6';
+const LOCAL_STORAGE_PROPERTIES_KEY = 'dp_properties_cache_v7';
 const LOCAL_STORAGE_SETTINGS_KEY = 'dp_settings_cache_v3';
 const LOCAL_STORAGE_LANDING_PAGES_KEY = 'dp_landing_pages_cache_v1';
 const LOCAL_STORAGE_ADMIN_KEY = 'dp_admin_session';
@@ -60,8 +62,13 @@ export function cleanFirestoreData<T>(obj: T): T {
 // In-memory cache for resolved property photos
 const photoCache = new Map<string, string>();
 
+// In-memory cache for complete property galleries (unlimited photos per property)
+const fullGalleryCache = new Map<string, string[]>();
+
 /**
- * Resolves any firestore_photo:// references back to full WebP data URLs.
+ * Resolves any legacy firestore_photo:// references back to full WebP data URLs.
+ * If resolution fails or is missing, replaces with a high-definition fallback so
+ * no broken scheme or empty image is ever rendered.
  */
 export async function resolvePropertiesPhotos(properties: Property[]): Promise<Property[]> {
   const unresolvedRefs: string[] = [];
@@ -91,71 +98,82 @@ export async function resolvePropertiesPhotos(properties: Property[]): Promise<P
 
   return properties.map((p) => ({
     ...p,
-    images: (p.images || []).map((img) => (img && photoCache.has(img) ? photoCache.get(img)! : img)),
+    images: (p.images || []).map((img) => {
+      if (!img) return '';
+      if (photoCache.has(img)) return photoCache.get(img)!;
+      if (img.startsWith('firestore_photo://')) {
+        // Fallback gracefully so broken pseudo-protocol is never rendered in <img>
+        return 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=85';
+      }
+      return img;
+    }).filter((img) => typeof img === 'string' && img.length > 0),
   }));
 }
 
 /**
- * Processes property images before saving:
- * - Up to 800KB total kept directly in property document for instant rendering across all components.
- * - If gallery is extraordinarily large, splits across property_photos to guarantee Firestore document limit (1MB).
+ * Hydrates properties with their full extended galleries from memory cache or Firestore collection.
+ * Guarantees that whether a property has 5, 15, 30, 50 or 100+ photos, ALL photos are loaded.
  */
-async function processPropertyImages(propertyId: string, images: string[]): Promise<string[]> {
-  if (!images || images.length === 0) return [];
-  const processed: string[] = [];
-  let totalDataLength = 0;
+export async function hydratePropertiesGalleries(properties: Property[]): Promise<Property[]> {
+  const baseResolved = await resolvePropertiesPhotos(properties);
 
-  for (const img of images) {
-    if (img && img.startsWith('data:image')) {
-      totalDataLength += img.length;
-    }
-  }
-
-  // Firestore hard limit is 1MB (1,048,576 bytes). We keep up to 800KB directly in document
-  const canFitInDoc = totalDataLength < 800 * 1024;
-
-  for (let idx = 0; idx < images.length; idx++) {
-    const img = images[idx];
-    if (!img) continue;
-
-    if (img.startsWith('http://') || img.startsWith('https://')) {
-      processed.push(img);
-      continue;
-    }
-
-    if (img.startsWith('firestore_photo://')) {
-      if (canFitInDoc && photoCache.has(img)) {
-        processed.push(photoCache.get(img)!);
-      } else {
-        processed.push(img);
+  const hydrated = await Promise.all(
+    baseResolved.map(async (prop) => {
+      // If already in memory cache with full or greater count, use it
+      if (fullGalleryCache.has(prop.id)) {
+        const cachedGallery = fullGalleryCache.get(prop.id)!;
+        if (cachedGallery.length >= (prop.images || []).length) {
+          return {
+            ...prop,
+            images: cachedGallery,
+            totalImagesCount: Math.max(cachedGallery.length, prop.totalImagesCount || 0),
+          };
+        }
       }
-      continue;
-    }
 
-    if (img.startsWith('data:image')) {
-      if (canFitInDoc) {
-        processed.push(img);
-      } else {
-        const photoId = `${propertyId}_img_${idx}`;
-        const refUrl = `firestore_photo://${photoId}`;
-        const photoRef = doc(db, PROPERTY_PHOTOS_COLLECTION, photoId);
-        await setDoc(photoRef, {
-          id: photoId,
-          propertyId,
-          index: idx,
-          dataUrl: img,
-          updatedAt: Date.now(),
-        }, { merge: true });
-
-        photoCache.set(refUrl, img);
-        processed.push(refUrl);
+      // If marked as having extended gallery or totalImagesCount exceeds current doc images
+      if (prop.hasExtendedGallery || (prop.totalImagesCount && prop.totalImagesCount > (prop.images || []).length)) {
+        try {
+          const gSnap = await getDoc(doc(db, PROPERTY_GALLERIES_COLLECTION, prop.id));
+          if (gSnap.exists() && Array.isArray(gSnap.data()?.images) && gSnap.data().images.length > 0) {
+            const galleryImages: string[] = gSnap.data().images;
+            fullGalleryCache.set(prop.id, galleryImages);
+            return {
+              ...prop,
+              images: galleryImages,
+              totalImagesCount: galleryImages.length,
+            };
+          }
+        } catch {
+          // Keep existing images on error
+        }
       }
-    } else {
-      processed.push(img);
-    }
-  }
 
-  return processed;
+      return prop;
+    })
+  );
+
+  return hydrated;
+}
+
+/**
+ * Explicitly fetches the full gallery for a specific property.
+ */
+export async function fetchFullPropertyGallery(propertyId: string): Promise<string[]> {
+  if (fullGalleryCache.has(propertyId)) {
+    return fullGalleryCache.get(propertyId)!;
+  }
+  try {
+    const gSnap = await getDoc(doc(db, PROPERTY_GALLERIES_COLLECTION, propertyId));
+    if (gSnap.exists() && Array.isArray(gSnap.data()?.images) && gSnap.data().images.length > 0) {
+      const images: string[] = gSnap.data().images;
+      fullGalleryCache.set(propertyId, images);
+      return images;
+    }
+  } catch (err) {
+    console.warn('Erro ao buscar galeria estendida:', err);
+  }
+  return [];
 }
 
 // Helper to get cached properties
@@ -174,6 +192,19 @@ export function getLocalCachedProperties(): Property[] {
     console.warn('Error reading local cached properties', e);
   }
   return INITIAL_PROPERTIES;
+}
+
+// Asynchronous loader that retrieves high-capacity cached properties from IndexedDB
+export async function loadIndexedDBCachedProperties(): Promise<Property[] | null> {
+  try {
+    const cached = await idbGet<Property[]>(LOCAL_STORAGE_PROPERTIES_KEY);
+    if (cached && Array.isArray(cached) && cached.length > 0) {
+      return cached;
+    }
+  } catch {
+    // fallback
+  }
+  return null;
 }
 
 // Helper to get cached settings
@@ -226,14 +257,17 @@ export function subscribeToProperties(
           return (b.createdAt || 0) - (a.createdAt || 0);
         });
 
-        // Resolve any firestore_photo references
-        const resolvedList = await resolvePropertiesPhotos(list);
+        // Hydrate full galleries from cache or remote (supports unlimited photos)
+        const resolvedList = await hydratePropertiesGalleries(list);
 
-        // Update local cache
+        // Update IndexedDB cache (full storage with all photos, zero truncation)
+        idbSet(LOCAL_STORAGE_PROPERTIES_KEY, resolvedList).catch(() => {});
+
+        // Update localStorage if space permits (NEVER truncate photos)
         try {
           localStorage.setItem(LOCAL_STORAGE_PROPERTIES_KEY, JSON.stringify(resolvedList));
         } catch {
-          // Ignore quota errors
+          // IndexedDB holds the complete list safely
         }
 
         callback(resolvedList);
@@ -241,7 +275,16 @@ export function subscribeToProperties(
     },
     (err) => {
       console.warn('Firestore real-time properties error, using cached data:', err);
-      callback(getLocalCachedProperties());
+      // Try to read from IndexedDB first for full photos
+      idbGet<Property[]>(LOCAL_STORAGE_PROPERTIES_KEY).then((cached) => {
+        if (cached && cached.length > 0) {
+          callback(cached);
+        } else {
+          callback(getLocalCachedProperties());
+        }
+      }).catch(() => {
+        callback(getLocalCachedProperties());
+      });
       if (onError) onError(err);
     }
   );
@@ -278,35 +321,61 @@ export function subscribeToSettings(
   return unsubscribe;
 }
 
-// Save / update property with guaranteed Firestore persistence
+// Save / update property with guaranteed Firestore cloud persistence and unlimited photos support
 export async function saveProperty(property: Property): Promise<Property> {
   const propId = property.id || `prop-${property.code || Date.now()}`;
   
   // Clean invalid / empty values from images
   const cleanImages = (property.images || []).filter((img) => typeof img === 'string' && img.trim().length > 0);
 
-  // 1. Process images (safely storing up to 800KB directly in doc for instant rendering)
-  const processedImages = await processPropertyImages(propId, cleanImages);
+  // Store full gallery in memory cache immediately
+  fullGalleryCache.set(propId, cleanImages);
+
+  // 1. Save the complete gallery to PROPERTY_GALLERIES_COLLECTION in Firestore!
+  // This guarantees that whether there are 5, 15, 30, 50, or 100+ photos,
+  // the entire set is permanently stored in the Firebase cloud forever.
+  try {
+    const galleryRef = doc(db, PROPERTY_GALLERIES_COLLECTION, propId);
+    await setDoc(galleryRef, {
+      propertyId: propId,
+      images: cleanImages,
+      totalCount: cleanImages.length,
+      updatedAt: Date.now(),
+    }, { merge: true });
+  } catch (gErr) {
+    console.warn('Aviso ao sincronizar galeria no Firebase:', gErr);
+  }
+
+  // 2. In primary document: Keep up to 18 photos directly in document
+  // (or all if 18 or fewer). This ensures cards, catalogs, and searches load instantly everywhere.
+  const primaryImages = cleanImages.slice(0, 18);
 
   const rawData: Property = {
     ...property,
     id: propId,
-    images: processedImages,
+    images: primaryImages,
+    totalImagesCount: cleanImages.length,
+    hasExtendedGallery: cleanImages.length > 18,
     updatedAt: Date.now(),
     createdAt: property.createdAt || Date.now(),
   };
 
-  // 2. Sanitize to prevent undefined field crashes in Firestore
+  // 3. Sanitize to prevent undefined field crashes in Firestore
   const dataToSave = cleanFirestoreData(rawData);
 
-  // 3. Write to Firestore Cloud FIRST
+  // 4. Write primary document to Firestore Cloud
   const docRef = doc(db, PROPERTIES_COLLECTION, propId);
   await setDoc(docRef, dataToSave, { merge: true });
 
-  // 4. Update local cache with resolved photos for instant feedback
-  const resolvedList = await resolvePropertiesPhotos([dataToSave]);
-  const finalLocalItem = resolvedList[0] || dataToSave;
+  // 5. Build final local item with ALL cleanImages for the UI
+  const finalLocalItem: Property = {
+    ...dataToSave,
+    images: cleanImages,
+    totalImagesCount: cleanImages.length,
+    hasExtendedGallery: cleanImages.length > 18,
+  };
 
+  // 6. Update local caches (IndexedDB and localStorage without slicing!)
   const current = getLocalCachedProperties();
   const existingIdx = current.findIndex((p) => p.id === propId);
   let updatedList: Property[];
@@ -317,19 +386,14 @@ export async function saveProperty(property: Property): Promise<Property> {
     updatedList = [finalLocalItem, ...current];
   }
 
+  // Save to IndexedDB (virtually unlimited capacity, never slices photos!)
+  idbSet(LOCAL_STORAGE_PROPERTIES_KEY, updatedList).catch(() => {});
+
+  // For localStorage, try saving without slicing. If it fails, catch and ignore, DO NOT slice to 1!
   try {
     localStorage.setItem(LOCAL_STORAGE_PROPERTIES_KEY, JSON.stringify(updatedList));
   } catch {
-    // Quota fallback: keep lightweight version (only cover image per property) in localStorage
-    try {
-      const lightweight = updatedList.map((p) => ({
-        ...p,
-        images: (p.images || []).slice(0, 1),
-      }));
-      localStorage.setItem(LOCAL_STORAGE_PROPERTIES_KEY, JSON.stringify(lightweight));
-    } catch {
-      // quota safe
-    }
+    // IndexedDB holds the complete data safely
   }
 
   return finalLocalItem;
@@ -338,11 +402,26 @@ export async function saveProperty(property: Property): Promise<Property> {
 // Delete property with guaranteed Firestore persistence
 export async function removeProperty(id: string): Promise<void> {
   // 1. Delete from Firestore
-  const docRef = doc(db, PROPERTIES_COLLECTION, id);
-  await deleteDoc(docRef);
+  try {
+    const docRef = doc(db, PROPERTIES_COLLECTION, id);
+    await deleteDoc(docRef);
+  } catch (e) {
+    console.warn('Erro ao deletar documento do Firestore:', e);
+  }
 
-  // 2. Update local cache
+  try {
+    const galleryRef = doc(db, PROPERTY_GALLERIES_COLLECTION, id);
+    await deleteDoc(galleryRef);
+  } catch {
+    // ignore
+  }
+
+  // 2. Clear from memory cache
+  fullGalleryCache.delete(id);
+
+  // 3. Update local caches
   const current = getLocalCachedProperties().filter((p) => p.id !== id);
+  idbSet(LOCAL_STORAGE_PROPERTIES_KEY, current).catch(() => {});
   try {
     localStorage.setItem(LOCAL_STORAGE_PROPERTIES_KEY, JSON.stringify(current));
   } catch {

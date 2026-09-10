@@ -32,6 +32,12 @@ service cloud.firestore {
       allow write: if true;
     }
 
+    // Property galleries collection: Extended full-resolution photo sets
+    match /property_galleries/{galleryId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
     // Default deny all other paths
     match /{document=**} {
       allow read, write: if false;

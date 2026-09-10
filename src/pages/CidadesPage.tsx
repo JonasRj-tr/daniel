@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { MapPin, TrendingUp, Sparkles, CheckCircle2, ArrowRight, Building } from 'lucide-react';
+import { MapPin, TrendingUp, Sparkles, CheckCircle2, ArrowRight, Building, Compass } from 'lucide-react';
 import { Property, SiteSettings } from '../types';
-import { CITIES_DATA, CityGuide } from '../data/initialSettings';
+import { CITIES_DATA, CityGuide, AMREC_DESCRIPTION } from '../data/initialSettings';
 import { PropertyCard } from '../components/PropertyCard';
 
 interface CidadesPageProps {
@@ -17,40 +17,54 @@ export const CidadesPage: React.FC<CidadesPageProps> = ({
   onSelectProperty,
   onOpenCuratedModal,
 }) => {
-  const [selectedCity, setSelectedCity] = useState<string>('Criciúma');
+  const [selectedCity, setSelectedCity] = useState<string>('Criciúma (sede)');
 
   const activeCityData = CITIES_DATA.find((c) => c.name.toLowerCase() === selectedCity.toLowerCase()) || CITIES_DATA[0];
 
-  const cityProperties = properties.filter(
-    (p) => p.city.toLowerCase() === selectedCity.toLowerCase()
-  );
+  const cleanSelectedCity = selectedCity.replace(/\s*\(sede\)/i, '').trim().toLowerCase();
+
+  const cityProperties = properties.filter((p) => {
+    const pCity = (p.city || '').toLowerCase();
+    return pCity.includes(cleanSelectedCity) || cleanSelectedCity.includes(pCity);
+  });
 
   return (
-    <div id="cidades-page" className="pt-28 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+    <div id="cidades-page" className="pt-28 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto space-y-3">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FFFFFF] border border-[#E5E0D8] text-xs text-[#C9A227] shadow-sm">
           <MapPin className="w-3.5 h-3.5 text-[#C9A227]" />
-          <span>Polos Imobiliários do Sul Catarinense</span>
+          <span>Região da AMREC • Sul Catarinense</span>
         </div>
         <h1 className="text-3xl sm:text-5xl font-bold font-serif-luxury text-[#111111]">
-          Onde Viver & Investir no Sul de SC
+          Cidades Atendidas
         </h1>
         <p className="text-xs sm:text-sm text-[#5A5A5A] leading-relaxed">
-          Conheça as particularidades, atrativos e potencial de valorização imobiliária de cada cidade atendida pela consultoria de Daniel Pacheco.
+          {AMREC_DESCRIPTION} Conheça os diferenciais e oportunidades imobiliárias em cada município atendido com assessoria direta do corretor Daniel Pacheco.
         </p>
       </div>
 
+      {/* AMREC 12 Municipalities Information Bar */}
+      <div className="p-4 rounded-2xl bg-[#FAF7F0] border border-[#E5E0D8] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#5A5A5A]">
+        <div className="flex items-center gap-2 font-semibold text-[#111111]">
+          <Compass className="w-4 h-4 text-[#C9A227] shrink-0" />
+          <span>AMREC — Associação dos Municípios da Região Carbonífera (12 Municípios)</span>
+        </div>
+        <span className="text-[11px] text-[#8A8A8A] bg-white px-3 py-1 rounded-full border border-[#E5E0D8]">
+          Atendimento Oficial no Sul de SC
+        </span>
+      </div>
+
       {/* City Selector Pills */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 justify-start sm:justify-center">
+      <div className="flex items-center gap-2 overflow-x-auto pb-3 pt-1 justify-start scrollbar-thin">
         {CITIES_DATA.map((city) => (
           <button
             key={city.id}
             onClick={() => setSelectedCity(city.name)}
-            className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+            className={`px-4 py-2 rounded-xl text-xs whitespace-nowrap transition-all cursor-pointer ${
               selectedCity.toLowerCase() === city.name.toLowerCase()
-                ? 'bg-[#0A0A0A] text-[#FFFFFF] shadow-md scale-105 font-bold'
-                : 'bg-[#FFFFFF] text-[#5A5A5A] hover:text-[#111111] hover:bg-[#F0EBE1] border border-[#E5E0D8]'
+                ? 'bg-[#0A0A0A] text-[#C9A227] shadow-md scale-105 font-bold border border-[#C9A227]'
+                : 'bg-[#FFFFFF] text-[#5A5A5A] hover:text-[#111111] hover:bg-[#F0EBE1] border border-[#E5E0D8] font-medium'
             }`}
           >
             {city.name}

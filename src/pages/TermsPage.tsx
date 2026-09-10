@@ -1,14 +1,14 @@
 import React from 'react';
-import { ArrowLeft, ShieldCheck, Lock, Cookie, FileText, Mail, Phone } from 'lucide-react';
+import { ArrowLeft, ShieldCheck, FileText, Cookie, Mail, Phone, ExternalLink } from 'lucide-react';
 import { SiteSettings } from '../types';
 
-interface PrivacyPolicyPageProps {
+interface TermsPageProps {
   settings: SiteSettings;
   onBack: () => void;
   navigate?: (route: string) => void;
 }
 
-export const PrivacyPolicyPage: React.FC<PrivacyPolicyPageProps> = ({ settings, onBack, navigate }) => {
+export const TermsPage: React.FC<TermsPageProps> = ({ settings, onBack, navigate }) => {
   const handleNav = (route: string) => {
     if (navigate) {
       navigate(route);
@@ -19,8 +19,8 @@ export const PrivacyPolicyPage: React.FC<PrivacyPolicyPageProps> = ({ settings, 
   };
 
   return (
-    <div id="privacy-policy-page" className="pt-28 pb-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 animate-in fade-in duration-200">
-      {/* Top Navigation */}
+    <div id="terms-page" className="pt-28 pb-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+      {/* Top Breadcrumb / Back Navigation */}
       <div className="flex items-center justify-between">
         <button
           onClick={onBack}
@@ -33,10 +33,10 @@ export const PrivacyPolicyPage: React.FC<PrivacyPolicyPageProps> = ({ settings, 
         {/* Cross-linking navigation bar */}
         <div className="flex items-center gap-2 text-xs">
           <button
-            onClick={() => handleNav('termos-de-uso')}
+            onClick={() => handleNav('politica-de-privacidade')}
             className="px-3 py-1.5 rounded-lg bg-white border border-[#E5E0D8] text-[#5A5A5A] hover:text-[#111111] hover:border-[#C9A227] transition-all cursor-pointer font-medium"
           >
-            Termos de Uso
+            Política de Privacidade
           </button>
           <button
             onClick={() => handleNav('cookie-policy')}
@@ -50,140 +50,116 @@ export const PrivacyPolicyPage: React.FC<PrivacyPolicyPageProps> = ({ settings, 
       {/* Main Document Card */}
       <div className="bg-[#FFFFFF] border border-[#E5E0D8] rounded-3xl p-8 sm:p-14 shadow-sm space-y-8">
         <div className="space-y-3 pb-6 border-b border-[#E5E0D8]">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1F8A4C]/10 border border-[#1F8A4C]/30 text-xs text-[#1F8A4C] font-semibold">
-            <ShieldCheck className="w-3.5 h-3.5" />
-            <span>LGPD • Lei nº 13.709/2018</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#C9A227]/15 border border-[#C9A227]/40 text-xs text-[#C9A227] font-semibold">
+            <FileText className="w-3.5 h-3.5" />
+            <span>Documento Legal Oficial</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold font-serif-luxury text-[#111111]">
-            Política de Privacidade
+            Termos de Uso
           </h1>
           <p className="text-xs text-[#5A5A5A]">
-            Última atualização: 08 de setembro de 2026 • Daniel Pacheco Consultoria Imobiliária
+            Última atualização: 08 de setembro de 2026 • Foro da Comarca de Criciúma - SC
           </p>
         </div>
 
         <div className="prose prose-sm max-w-none text-[#333333] space-y-6 text-sm leading-relaxed">
           <p className="bg-[#FAF7F0] p-4 rounded-2xl border border-[#E5E0D8] text-xs text-[#444444] leading-relaxed">
-            Esta Política de Privacidade descreve como <strong>Daniel Pacheco</strong>, corretor de imóveis responsável pelo site{' '}
+            Estes Termos de Uso regulam o acesso e a utilização do site{' '}
             <a href="https://www.corretordanielpacheco.com.br" className="text-[#C9A227] font-bold underline">
               www.corretordanielpacheco.com.br
             </a>{' '}
-            (&quot;nós&quot;), coleta, usa, armazena e protege os dados pessoais dos Usuários, em conformidade com a Lei nº 13.709/2018 (Lei Geral de Proteção de Dados Pessoais – LGPD).
+            (&quot;Site&quot;), de titularidade de <strong>Daniel Pacheco</strong>, corretor de imóveis inscrito no <strong>CRECI nº 38.813</strong> e <strong>CNAI nº 34.653</strong> (&quot;nós&quot;). Ao acessar ou utilizar o Site, você (&quot;Usuário&quot;) declara ter lido, compreendido e aceitado integralmente estes Termos.
           </p>
 
           <section className="space-y-2">
             <h2 className="text-base font-bold text-[#111111] flex items-center gap-2">
               <span className="w-6 h-6 rounded-full bg-[#F7F3EB] text-[#C9A227] text-xs flex items-center justify-center font-bold">1</span>
-              Dados que coletamos
+              Sobre o Site
             </h2>
-            <ul className="text-xs text-[#5A5A5A] space-y-2 pl-8 list-disc">
-              <li>Dados de identificação e contato fornecidos em formulários (nome, e-mail, telefone/WhatsApp).</li>
-              <li>Dados sobre o imóvel de interesse e preferências de busca (tipo, localização, faixa de preço).</li>
-              <li>Dados de navegação coletados automaticamente por cookies e tecnologias similares (ver <button onClick={() => handleNav('cookie-policy')} className="text-[#C9A227] underline font-semibold">Política de Cookies</button>).</li>
-            </ul>
+            <p className="text-xs text-[#5A5A5A] leading-relaxed pl-8">
+              O Site tem como finalidade divulgar imóveis para venda e/ou locação, prestar informações sobre os serviços de intermediação imobiliária e viabilizar o contato entre o Usuário e o corretor responsável.
+            </p>
           </section>
 
           <section className="space-y-2">
             <h2 className="text-base font-bold text-[#111111] flex items-center gap-2">
               <span className="w-6 h-6 rounded-full bg-[#F7F3EB] text-[#C9A227] text-xs flex items-center justify-center font-bold">2</span>
-              Finalidade do tratamento
+              Cadastro e uso do Site
             </h2>
             <ul className="text-xs text-[#5A5A5A] space-y-2 pl-8 list-disc">
-              <li>Responder a solicitações de contato, agendamento de visitas e propostas.</li>
-              <li>Enviar informações sobre imóveis compatíveis com o interesse do Usuário.</li>
-              <li>Melhorar a experiência de navegação e o desempenho do Site.</li>
-              <li>Cumprir obrigações legais e regulatórias aplicáveis à atividade de corretagem imobiliária.</li>
+              <li>O Usuário compromete-se a fornecer informações verdadeiras, completas e atualizadas em eventuais formulários de contato ou cadastro.</li>
+              <li>É vedado utilizar o Site para fins ilícitos, fraudulentos ou que violem direitos de terceiros.</li>
+              <li>Reservamo-nos o direito de recusar, suspender ou cancelar o acesso de Usuários que descumprirem estes Termos.</li>
             </ul>
           </section>
 
           <section className="space-y-2">
             <h2 className="text-base font-bold text-[#111111] flex items-center gap-2">
               <span className="w-6 h-6 rounded-full bg-[#F7F3EB] text-[#C9A227] text-xs flex items-center justify-center font-bold">3</span>
-              Base legal
+              Informações sobre os imóveis
             </h2>
             <p className="text-xs text-[#5A5A5A] leading-relaxed pl-8">
-              O tratamento de dados pessoais é realizado com base no consentimento do titular, na execução de procedimentos preliminares e de contratos relacionados à intermediação imobiliária, e no legítimo interesse, nos termos dos artigos 7º e 10 da LGPD.
+              As informações, fotos, valores, metragens e condições dos imóveis anunciados têm caráter meramente informativo e podem ser alteradas sem aviso prévio, estando sempre sujeitas a confirmação junto ao corretor responsável antes da formalização de qualquer negócio.
             </p>
           </section>
 
           <section className="space-y-2">
             <h2 className="text-base font-bold text-[#111111] flex items-center gap-2">
               <span className="w-6 h-6 rounded-full bg-[#F7F3EB] text-[#C9A227] text-xs flex items-center justify-center font-bold">4</span>
-              Compartilhamento de dados
+              Propriedade intelectual
             </h2>
             <p className="text-xs text-[#5A5A5A] leading-relaxed pl-8">
-              Os dados poderão ser compartilhados com proprietários de imóveis, imobiliárias parceiras, instituições financeiras (em caso de financiamento) e prestadores de serviços que auxiliam na operação do Site (como provedores de hospedagem e ferramentas de comunicação), sempre na medida necessária para a finalidade pretendida. <strong>Não vendemos dados pessoais a terceiros.</strong>
+              Todos os textos, imagens, marcas, logotipos e demais conteúdos disponibilizados no Site são de propriedade de seus respectivos titulares, sendo vedada a reprodução, distribuição ou utilização sem autorização prévia.
             </p>
           </section>
 
           <section className="space-y-2">
             <h2 className="text-base font-bold text-[#111111] flex items-center gap-2">
               <span className="w-6 h-6 rounded-full bg-[#F7F3EB] text-[#C9A227] text-xs flex items-center justify-center font-bold">5</span>
-              Armazenamento e segurança
+              Limitação de responsabilidade
             </h2>
             <p className="text-xs text-[#5A5A5A] leading-relaxed pl-8">
-              Adotamos medidas técnicas e administrativas razoáveis para proteger os dados pessoais contra acessos não autorizados, perda, alteração ou divulgação indevida. Os dados são mantidos pelo tempo necessário ao cumprimento das finalidades descritas ou conforme exigido por lei.
+              Envidamos esforços para manter as informações do Site atualizadas e corretas, mas não garantimos a ausência de erros, interrupções ou indisponibilidades. O uso do Site é de responsabilidade do Usuário.
             </p>
           </section>
 
           <section className="space-y-2">
             <h2 className="text-base font-bold text-[#111111] flex items-center gap-2">
               <span className="w-6 h-6 rounded-full bg-[#F7F3EB] text-[#C9A227] text-xs flex items-center justify-center font-bold">6</span>
-              Direitos do titular
+              Links para sites de terceiros
             </h2>
             <p className="text-xs text-[#5A5A5A] leading-relaxed pl-8">
-              Nos termos da LGPD, o Usuário pode solicitar, a qualquer momento:
-            </p>
-            <ul className="text-xs text-[#5A5A5A] space-y-1.5 pl-8 list-disc">
-              <li>Confirmação da existência de tratamento e acesso aos dados;</li>
-              <li>Correção de dados incompletos, inexatos ou desatualizados;</li>
-              <li>Anonimização, bloqueio ou eliminação de dados desnecessários ou tratados em desconformidade com a lei;</li>
-              <li>Portabilidade dos dados a outro fornecedor de serviço;</li>
-              <li>Revogação do consentimento e eliminação dos dados tratados com base nele;</li>
-              <li>Informação sobre entidades públicas e privadas com as quais os dados foram compartilhados.</li>
-            </ul>
-            <p className="text-xs text-[#5A5A5A] leading-relaxed pl-8 pt-1">
-              As solicitações podem ser feitas pelo e-mail{' '}
-              <a href="mailto:Daniel.pacheco@creci.org.br" className="text-[#C9A227] underline font-semibold">
-                Daniel.pacheco@creci.org.br
-              </a>.
+              O Site pode conter links para sites de terceiros. Não nos responsabilizamos pelo conteúdo, práticas de privacidade ou funcionamento desses sites externos.
             </p>
           </section>
 
           <section className="space-y-2">
             <h2 className="text-base font-bold text-[#111111] flex items-center gap-2">
               <span className="w-6 h-6 rounded-full bg-[#F7F3EB] text-[#C9A227] text-xs flex items-center justify-center font-bold">7</span>
-              Cookies
+              Alterações destes Termos
             </h2>
             <p className="text-xs text-[#5A5A5A] leading-relaxed pl-8">
-              O Site utiliza cookies para funcionamento e melhoria da experiência do Usuário. Detalhes sobre os tipos de cookies utilizados e como geri-los estão na{' '}
-              <button
-                onClick={() => handleNav('cookie-policy')}
-                className="text-[#C9A227] underline font-semibold hover:text-[#111111]"
-              >
-                Política de Cookies
-              </button>
-              , parte integrante deste documento.
+              Estes Termos podem ser atualizados a qualquer momento, sendo a versão vigente sempre a publicada no Site. Recomenda-se a consulta periódica desta página.
             </p>
           </section>
 
           <section className="space-y-2">
             <h2 className="text-base font-bold text-[#111111] flex items-center gap-2">
               <span className="w-6 h-6 rounded-full bg-[#F7F3EB] text-[#C9A227] text-xs flex items-center justify-center font-bold">8</span>
-              Alterações desta Política
+              Legislação e foro
             </h2>
             <p className="text-xs text-[#5A5A5A] leading-relaxed pl-8">
-              Esta Política pode ser atualizada periodicamente para refletir melhorias no Site ou mudanças na legislação. A versão vigente será sempre a publicada nesta página.
+              Estes Termos são regidos pela legislação brasileira. Fica eleito o foro da comarca de <strong>Criciúma-SC</strong>, para dirimir eventuais controvérsias, com renúncia a qualquer outro, por mais privilegiado que seja.
             </p>
           </section>
 
           <section className="space-y-2">
             <h2 className="text-base font-bold text-[#111111] flex items-center gap-2">
               <span className="w-6 h-6 rounded-full bg-[#F7F3EB] text-[#C9A227] text-xs flex items-center justify-center font-bold">9</span>
-              Contato / Encarregado de Dados (DPO)
+              Contato
             </h2>
             <p className="text-xs text-[#5A5A5A] leading-relaxed pl-8">
-              Para exercer seus direitos ou esclarecer dúvidas sobre o tratamento de dados pessoais, entre em contato:
+              Dúvidas sobre estes Termos podem ser encaminhadas para:
             </p>
             <div className="pl-8 pt-2 space-y-1.5 text-xs text-[#333333]">
               <div className="flex items-center gap-2">
@@ -204,23 +180,16 @@ export const PrivacyPolicyPage: React.FC<PrivacyPolicyPageProps> = ({ settings, 
           {/* Footer Card with Signature */}
           <div className="pt-8 border-t border-[#E5E0D8] text-xs text-[#5A5A5A] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <p className="font-bold text-[#111111]">Daniel Pacheco — Corretor de Imóveis</p>
+              <p className="font-bold text-[#111111]">Daniel Pacheco — Corretor e Perito Judicial</p>
               <p>CRECI-38.813 • CNAI 34.653</p>
               <p className="text-[#C9A227] font-medium">www.corretordanielpacheco.com.br</p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <button
-                onClick={() => handleNav('termos-de-uso')}
+                onClick={() => handleNav('politica-de-privacidade')}
                 className="text-xs text-[#C9A227] hover:underline font-semibold"
               >
-                Termos de Uso
-              </button>
-              <span>•</span>
-              <button
-                onClick={() => handleNav('cookie-policy')}
-                className="text-xs text-[#C9A227] hover:underline font-semibold"
-              >
-                Política de Cookies
+                Política de Privacidade →
               </button>
             </div>
           </div>

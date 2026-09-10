@@ -25,7 +25,19 @@ export const CookieBanner: React.FC = () => {
       className="fixed bottom-6 left-6 z-50 bg-[#FFFFFF] border border-[#E5E0D8] p-4 rounded-xl shadow-xl max-w-[300px] text-[#111111] animate-in slide-in-from-bottom-3 duration-300"
     >
       <p className="text-[11px] mb-3 leading-relaxed text-[#5A5A5A]">
-        Utilizamos cookies para melhorar sua experiência e oferecer uma consultoria imobiliária personalizada.
+        Utilizamos cookies para melhorar sua experiência e oferecer uma consultoria personalizada. Saiba mais em nossa{' '}
+        <a
+          href="#cookie-policy"
+          onClick={(e) => {
+            e.preventDefault();
+            window.location.hash = 'cookie-policy';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          className="text-[#C9A227] underline font-semibold hover:text-[#111111]"
+        >
+          Política de Cookies
+        </a>
+        .
       </p>
       <div className="flex items-center gap-2">
         <button

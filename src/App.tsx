@@ -10,6 +10,7 @@ import {
   subscribeLandingPages,
   getIsAdminCached,
   getLocalCachedProperties,
+  loadIndexedDBCachedProperties,
   getLocalCachedSettings,
   getLocalCachedLandingPages,
   logoutAdmin
@@ -39,6 +40,8 @@ import { SobrePage } from './pages/SobrePage';
 import { ContatoPage } from './pages/ContatoPage';
 import { AdminPage } from './pages/AdminPage';
 import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
+import { TermsPage } from './pages/TermsPage';
+import { CookiePolicyPage } from './pages/CookiePolicyPage';
 import { SiteMapPage } from './pages/SiteMapPage';
 import { LandingPageView } from './pages/LandingPageView';
 
@@ -66,6 +69,13 @@ export default function App() {
   // Initialize and subscribe to Firestore
   useEffect(() => {
     initFirebaseData();
+
+    // Carregamento instantâneo do IndexedDB de alta capacidade (fotos e galerias completas)
+    loadIndexedDBCachedProperties().then((cached) => {
+      if (cached && cached.length > 0) {
+        setProperties(cached);
+      }
+    }).catch(() => {});
 
     const unsubProps = subscribeProperties((data) => {
       if (data && data.length > 0) {
@@ -126,7 +136,14 @@ export default function App() {
       const target = (rawHash || pathname).trim();
       if (!target) return;
 
-      const RESERVED_ROUTES = ['home', 'portfolio', 'na-planta', 'prontos', 'terrenos', 'cidades', 'como-escolher', 'sobre', 'contato', 'admin', 'privacy', 'sitemap'];
+      const RESERVED_ROUTES = [
+        'home', 'portfolio', 'na-planta', 'prontos', 'terrenos', 'loteamentos', 
+        'cidades', 'como-escolher', 'sobre', 'contato', 'admin', 
+        'privacy', 'privacidade', 'politica-de-privacidade', 
+        'termos', 'termos-de-uso', 
+        'cookie-policy', 'cookies', 'politica-de-cookies',
+        'sitemap', 'mapa-do-site'
+      ];
 
       // Check if target is a Property Detail route (e.g. imovel-dp-101)
       if (target.startsWith('imovel-')) {
@@ -320,14 +337,31 @@ export default function App() {
           />
         )}
 
-        {currentRoute === 'privacy' && (
+        {(currentRoute === 'privacy' || currentRoute === 'privacidade' || currentRoute === 'politica-de-privacidade') && (
           <PrivacyPolicyPage
             settings={settings}
             onBack={() => navigate('home')}
+            navigate={navigate}
           />
         )}
 
-        {currentRoute === 'sitemap' && (
+        {(currentRoute === 'termos' || currentRoute === 'termos-de-uso') && (
+          <TermsPage
+            settings={settings}
+            onBack={() => navigate('home')}
+            navigate={navigate}
+          />
+        )}
+
+        {(currentRoute === 'cookie-policy' || currentRoute === 'cookies' || currentRoute === 'politica-de-cookies') && (
+          <CookiePolicyPage
+            settings={settings}
+            onBack={() => navigate('home')}
+            navigate={navigate}
+          />
+        )}
+
+        {(currentRoute === 'sitemap' || currentRoute === 'mapa-do-site') && (
           <SiteMapPage
             properties={properties}
             settings={settings}

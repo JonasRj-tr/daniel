@@ -51,11 +51,12 @@ export const AIAssistantFloating: React.FC<AIAssistantFloatingProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const realtorName = settings.realtorName || 'Daniel Pacheco';
-  const creci = settings.creci || 'CRECI: 38 813';
-  const cnai = settings.cnai || 'CNAI: 34 653';
-  const phone = settings.phone || '(48) 99800-1744';
-  const email = settings.email || 'daniel.pacheco@creci.org.br';
-  const instagramUrl = settings.instagram || 'https://instagram.com/danielpacheco.imoveis';
+  const realtorRole = 'Corretor e Perito Judicial';
+  const creci = 'CRECI-38.813';
+  const cnai = 'CNAI 34.653';
+  const phone = '48 9 98001744';
+  const email = settings.email || 'Daniel.pacheco@creci.org.br';
+  const instagramUrl = settings.instagram || 'https://instagram.com/corretordanielpacheco';
   
   const defaultWhatsAppUrl = createWhatsAppUrl(
     settings.whatsapp || '5548998001744',
@@ -63,7 +64,7 @@ export const AIAssistantFloating: React.FC<AIAssistantFloatingProps> = ({
   );
 
   const googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(
-    'Daniel Pacheco Corretor de Imoveis CRECI 38813 Criciuma SC'
+    'Daniel Pacheco Corretor e Perito Judicial CRECI 38813 CNAI 34653 Criciuma SC'
   )}`;
 
   // Initial welcome message
@@ -71,16 +72,16 @@ export const AIAssistantFloating: React.FC<AIAssistantFloatingProps> = ({
     {
       id: 'msg-welcome',
       sender: 'ai',
-      text: `Olá! Sou a Assistente Virtual do corretor **${realtorName}** (${creci} • ${cnai}).\n\nEstou aqui para esclarecer suas dúvidas sobre o trabalho do Daniel, lançamentos na planta, imóveis prontos ou te encaminhar diretamente para as redes sociais oficiais! Como posso te ajudar hoje?`,
+      text: `Olá! Sou a Assistente Virtual de **${realtorName}** (${realtorRole} • ${creci} • ${cnai}).\n\nAtuamos em toda a região da **AMREC** no Sul de Santa Catarina. Como posso te ajudar hoje com terrenos, lançamentos na planta ou avaliações periciais?`,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       actionButtons: [
         {
-          label: 'Falar no WhatsApp Oficial',
+          label: 'Falar no WhatsApp (48 9 98001744)',
           type: 'whatsapp',
           url: defaultWhatsAppUrl,
         },
         {
-          label: 'Conhecer o Instagram',
+          label: 'Instagram @corretordanielpacheco',
           type: 'instagram',
           url: instagramUrl,
         },
@@ -133,10 +134,10 @@ export const AIAssistantFloating: React.FC<AIAssistantFloatingProps> = ({
         'Olá Daniel! Gostaria de conversar com você sobre consultoria imobiliária.'
       );
       return {
-        text: `O **Daniel Pacheco** é corretor e consultor imobiliário com mais de **8 anos de atuação sólida** no mercado imobiliário do Sul de Santa Catarina.\n\n` +
-          `🔹 **Registros Oficiais:** ${creci} e ${cnai} (Perito Avaliador Imobiliário).\n` +
-          `🔹 **Origem Técnica em Construtora:** Antes de atuar como corretor independente, trabalhou diretamente dentro de construtora, dominando contratos, plantas, etapas de obra e negociações diretas.\n` +
-          `🔹 **Foco:** Ética, transparência absoluta e segurança jurídica para quem busca morar bem ou investir com alta rentabilidade.\n\n` +
+        text: `O **Daniel Pacheco** é **Corretor e Perito Judicial** com sólida experiência e credibilidade no mercado imobiliário do Sul de Santa Catarina.\n\n` +
+          `🔹 **Credenciais Oficiais:** ${creci} • ${cnai} (Perito Avaliador Judicial do COFECI).\n` +
+          `🔹 **Contato Direto:** 48 9 98001744.\n` +
+          `🔹 **Atuação:** Imóveis prontos, lançamentos na planta e loteamentos em toda a região da AMREC, além de laudos periciais e avaliações mercadológicas de alta precisão.\n\n` +
           `Deseja conversar com ele pessoalmente no WhatsApp ou acompanhar os stories no Instagram?`,
         actionButtons: [
           { label: 'Conversar no WhatsApp', type: 'whatsapp', url: waUrl },
@@ -161,21 +162,22 @@ export const AIAssistantFloating: React.FC<AIAssistantFloatingProps> = ({
       q.includes('e-mail')
     ) {
       return {
-        text: `Aqui estão todos os canais e redes sociais oficiais do **Daniel Pacheco**:\n\n` +
-          `📱 **WhatsApp Direto:** ${phone}\n` +
-          `📸 **Instagram Oficial:** @danielpacheco.imoveis (com novidades diárias, vídeos de obras e lançamentos)\n` +
-          `✉️ **E-mail Corporativo:** ${email}\n` +
+        text: `Aqui estão todos os canais e redes sociais oficiais de **Daniel Pacheco** (Corretor e Perito Judicial):\n\n` +
+          `📱 **WhatsApp / Telefone:** 48 9 98001744\n` +
+          `📸 **Instagram Oficial:** @corretordanielpacheco\n` +
+          `✉️ **E-mail Corporativo:** Daniel.pacheco@creci.org.br\n` +
+          `🆔 **Registros:** ${creci} • ${cnai}\n` +
           `⭐ **Google Meu Negócio:** Avaliação 5.0 Estrelas\n\n` +
           `Toque abaixo para ser direcionado agora mesmo:`,
         actionButtons: [
-          { label: 'Abrir WhatsApp Direto', type: 'whatsapp', url: defaultWhatsAppUrl },
-          { label: 'Acessar Instagram @danielpacheco.imoveis', type: 'instagram', url: instagramUrl },
+          { label: 'Abrir WhatsApp (48 9 98001744)', type: 'whatsapp', url: defaultWhatsAppUrl },
+          { label: 'Acessar Instagram @corretordanielpacheco', type: 'instagram', url: instagramUrl },
           { label: 'Ver no Google', type: 'google', url: googleSearchUrl },
         ],
       };
     }
 
-    // 3. Imóveis na Planta / Construtora / Financiamento
+    // 3. Imóveis na Planta / Terrenos / Construtora / Financiamento
     if (
       q.includes('planta') ||
       q.includes('construtora') ||
@@ -183,22 +185,25 @@ export const AIAssistantFloating: React.FC<AIAssistantFloatingProps> = ({
       q.includes('lançamento') ||
       q.includes('financiamento direto') ||
       q.includes('parcelamento') ||
-      q.includes('cub')
+      q.includes('cub') ||
+      q.includes('terreno') ||
+      q.includes('lote') ||
+      q.includes('loteamento')
     ) {
       const waUrl = createWhatsAppUrl(
         settings.whatsapp || '5548998001744',
-        'Olá Daniel! Gostaria de receber opções de lançamentos na planta com condições especiais.'
+        'Olá Daniel! Gostaria de consultar opções de terrenos e lançamentos na planta com financiamento direto.'
       );
       return {
-        text: `A grande especialidade do Daniel Pacheco são os **lançamentos na planta** com condições direto com a construtora:\n\n` +
-          `✨ **Vantagens exclusivas:**\n` +
-          `• Parcelamento direto em até 72x a 100x sem burocracia bancária inicial.\n` +
-          `• Valorização expressiva do imóvel durante o período de obras (20% a 40%+).\n` +
-          `• Análise técnica das construtoras e segurança no memorial de incorporação.\n\n` +
-          `O Daniel pode te enviar a tabela atualizada e as melhores plantas em Criciúma ou Balneário Rincão pelo WhatsApp!`,
+        text: `O Daniel Pacheco assessora você diretamente com as melhores construtoras e loteadoras do Sul de SC:\n\n` +
+          `✨ **Condições para Terrenos e Loteamentos:**\n` +
+          `• Parcelamento direto em **até 120 vezes pela variação do CUB**, ou em **até 240 vezes com correções**, com entrada facilitada e sem burocracia bancária.\n\n` +
+          `✨ **Apartamentos na Planta:**\n` +
+          `• Parcelamento direto durante a obra, entrada reduzida e alto potencial de valorização (20% a 40%+ até a entrega).\n\n` +
+          `Deseja que o Daniel te envie as tabelas e opções disponíveis pelo WhatsApp?`,
         actionButtons: [
-          { label: 'Solicitar Lançamentos no WhatsApp', type: 'whatsapp', url: waUrl },
-          { label: 'Ver Vídeos de Obras no Instagram', type: 'instagram', url: instagramUrl },
+          { label: 'Solicitar Tabelas no WhatsApp', type: 'whatsapp', url: waUrl },
+          { label: 'Ver Loteamentos no Instagram', type: 'instagram', url: instagramUrl },
         ],
       };
     }
@@ -218,24 +223,25 @@ export const AIAssistantFloating: React.FC<AIAssistantFloatingProps> = ({
         'Olá Daniel! Possuo um imóvel e gostaria de solicitar uma avaliação com registro CNAI.'
       );
       return {
-        text: `Sim! O Daniel Pacheco possui o registro **${cnai}** (Cadastro Nacional de Avaliadores Imobiliários do COFECI).\n\n` +
-          `📋 **Serviços de Avaliação:**\n` +
+        text: `Sim! Daniel Pacheco é **Corretor e Perito Judicial** credenciado com o registro **${cnai}** no COFECI:\n\n` +
+          `📋 **Serviços Periciais e de Avaliação:**\n` +
           `• Elaboração de PTAM (Parecer Técnico de Avaliação Mercadológica).\n` +
-          `• Avaliação técnica para compra, venda, partilha de bens e fins judiciais.\n` +
-          `• Determinação precisa do valor real de mercado fundamentado em dados da região.\n\n` +
-          `Você pode solicitar uma consultoria de avaliação diretamente com ele:`,
+          `• Avaliação técnica para inventários, partilhas judiciais, compra, venda e garantias.\n` +
+          `• Determinação fundamentada do valor real de mercado com rigor técnico.\n\n` +
+          `Você pode solicitar uma consultoria ou orçamento diretamente com ele:`,
         actionButtons: [
-          { label: 'Solicitar Avaliação CNAI no WhatsApp', type: 'whatsapp', url: waUrl },
+          { label: 'Solicitar Avaliação CNAI (48 9 98001744)', type: 'whatsapp', url: waUrl },
           { label: 'Conhecer o Trabalho no Instagram', type: 'instagram', url: instagramUrl },
         ],
       };
     }
 
-    // 5. Cidades / Regiões Atendidas
+    // 5. Cidades / Regiões Atendidas (AMREC 12 Municípios)
     if (
       q.includes('cidade') ||
       q.includes('regiao') ||
       q.includes('região') ||
+      q.includes('amrec') ||
       q.includes('criciuma') ||
       q.includes('criciúma') ||
       q.includes('rincao') ||
@@ -248,17 +254,27 @@ export const AIAssistantFloating: React.FC<AIAssistantFloatingProps> = ({
     ) {
       const waUrl = createWhatsAppUrl(
         settings.whatsapp || '5548998001744',
-        'Olá Daniel! Gostaria de consultar opções de imóveis nas cidades que você atende.'
+        'Olá Daniel! Gostaria de consultar opções de imóveis nas cidades atendidas da AMREC.'
       );
       return {
-        text: `O Daniel Pacheco atua nas principais praças com alto potencial de valorização no **Sul de Santa Catarina**:\n\n` +
-          `🏙️ **Criciúma:** Centro, Pio Corrêa, Michel, Comerciário, Santa Bárbara e Mina Brasil.\n` +
-          `🌊 **Balneário Rincão:** Frente Mar, Zona Sul, Centro e condomínios fechados.\n` +
-          `🏡 **Içara, Cocal do Sul, Nova Veneza e Tubarão.**\n\n` +
-          `Qual dessas regiões mais combina com seu momento de vida ou objetivo de investimento?`,
+        text: `A consultoria imobiliária atende a região da **AMREC**:\n\n` +
+          `📍 **AMREC (Associação dos Municípios da Região Carbonífera) é integrada por 12 municípios localizados no sul de SC:**\n` +
+          `1. **Criciúma (sede)**\n` +
+          `2. **Balneário Rincão**\n` +
+          `3. **Cocal do Sul**\n` +
+          `4. **Forquilhinha**\n` +
+          `5. **Içara**\n` +
+          `6. **Lauro Müller**\n` +
+          `7. **Morro da Fumaça**\n` +
+          `8. **Nova Veneza**\n` +
+          `9. **Orleans**\n` +
+          `10. **Siderópolis**\n` +
+          `11. **Treviso**\n` +
+          `12. **Urussanga**\n\n` +
+          `*(Observação: Não atuamos em Tubarão, concentrando nossa total expertise técnica e comercial nos 12 municípios da AMREC).*`,
         actionButtons: [
-          { label: 'Consultar Imóveis por Região no WhatsApp', type: 'whatsapp', url: waUrl },
-          { label: 'Ver Tour das Cidades no Instagram', type: 'instagram', url: instagramUrl },
+          { label: 'Consultar Imóveis na AMREC no WhatsApp', type: 'whatsapp', url: waUrl },
+          { label: 'Ver Cidades no Instagram', type: 'instagram', url: instagramUrl },
         ],
       };
     }
@@ -356,7 +372,7 @@ export const AIAssistantFloating: React.FC<AIAssistantFloatingProps> = ({
   };
 
   return (
-    <div className="fixed bottom-6 left-6 z-40 flex flex-col items-start gap-3 pointer-events-auto select-none">
+    <div className="fixed bottom-12 sm:bottom-14 left-4 sm:left-6 z-40 flex flex-col items-start gap-3 pointer-events-auto select-none">
       {/* Floating AI Button (Left Side, Non-Intrusive) */}
       {!isOpen && (
         <div className="flex items-center gap-2.5">

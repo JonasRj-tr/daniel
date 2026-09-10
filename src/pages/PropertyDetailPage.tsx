@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
   ArrowLeft, 
   MapPin, 
@@ -40,6 +40,7 @@ import {
 } from 'lucide-react';
 import { Property, SiteSettings } from '../types';
 import { formatCurrency, getStatusBadgeColor, createWhatsAppUrl, getHighResImages, getHighResImageUrl } from '../utils/formatters';
+import { fetchFullPropertyGallery } from '../firebase/firebaseService';
 import { FloorPlanViewer3D } from '../components/FloorPlanViewer3D';
 import { PropertyCard } from '../components/PropertyCard';
 import { PropertyGalleryLightbox } from '../components/PropertyGalleryLightbox';
@@ -78,10 +79,22 @@ export const PropertyDetailPage: React.FC<PropertyDetailPageProps> = ({
   const [formEmail, setFormEmail] = useState('');
   const [formNotes, setFormNotes] = useState('');
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [extendedGallery, setExtendedGallery] = useState<string[] | null>(null);
+
+  useEffect(() => {
+    if (property.hasExtendedGallery || (property.totalImagesCount && property.totalImagesCount > (property.images || []).length)) {
+      fetchFullPropertyGallery(property.id).then((full) => {
+        if (full && full.length > (property.images || []).length) {
+          setExtendedGallery(full);
+        }
+      }).catch(() => {});
+    }
+  }, [property.id, property.hasExtendedGallery, property.totalImagesCount, property.images]);
 
   const images = useMemo(() => {
-    return getHighResImages(property.images);
-  }, [property.images]);
+    const activeList = extendedGallery && extendedGallery.length > 0 ? extendedGallery : property.images;
+    return getHighResImages(activeList);
+  }, [property.images, extendedGallery]);
 
   const badgeStyle = getStatusBadgeColor(property.status);
 
